@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Beekepeer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d19b95dba7c8a4330a725ff9d13c88bda8888644")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fc13548763a299aa53fbce2c287676e06d3c0b5f")]
 [assembly: System.Reflection.AssemblyProductAttribute("Beekepeer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Beekepeer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

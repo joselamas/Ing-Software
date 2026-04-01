@@ -1,8 +1,8 @@
 [
   {
-    "ContainingType": "Beekepeer.Controllers.AutomovilController",
+    "ContainingType": "Beekepeer.Controllers.ApiarioController",
     "Method": "Delete",
-    "RelativePath": "api/Automovil/delete/{id}",
+    "RelativePath": "api/Apiario/delete/{id}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
@@ -16,9 +16,25 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Beekepeer.Controllers.AutomovilController",
+    "ContainingType": "Beekepeer.Controllers.ApiarioController",
+    "Method": "Desactivate",
+    "RelativePath": "api/Apiario/desactivate/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Beekepeer.Controllers.ApiarioController",
     "Method": "GetById",
-    "RelativePath": "api/Automovil/getById/{id}",
+    "RelativePath": "api/Apiario/getById/{id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -32,16 +48,38 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Beekepeer.Controllers.AutomovilController",
-    "Method": "GetAutomovil",
-    "RelativePath": "api/Automovil/getListAutomovil",
+    "ContainingType": "Beekepeer.Controllers.ApiarioController",
+    "Method": "Insertar",
+    "RelativePath": "api/Apiario/insert",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "nuevo",
+        "Type": "Beekepeer.Model.Apiario",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Beekepeer.Controllers.ApiarioController",
+    "Method": "GetApiarios",
+    "RelativePath": "api/Apiario/list",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "acronimoUsuario",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[Beekepeer.Model.automovilClass, Beekepeer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.List\u00601[[Beekepeer.Model.Apiario, Beekepeer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -52,46 +90,104 @@
     ]
   },
   {
-    "ContainingType": "Beekepeer.Controllers.AutomovilController",
+    "ContainingType": "Beekepeer.Controllers.ApiarioController",
+    "Method": "Update",
+    "RelativePath": "api/Apiario/update/{id}",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "datos",
+        "Type": "Beekepeer.Model.Apiario",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Beekepeer.Controllers.ColmenaController",
+    "Method": "Delete",
+    "RelativePath": "api/Colmena/delete/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Beekepeer.Controllers.ColmenaController",
+    "Method": "Desactivate",
+    "RelativePath": "api/Colmena/desactivate/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Beekepeer.Controllers.ColmenaController",
     "Method": "Insertar",
-    "RelativePath": "api/Automovil/insert",
+    "RelativePath": "api/Colmena/insert",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "nuevoAuto",
-        "Type": "Beekepeer.Model.automovilClass",
+        "Name": "nueva",
+        "Type": "Beekepeer.Model.Colmena",
         "IsRequired": true
       }
     ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Beekepeer.Controllers.AutomovilController",
-    "Method": "Search",
-    "RelativePath": "api/Automovil/search",
+    "ContainingType": "Beekepeer.Controllers.ColmenaController",
+    "Method": "GetColmenas",
+    "RelativePath": "api/Colmena/list",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "marca",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "modelo",
+        "Name": "usuarioAcronimo",
         "Type": "System.String",
         "IsRequired": false
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[Beekepeer.Model.Colmena, Beekepeer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
-    "ContainingType": "Beekepeer.Controllers.AutomovilController",
-    "Method": "UpdateMarca",
-    "RelativePath": "api/Automovil/updateMarca/{id}",
+    "ContainingType": "Beekepeer.Controllers.ColmenaController",
+    "Method": "Update",
+    "RelativePath": "api/Colmena/update/{id}",
     "HttpMethod": "PATCH",
     "IsController": true,
     "Order": 0,
@@ -102,7 +198,23 @@
         "IsRequired": true
       },
       {
-        "Name": "nuevaMarca",
+        "Name": "datos",
+        "Type": "Beekepeer.Model.Colmena",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Beekepeer.Controllers.UsuarioController",
+    "Method": "Delete",
+    "RelativePath": "api/Usuario/delete/{acronimo}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "acronimo",
         "Type": "System.String",
         "IsRequired": true
       }
@@ -110,21 +222,73 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Beekepeer.Controllers.AutomovilController",
-    "Method": "UpdateModelo",
-    "RelativePath": "api/Automovil/updateModelo/{id}",
+    "ContainingType": "Beekepeer.Controllers.UsuarioController",
+    "Method": "GetByAcronimo",
+    "RelativePath": "api/Usuario/getByAcronimo/{acronimo}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "acronimo",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Beekepeer.Controllers.UsuarioController",
+    "Method": "Insertar",
+    "RelativePath": "api/Usuario/insert",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "nuevo",
+        "Type": "Beekepeer.Model.Usuario",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Beekepeer.Controllers.UsuarioController",
+    "Method": "GetUsuarios",
+    "RelativePath": "api/Usuario/list",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[Beekepeer.Model.Usuario, Beekepeer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Beekepeer.Controllers.UsuarioController",
+    "Method": "Update",
+    "RelativePath": "api/Usuario/update/{acronimo}",
     "HttpMethod": "PATCH",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
-        "Type": "System.Int32",
+        "Name": "acronimo",
+        "Type": "System.String",
         "IsRequired": true
       },
       {
-        "Name": "nuevoModelo",
-        "Type": "System.String",
+        "Name": "datos",
+        "Type": "Beekepeer.Model.Usuario",
         "IsRequired": true
       }
     ],
