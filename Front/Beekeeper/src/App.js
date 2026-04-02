@@ -7,7 +7,7 @@ import './App.css';
 
 function App() {
 
-
+// prueba de git
   return (
     <div className="App">
       {BarraNavegacion()}
