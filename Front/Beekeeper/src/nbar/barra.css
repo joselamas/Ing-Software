@@ -1,0 +1,112 @@
+:root {
+    --primary-yellow: #ffb300;
+    --dark-brown: #2e1a12;
+    --bg-cream: #f9f9f5;
+    --border-width: 2.5px;
+}
+
+/* Contenedor principal de la Navbar */
+.navbar-horizontal {
+    width: 100%;
+    height: 80px;
+    background-color: var(--bg-cream);
+    border-bottom: var(--border-width) solid var(--dark-brown);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+}
+
+.nav-container {
+    width: 100%;
+    padding: 0 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Estilo del Logo */
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 900;
+    font-size: 1.3rem;
+    color: var(--dark-brown);
+}
+
+.logo-icon {
+    color: var(--primary-yellow);
+    font-size: 1.8rem;
+    /* Efecto de borde en el icono */
+    text-shadow: 1px 1px 0 var(--dark-brown), -1px -1px 0 var(--dark-brown);
+}
+
+/* Links de Navegación */
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 25px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--dark-brown);
+    font-weight: 800;
+    padding: 10px 22px;
+    border: var(--border-width) solid transparent;
+    border-radius: 4px;
+    transition: all 0.1s;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+/* Estilo de botón seleccionado (Igual a la imagen 9) */
+.nav-links a.active, 
+.nav-links a:hover {
+    background-color: var(--primary-yellow);
+    border-color: var(--dark-brown);
+    box-shadow: 4px 4px 0px var(--dark-brown); /* Sombra sólida */
+    transform: translate(-3px, -3px);
+}
+
+/* Sección de Usuario */
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar {
+    width: 42px;
+    height: 42px;
+    background-color: var(--primary-yellow);
+    border: var(--border-width) solid var(--dark-brown);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    border-radius: 4px;
+}
+
+.user-name {
+    font-weight: 800;
+    font-size: 0.85rem;
+    margin: 0;
+    color: var(--dark-brown);
+}
+
+.logout-link {
+    font-size: 0.7rem;
+    color: #8d6e63;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+/* IMPORTANTE: Espaciado para el cuerpo de la página */
+body {
+    padding-top: 80px;
+    background-color: var(--bg-cream);
+}

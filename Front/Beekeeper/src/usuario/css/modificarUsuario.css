@@ -1,0 +1,80 @@
+/* --- Ajustes para la vista de Editar Perfil --- */
+
+.header-inline {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.header-inline h1 span {
+    font-weight: 400; /* Hace que "Perfil" se vea más delgado que "Editar" */
+}
+
+.back-arrow {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--dark-brown);
+}
+
+/* Estilo para etiquetas en mayúsculas pequeñas como en la imagen */
+.input-group label {
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #6d4c41;
+}
+
+/* Campo no editable */
+.input-group.disabled .static-info {
+    color: #a1887f;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 5px;
+    text-transform: uppercase;
+}
+
+/* Grupo de botones en línea */
+.button-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 40px;
+}
+
+/* Botón Cancelar (Blanco con borde negro) */
+.secondary-btn {
+    flex: 1;
+    background-color: white;
+    color: var(--dark-brown);
+    border: 2px solid var(--dark-brown);
+    padding: 12px;
+    border-radius: 4px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.secondary-btn:hover {
+    background-color: #f5f5f5;
+}
+
+/* Botón Guardar (Mismo estilo que el botón de entrar) */
+.primary-btn {
+    flex: 1.5; /* El botón de guardar es un poco más largo */
+    background-color: var(--primary-yellow);
+    color: var(--dark-brown);
+    border: 2px solid var(--dark-brown); /* Borde negro sólido como en la imagen */
+    padding: 12px;
+    border-radius: 4px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px var(--dark-brown); /* Sombra desplazada tipo cómic/retro */
+    transition: all 0.1s;
+}
+
+.primary-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px var(--dark-brown);
+}

@@ -1,0 +1,142 @@
+:root {
+    --primary-yellow: #ffb300;
+    --dark-brown: #2e1a12;
+    --light-cream: #fffdf5;
+    --honey-gradient: radial-gradient(circle at center, #8d5a36 0%, #432818 100%);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.main-container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* PANEL IZQUIERDO: DISEÑO DE PANAL */
+.left-panel {
+    flex: 1;
+    position: relative;
+    background: var(--honey-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    padding: 40px;
+}
+
+.left-panel::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    /* Patrón de panal real */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100' viewBox='0 0 56 100'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='%23ffffff22' stroke-width='1'/%3E%3C/svg%3E");
+    background-size: 56px 100px;
+    opacity: 0.6;
+}
+
+.overlay-content {
+    position: relative;
+    z-index: 2;
+    max-width: 400px;
+}
+
+.bee-icon img {
+    width: 80px;
+    filter: invert(1) sepia(1) saturate(5) hue-rotate(0deg); /* Hace el icono dorado/blanco */
+    margin-bottom: 20px;
+}
+
+.left-panel h2 {
+    font-size: 2.2rem;
+    margin-bottom: 15px;
+}
+
+/* PANEL DERECHO: FORMULARIO */
+.right-panel {
+    flex: 1;
+    background-color: var(--light-cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.form-container {
+    width: 100%;
+    max-width: 420px;
+}
+
+h1 {
+    font-size: 2.4rem;
+    color: var(--dark-brown);
+}
+
+.form-desc {
+    color: #8d6e63;
+    margin-bottom: 30px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--dark-brown);
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1.5px solid #d7ccc8;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+}
+
+.input-group input:focus {
+    border-color: var(--primary-yellow);
+}
+
+/* BOTÓN ESTILO IMAGEN 4 */
+.primary-btn {
+    width: 100%;
+    background-color: var(--primary-yellow);
+    color: var(--dark-brown);
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #c68400; /* Sombra sólida 3D */
+    transition: all 0.1s;
+}
+
+.primary-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #c68400;
+}
+
+.form-footer {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.form-footer a {
+    color: var(--dark-brown);
+    font-weight: 700;
+}
+
+@media (max-width: 900px) {
+    .left-panel { display: none; }
+}
