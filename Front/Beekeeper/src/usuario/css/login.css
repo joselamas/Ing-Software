@@ -1,0 +1,144 @@
+/* Reset general */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.login-container {
+    display: flex; /* Divide la pantalla en dos columnas */
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* --- PANEL IZQUIERDO (PANAL CSS) --- */
+.left-panel {
+    flex: 1;
+background: radial-gradient(
+        circle at center, 
+        #8d5a36 0%,   /* Café ámbar claro en el centro */
+        #5d3a24 70%,  /* Café medio */
+        #432818 100%  /* Café muy oscuro en las esquinas */
+    );    background-image: url('../../imagenes/light-honeycomb.png'),
+    radial-gradient(circle at center, #8d5a36 0%, #432818 100%);;
+    background-size: 800px 800px;
+    background-position: 0 0, 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+    
+}
+.left-panel::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.4) 100%);
+    pointer-events: none;
+}
+
+/* --- PANEL DERECHO (FORMULARIO) --- */
+.right-panel {
+    flex: 1;
+    background-color: #fffdf5; /* Crema suave */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.form-wrapper {
+    width: 100%;
+    max-width: 400px;
+}
+
+.title {
+    font-size: 2.5rem;
+    color: #2e1a12;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: #8d6e63;
+    font-size: 1.1rem;
+    margin-bottom: 40px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.input-group label {
+    display: block;
+    color: #4e342e;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper i {
+    position: absolute;
+    left: 15px;
+    color: #a1887f;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 14px 15px 14px 45px;
+    border: 1.5px solid #d7ccc8;
+    border-radius: 6px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.input-wrapper input:focus {
+    border-color: #ffb300;
+}
+
+/* BOTÓN AMARILLO ABEJA */
+.submit-btn {
+    background-color: #ffb300;
+    color: #2e1a12;
+    border: none;
+    padding: 16px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 10px;
+    /* Efecto 3D de la imagen */
+    box-shadow: 0 4px 0 #c68400; 
+    transition: all 0.1s;
+}
+
+.submit-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #c68400;
+}
+
+.footer-text {
+    margin-top: 35px;
+    text-align: center;
+    color: #5d4037;
+}
+
+.footer-text a {
+    color: #2e1a12;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+/* Responsividad para móviles */
+@media (max-width: 800px) {
+    .left-panel { display: none; }
+}

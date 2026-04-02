@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\jose luis\\OneDrive\\Documents\\IS\\beekepeer\\Back\\Beekepeer\\Beekepeer.csproj": {}
+    "C:\\Users\\jose luis\\OneDrive\\Documents\\GitHub\\Ing-Software\\Back\\Beekepeer\\Beekepeer.csproj": {}
   },
   "projects": {
-    "C:\\Users\\jose luis\\OneDrive\\Documents\\IS\\beekepeer\\Back\\Beekepeer\\Beekepeer.csproj": {
+    "C:\\Users\\jose luis\\OneDrive\\Documents\\GitHub\\Ing-Software\\Back\\Beekepeer\\Beekepeer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\jose luis\\OneDrive\\Documents\\IS\\beekepeer\\Back\\Beekepeer\\Beekepeer.csproj",
+        "projectUniqueName": "C:\\Users\\jose luis\\OneDrive\\Documents\\GitHub\\Ing-Software\\Back\\Beekepeer\\Beekepeer.csproj",
         "projectName": "Beekepeer",
-        "projectPath": "C:\\Users\\jose luis\\OneDrive\\Documents\\IS\\beekepeer\\Back\\Beekepeer\\Beekepeer.csproj",
+        "projectPath": "C:\\Users\\jose luis\\OneDrive\\Documents\\GitHub\\Ing-Software\\Back\\Beekepeer\\Beekepeer.csproj",
         "packagesPath": "C:\\Users\\jose luis\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\jose luis\\OneDrive\\Documents\\IS\\beekepeer\\Back\\Beekepeer\\obj\\",
+        "outputPath": "C:\\Users\\jose luis\\OneDrive\\Documents\\GitHub\\Ing-Software\\Back\\Beekepeer\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
