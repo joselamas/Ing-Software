@@ -48,6 +48,40 @@ namespace Beekepeer.DDBB
             return usr;
         }
 
+        public Usuario? BuscarUsuarioXIdentificador(string identificador)
+        {
+            Usuario? usr = null;
+
+            using (SqlConnection connection = new SqlConnection(_sqlurl))
+            {
+                SqlCommand cmd = new SqlCommand(queryUsuario.BuscarUsuarioXIdentificador, connection);
+                cmd.Parameters.AddWithValue("@id", identificador);
+
+                connection.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        usr = new Usuario
+                        {
+                            nombre = reader["nombre"].ToString() ?? "",
+                            clave = reader["clave"].ToString() ?? "",
+                            apellido = reader["apellido"].ToString() ?? "",
+                            correo = reader["correo"].ToString() ?? "",
+                            telefono = reader["telefono"].ToString() ?? "",
+                            permiso = (int)reader["permiso"],
+                            localidad_asociada = reader["localidad_asociada"].ToString() ?? "",
+                            activo = reader["activo"] != DBNull.Value && (bool)reader["activo"],
+                            acronimo = reader["acronimo"].ToString() ?? ""
+                        };
+                    }
+                }
+            }
+            return usr;
+        }
+
+        
+
         // 2. BÚSQUEDA completa de usuarios
         public List<Usuario> GetTodosLosUsuarios()
         {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import * as WSUsuario from '../webService/usuario.js';
+import * as WSUsuario from '../webService/WSusuario.js';
 
 import "./css/login.css"
 
@@ -37,40 +37,40 @@ export default function Login(props){
     }
     
     const createView = () => {
-      return (<div class="login-container">
+      return (<div className="login-container">
         <div className="left-panel">
-            <div class="pattern-overlay"></div>
+            <div className="pattern-overlay"></div>
         </div>
 
         <div className="right-panel">
-            <div class="form-wrapper">
-                <h1 class="main-title">Iniciar Sesión</h1>
-                <p class="sub-title">Accede a tu cuenta de apicultor</p>
+            <div className="form-wrapper">
+                <h1 className="main-title">Iniciar Sesión</h1>
+                <p className="sub-title">Accede a tu cuenta de apicultor</p>
 
-                <form class="login-form">
-                    <div class="input-group">
+                <form className="login-form">
+                    <div className="input-group">
                         <label for="email">Correo Electrónico</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-envelope input-icon"></i>
+                        <div className="input-wrapper">
+                            <i className="fas fa-envelope input-icon"></i>
                             <input type="email" id="email" placeholder="ejemplo@correo.com" required/>
                         </div>
                     </div>
 
-                    <div class="input-group">
+                    <div className="input-group">
                         <label for="password">Contraseña</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-lock input-icon"></i>
+                        <div className="input-wrapper">
+                            <i className="fas fa-lock input-icon"></i>
                             <input type="password" id="password" placeholder="********" required/>
                         </div>
                     </div>
 
-                    <button type="submit" class="submit-btn">
-                        Entrar <i class="fas fa-arrow-right arrow-icon"></i>
+                    <button type="submit" className="primary-btn" onClick={ () => props.setViewState('ModificarUsuario') }>
+                        Entrar <i className="fas fa-arrow-right arrow-icon"></i>
                     </button>
                 </form>
 
-                <div class="footer-links">
-                    <p>¿No tienes cuenta? <a href="#" class="link-bold">Crear Cuenta</a></p>
+                <div className="footer-links">
+                    <p>¿No tienes cuenta? <a href="#" onClick = {() => props.setViewState("CrearUsuario")}className="link-bold">Crear Cuenta</a></p>
                 </div>
             </div>
         </div>

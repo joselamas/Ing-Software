@@ -14,3 +14,7 @@ Back/Beekepeer/.vs/ProjectEvaluation/beekepeer.metadata.v9.bin
 Back/Beekepeer/.vs/ProjectEvaluation/beekepeer.projects.v9.bin
 Back/Beekepeer/.vs/ProjectEvaluation/beekepeer.strings.v9.bin
 **/appsettings.Development.json
+*.pdb
+*.exe
+*.dll
+*.csproj
