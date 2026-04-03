@@ -1,4 +1,6 @@
-﻿namespace Beekepeer.DDBB.querysSQL
+﻿using Beekepeer.Model;
+
+namespace Beekepeer.DDBB.querysSQL
 {
     public class queryUsuario
     {
@@ -6,6 +8,8 @@
 
         public const string BuscarPorAcronimo = "SELECT acronimo, clave, nombre, apellido, correo, telefono, localidad_asociada, permiso, activo FROM usuario WHERE acronimo = @Acronimo";
 
+        public const string BuscarUsuarioXIdentificador = @"SELECT* FROM usuario
+                            WHERE acronimo = @Identificador OR correo = @Identificador";
         public const string ActualizarUsuario = @"
             UPDATE usuario SET 
                 nombre = COALESCE(@Nombre, nombre),
