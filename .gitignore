@@ -13,3 +13,4 @@ Back/Beekepeer/obj/Debug/net8.0/Beekepeer.GlobalUsings.g.cs
 Back/Beekepeer/.vs/ProjectEvaluation/beekepeer.metadata.v9.bin
 Back/Beekepeer/.vs/ProjectEvaluation/beekepeer.projects.v9.bin
 Back/Beekepeer/.vs/ProjectEvaluation/beekepeer.strings.v9.bin
+**/appsettings.Development.json
