@@ -50,7 +50,7 @@ export async function UpdateUsuario(usr) {
 }
 
 export async function ValidarLogin(identificador, clave) {
-    // Creamos el objeto con los nombres que espera tu C# (LoginRequest)
+    // Creamos el objeto con los nombres que espera C# (LoginRequest)
     console.log(clave)
     const datosLogin = {
         identificador: identificador,

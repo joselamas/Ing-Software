@@ -1,5 +1,6 @@
 ﻿using Beekepeer.DDBB;
 using Beekepeer.Model;
+using Beekepeer.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Beekepeer.Controllers
@@ -20,7 +21,7 @@ namespace Beekepeer.Controllers
         // Ejemplo: api/Colmena/list?usuarioAcronimo=JUAN
         [HttpGet]
         [Route("list")]
-        public ActionResult<List<Colmena>> GetColmenas([FromQuery] string? usuarioAcronimo)
+        public ActionResult<List<ColmenaDashboardDTO>> GetColmenas([FromQuery] string? usuarioAcronimo)
         {
             return Ok(_sql.GetColmenas(usuarioAcronimo));
         }
@@ -28,7 +29,7 @@ namespace Beekepeer.Controllers
         // 2. INSERTAR NUEVA COLMENA
         [HttpPost]
         [Route("insert")]
-        public IActionResult Insertar([FromBody] Colmena nueva)
+        public IActionResult Insertar([FromBody] ColmenaDashboardDTO nueva)
         {
             if (nueva == null) return BadRequest("Datos de la colmena no válidos.");
 
@@ -37,7 +38,8 @@ namespace Beekepeer.Controllers
                 nueva.fecha_inicio,
                 nueva.es_enjambre,
                 nueva.id_colmena_madre,
-                nueva.activo
+                nueva.activo,
+                nueva.apiario_id
             );
 
             if (idGenerado == 0) return StatusCode(500, "Error al registrar la colmena.");
@@ -48,7 +50,7 @@ namespace Beekepeer.Controllers
         // 3. ACTUALIZACIÓN DINÁMICA (PATCH)
         [HttpPatch]
         [Route("update/{id}")]
-        public IActionResult Update(int id, [FromBody] Colmena datos)
+        public IActionResult Update(int id, [FromBody] ColmenaDashboardDTO datos)
         {
             bool exito = _sql.ActualizarColmena(
                 id,
@@ -56,7 +58,8 @@ namespace Beekepeer.Controllers
                 datos.fecha_inicio,
                 datos.es_enjambre,
                 datos.id_colmena_madre,
-                datos.activo
+                datos.activo,
+                datos.apiario_id
             );
 
             if (!exito) return NotFound("No se encontró la colmena o no hubo cambios.");
