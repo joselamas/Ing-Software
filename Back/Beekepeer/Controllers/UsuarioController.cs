@@ -1,5 +1,8 @@
-﻿using Beekepeer.DDBB;
+﻿using System.Text;
+using Beekepeer.DDBB;
 using Beekepeer.Model;
+using Beekepeer.Model.ws;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Beekepeer.Controllers
@@ -24,6 +27,51 @@ namespace Beekepeer.Controllers
             return Ok(_sql.GetTodosLosUsuarios());
         }
 
+        [HttpPost]
+        [Route("login")]
+        public dynamic ValidarLogin([FromBody] LoginRequestWS request)
+        {
+            try
+            {
+                // 1. Buscamos al usuario por su identificador (correo o acrónimo)
+                // Usamos el método que me pasaste
+                Usuario? usuario = _sql.BuscarUsuarioXIdentificador(request.identificador);
+
+                if (usuario == null)
+                {
+                    return new { status = 0, mensaje = "El usuario no existe en Beekeeper." };
+                }
+
+                // 2. Desencriptamos la clave que viene en Base64 desde el Front
+                string claveRecibida = (request.clave);
+
+                // 3. Validamos la clave y si el usuario está activo
+                if (usuario.clave == claveRecibida)
+                {
+                    if (!usuario.activo)
+                    {
+                        return new { status = 0, mensaje = "La cuenta está desactivada. Contacte al administrador." };
+                    }
+
+                    // ÉXITO: Retornamos el objeto usuario (limpio de datos sensibles si prefieres)
+                    usuario.clave = "";
+                    return new
+                    {
+                        status = 1,
+                        mensaje = "Bienvenido al sistema",
+                        usuario
+                    };
+                }
+                else
+                {
+                    return new { status = 0, mensaje = "Contraseña incorrecta." };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new { status = -1, mensaje = "Error interno: " + ex.Message };
+            }
+        }
         // 2. BUSCAR POR ACRÓNIMO
         // Ejemplo: api/Usuario/getByAcronimo/JDOE
         [HttpGet]
@@ -37,7 +85,7 @@ namespace Beekepeer.Controllers
 
         // 3. INSERTAR NUEVO USUARIO
         [HttpPost]
-        [Route("insert")]
+        [Route("insertar")]
         public IActionResult Insertar([FromBody] Usuario nuevo)
         {
             if (nuevo == null || string.IsNullOrEmpty(nuevo.acronimo))
@@ -55,9 +103,9 @@ namespace Beekepeer.Controllers
                 nuevo.activo
             );
 
-            if (!exito) return StatusCode(500, "Error al registrar el usuario. Es posible que el acrónimo ya exista.");
-
-            return Ok("Usuario registrado con éxito.");
+            if (!exito)
+                return StatusCode(500, new { status = 0, mensaje = "Error al registrar. El acrónimo o correo ya existen." });
+            return Ok(new { status = 1, mensaje = "Usuario registrado con éxito." });
         }
 
         // 4. ACTUALIZACIÓN DINÁMICA (PATCH)

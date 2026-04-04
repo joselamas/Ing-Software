@@ -1,112 +1,152 @@
-import React, { useState, useEffect } from 'react';
-import * as WSUsuario from '../webService/usuario.js';
-
+import React, { useState } from 'react';
+import Modal from '../componentes/modalMSN.js';
+import * as WSUsuario from '../webService/WSusuario.js';
 import "./css/crearUsuario.css"
 
+export default function CrearUsuario(props) {
+    const [formData, setFormData] = useState({
+        acronimo: '',
+        nombre: '',
+        apellido: '',
+        telefono: '',
+        correo: '',
+        localidad_asociada: '',
+        clave: '',
+        repetirClave: '',
+        permiso: 2,
+        activo:true
+    });
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [error, setError] = useState("");
+    const [modalInfo, setModalInfo] = useState({
+        titulo: '',
+        mensaje: ''});
 
-export default function CrearUsuario(props){
-  const [error, setError] = useState();
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value 
+        });
+    };
 
-  
-    useEffect(() => {
-    }, []);
+    const manejarRegistro = async (e) => {
+      e.preventDefault();
 
-    const aceptarLog = async() =>{
-      var usuario = document.getElementById("usr").value;
-      var clave = document.getElementById('clave').value;
-
-      var urs = {
-        idAsociado:usuario,
-        clave:btoa(clave)
+      if (formData.clave !== formData.repetirClave) {
+          setError("Las contraseñas no coinciden");
+          return;
       }
-      var usuarioF = null//await WScolibri.Login(urs)
-      if(usuarioF.status > 0 )
-      {
-        props.setUsr(usuarioF)
-        setError("")
+
+      const { repetirClave, ...datosAEnviar } = formData;
+
+      const payload = {
+          ...datosAEnviar,
+          clave: btoa(datosAEnviar.clave) 
+      };
+
+    try {
+      const respuesta =  await WSUsuario.CrearUsuario(payload); 
+      console.log(respuesta)
+      if (respuesta && respuesta.status > 0) {
+        setModalInfo({
+          titulo: "Registro Exitoso",
+          mensaje: "El usuario se ha creado correctamente en Beekeeper"
+        });
+      } else {
+          if(respuesta.status === 0)
+          setModalInfo({
+              titulo: "Error al Crear Usuario",
+              mensaje: respuesta.mensaje || "Ocurrió un error al crear el usuario"
+          });
+          else
+             setModalInfo({
+              titulo: "Error al conectar con el servidor",
+                mensaje: "No se pudo conectar con el servidor. Por favor, intenta nuevamente más tarde."
+          });
       }
-      else
-        setError("Usuario invalido")
+      } catch (err) {
+              setModalInfo({
+                titulo: "Error de Conexión",
+                mensaje: "No se pudo conectar con el servidor. Por favor, intenta nuevamente más tarde."
+              });
+      }
+      setIsModalOpen(true);
+  };
 
-      console.log(usuarioF)
-    }
-
-    const restarLog = () =>{
-      document.getElementById("usr").value = '';
-      document.getElementById('clave').value = '';
-    }
-    
     const createView = () => {
-      return (<div class="main-container">
-        <div class="left-panel">
-            <div class="overlay-content">
-                <div class="bee-icon">
-                    <img src="https://cdn-icons-png.flaticon.com/512/517/517563.png" alt="Logo"/>
+        return (
+            <div className="crearUsuario-container">
+                <div className="left-panel">
+                    <div className="overlay-content">
+                        <div className="bee-icon">
+                            <img src="https://cdn-icons-png.flaticon.com/512/517/517563.png" alt="Logo"/>
+                        </div>
+                        <h2>Gestiona tu colmena</h2>
+                        <p>La herramienta definitiva para el apicultor moderno.</p>
+                    </div>
                 </div>
-                <h2>Gestiona tu colmena</h2>
-                <p>La herramienta definitiva para el apicultor moderno, diseñada para el cuidado de tus abejas.</p>
-            </div>
-        </div>
 
-        <div class="right-panel">
-            <div class="form-container">
-                <h1>Crear Cuenta</h1>
-                <p class="form-desc">Únete para gestionar tus apiarios fácilmente.</p>
+                <div className="right-panel">
+                    <div className="form-container">
+                        <h1>Crear Cuenta</h1>
+                        <p className="form-desc">Únete para gestionar tus apiarios fácilmente.</p>
 
-                <form id="auth-form">
-                    <div class="input-group">
-                        <label>Nombres</label>
-                        <input type="text" placeholder="Ej. Juan Jose" required/>
+                        {error && <p style={{color: 'red', fontWeight: 'bold'}}>{error}</p>}
+
+                        <form id="auth-form" onSubmit={manejarRegistro} noValidate>
+                            <div className="input-group">
+                                <label>Acronimo</label>
+                                <input type="text" name="acronimo" value={formData.acronimo} onChange={handleChange} placeholder="JMLT" required minLength="4" maxLength="10" />
+                            </div>
+                            <div style={{display: "flex", gap: "10px"}}>
+                                <div className="input-group">
+                                    <label>Nombres</label>
+                                    <input type="text" name="nombre" value={formData.nombre} onChange={handleChange} required />
+                                </div>
+                                <div className="input-group">
+                                    <label>Apellidos</label>
+                                    <input type="text" name="apellido" value={formData.apellido} onChange={handleChange} required />
+                                </div>
+                            </div>
+                            <div className="input-group">
+                                <label>Teléfono</label>
+                                <input type="tel" name="telefono" value={formData.telefono} onChange={handleChange} required />
+                            </div>
+                            <div className="input-group">
+                                <label>Correo Electrónico</label>
+                                <input type="email" name="correo" value={formData.correo} onChange={handleChange} required />
+                            </div>
+                            <div className="input-group">
+                                <label>Localidad</label>
+                                <input type="text" name="localidad_asociada" value={formData.localidad_asociada} onChange={handleChange} required />
+                            </div>
+                            <div className="input-group">
+                                <label>Contraseña</label>
+                                <input type="password" name="clave" value={formData.clave} onChange={handleChange} required minLength="8" maxLength="20" />
+                            </div>
+                            <div className="input-group">
+                                <label>Repetir Contraseña</label>
+                                <input type="password" name="repetirClave" value={formData.repetirClave} onChange={handleChange} required minLength="8" maxLength="20" />
+                            </div>
+                            <button type="submit" className="primary-btn">Registrarse</button>
+                        </form>
+                         <div className="form-footer">
+                            <p>¿Ya tienes cuenta? <a href="#" onClick={() => props.setViewState("Login")}>Iniciar Sesión</a></p>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <label>Apellidos </label>
-                        <input type="text" placeholder="Ej. Rojas Uzcategui" required/>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Teléfono</label>
-                        <input type="tel" placeholder="Ej. +34 600 000 000" required/>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Correo Electrónico</label>
-                        <input type="email" placeholder="juan@apiario.com" required/>
-                    </div>
-
-                      <div class="input-group">
-                        <label>Localidad</label>
-                        <input type="password" placeholder="Merida-Vnzl" required/>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Contraseña</label>
-                        <input type="password" placeholder="Mínimo 8 caracteres" required/>
-                    </div>
-
-                      <div class="input-group">
-                        <label>Repetir Contraseña</label>
-                        <input type="password" placeholder="Mínimo 8 caracteres" required/>
-                    </div>
-
-
-                    <button type="submit" class="primary-btn">Registrarse</button>
-                </form>
-
-                <div class="form-footer">
-                    <p>¿Ya tienes cuenta? <a href="#">Iniciar Sesión</a></p>
                 </div>
+                <Modal 
+                    isOpen={isModalOpen} 
+                    onClose={setIsModalOpen} 
+                    goView={props.setViewState} 
+                    view = {modalInfo.titulo === 'Registro Exitoso' ? "Login" :""}
+                    title={modalInfo.titulo}
+                    message={modalInfo.mensaje}
+                    type = {modalInfo.titulo === 'Registro Exitoso' ? "success" :"error"}
+                />
             </div>
-        </div>
-    </div>)
+        );
     }
-return(
-  <section>
-    {createView()}
-  </section>
-    
- 
-  )
+    return <section>{createView()}</section>;
 }
-
-
-

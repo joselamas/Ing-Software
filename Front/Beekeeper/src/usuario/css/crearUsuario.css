@@ -12,11 +12,6 @@
     font-family: 'Open Sans', sans-serif;
 }
 
-.main-container {
-    display: flex;
-    width: 100vw;
-    height: 100vh;
-}
 
 /* PANEL IZQUIERDO: DISEÑO DE PANAL */
 .left-panel {

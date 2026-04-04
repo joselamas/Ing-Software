@@ -8,8 +8,10 @@ namespace Beekepeer.DDBB.querysSQL
 
         public const string BuscarPorAcronimo = "SELECT acronimo, clave, nombre, apellido, correo, telefono, localidad_asociada, permiso, activo FROM usuario WHERE acronimo = @Acronimo";
 
-        public const string BuscarUsuarioXIdentificador = @"SELECT* FROM usuario
+        public const string BuscarUsuarioXIdentificador = @"SELECT * FROM usuario
                             WHERE acronimo = @Identificador OR correo = @Identificador";
+
+
         public const string ActualizarUsuario = @"
             UPDATE usuario SET 
                 nombre = COALESCE(@Nombre, nombre),
@@ -24,8 +26,16 @@ namespace Beekepeer.DDBB.querysSQL
 
         public const string Eliminar = "DELETE FROM usuario WHERE acronimo = @Acronimo";
 
-        public const string Insertar = @"
-            INSERT INTO usuario (acronimo, clave, nombre, apellido, correo, telefono, localidad_asociada, permiso, activo)
-            VALUES (@Acronimo, @Clave, @Nombre, @Apellido, @Correo, @Telefono, @Localidad_asociada, @Permiso, @Activo)";
+        public const string Insertar = @"IF NOT EXISTS (SELECT 1 FROM usuario WHERE acronimo = @Acronimo OR correo = @Correo)
+                    BEGIN
+                        INSERT INTO usuario (acronimo, clave, nombre, apellido, correo, telefono, localidad_asociada, permiso, activo)
+                        VALUES (@Acronimo, @Clave, @Nombre, @Apellido, @Correo, @Telefono, @Localidad_asociada, @Permiso, @Activo);
+                        SELECT 1; -- Retorna 1 si se insertó
+                    END
+                    ELSE
+                    BEGIN
+                        SELECT 0; -- Retorna 0 si ya existía
+                    END";
+
     }
 }

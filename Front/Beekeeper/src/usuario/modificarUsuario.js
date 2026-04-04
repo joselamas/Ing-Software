@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import * as WSUsuario from '../webService/usuario.js';
+import * as WSUsuario from '../webService/WSusuario.js';
 
 import "./css/modificarUsuario.css"
 
@@ -7,7 +7,7 @@ import "./css/modificarUsuario.css"
 export default function ModificarUsuario(props){
   const [error, setError] = useState();
 
-  
+  console.log(props.urs)
     useEffect(() => {
     }, []);
 
@@ -38,59 +38,58 @@ export default function ModificarUsuario(props){
     
     const createView = () => {
       return (
-        <div class="main-container">
-    <div class="left-panel">
+        <div className="main-container">
+    <div className="left-panel">
         </div>
 
-    <div class="right-panel">
-        <div class="form-container edit-profile">
-            <div class="header-inline">
-                <button class="back-arrow"><i class="fa-solid fa-arrow-left"></i></button>
+    <div className="right-panel">
+        <div className="form-container edit-profile">
+            <div className="header-inline">
                 <h1>Editar <span>Perfil</span></h1>
             </div>
 
             <form id="edit-form">
-               <div class="input-group">
+               <div className="input-group">
                         <label>Acronimo</label>
-                        <input type="text" placeholder="dkxeh5" required/>
+                        <input type="text" value={props.usr.acronimo} required disabled/>
                     </div>
-                  <div class="input-group">
+                  <div className="input-group">
                         <label>Nombres</label>
-                        <input type="text" placeholder="Ej. Juan Jose" required/>
+                        <input type="text" value={props.usr.nombre} required disabled/>
                     </div>
-                    <div class="input-group">
+                    <div className="input-group">
                         <label>Apellidos </label>
-                        <input type="text" placeholder="Ej. Rojas Uzcategui" required/>
+                        <input type="text" value={props.usr.apellido} required disabled/>
                     </div>
 
-                    <div class="input-group">
+                    <div className="input-group">
                         <label>Teléfono</label>
-                        <input type="tel" placeholder="Ej. +34 600 000 000" required/>
+                        <input type="tel" defaultValue={props.usr.telefono} required/>
                     </div>
 
-                    <div class="input-group">
+                    <div className="input-group">
                         <label>Correo Electrónico</label>
-                        <input type="email" placeholder="juan@apiario.com" required/>
+                        <input type="email" defaultValue={props.usr.correo} required disabled/>
                     </div>
 
-                      <div class="input-group">
+                      <div className="input-group">
                         <label>Localidad</label>
-                        <input type="password" placeholder="Merida-Vnzl" required/>
+                        <input type="password" defaultValue={props.usr.localidad_asociada} required/>
                     </div>
 
-                    <div class="input-group">
+                    <div className="input-group">
                         <label>Contraseña</label>
-                        <input type="password" placeholder="Mínimo 8 caracteres" required/>
+                        <input type="password" placeholder="Mínimo 8 caracteres" required minLength="8" maxLength="20"/>
                     </div>
 
-                      <div class="input-group">
+                      <div className="input-group">
                         <label>Repetir Contraseña</label>
-                        <input type="password" placeholder="Mínimo 8 caracteres" required/>
+                        <input type="password" placeholder="Mínimo 8 caracteres" required minLength="8" maxLength="20"/>
                     </div>
 
-                <div class="button-group">
-                    <button type="button" class="secondary-btn">Cancelar</button>
-                    <button type="submit" class="primary-btn">Guardar Cambios</button>
+                <div className="button-group">
+                    {false&& <button type="button" className="secondary-btn">Cancelar</button>}
+                    <button type="submit" className="primary-btn">Guardar Cambios</button>
                 </div>
             </form>
         </div>

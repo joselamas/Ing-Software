@@ -55,7 +55,7 @@ namespace Beekepeer.DDBB
             using (SqlConnection connection = new SqlConnection(_sqlurl))
             {
                 SqlCommand cmd = new SqlCommand(queryUsuario.BuscarUsuarioXIdentificador, connection);
-                cmd.Parameters.AddWithValue("@id", identificador);
+                cmd.Parameters.AddWithValue("@Identificador", identificador);
 
                 connection.Open();
                 using (SqlDataReader reader = cmd.ExecuteReader())

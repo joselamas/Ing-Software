@@ -1,9 +1,3 @@
-:root {
-    --primary-yellow: #ffb300;
-    --dark-brown: #2e1a12;
-    --bg-cream: #f9f9f5;
-    --border-width: 2.5px;
-}
 
 /* Contenedor principal de la Navbar */
 .navbar-horizontal {
@@ -51,7 +45,7 @@
     gap: 25px;
 }
 
-.nav-links a {
+.nav-links a, .dropbtn, .dropdown-content{
     text-decoration: none;
     color: var(--dark-brown);
     font-weight: 800;
@@ -63,9 +57,9 @@
     text-transform: uppercase;
 }
 
-/* Estilo de botón seleccionado (Igual a la imagen 9) */
 .nav-links a.active, 
-.nav-links a:hover {
+.nav-links a:hover,
+.dropbtn:hover, .dropdown-content:hover > div:hover {
     background-color: var(--primary-yellow);
     border-color: var(--dark-brown);
     box-shadow: 4px 4px 0px var(--dark-brown); /* Sombra sólida */
@@ -106,7 +100,34 @@
 }
 
 /* IMPORTANTE: Espaciado para el cuerpo de la página */
-body {
-    padding-top: 80px;
-    background-color: var(--bg-cream);
+
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: var(--bg-cream);
+  min-width: 160px;
+  z-index: 1;
+  border: var(--border-width) solid var(--dark-brown);
+
 }
+
+
+
+/* Links inside the dropdown */
+.dropdown-content div {
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+  z-index: 10;
+}
+.dropdown-content:hover > div:hover {
+  display: block;
+    color: var(--dark-brown);
+}
+

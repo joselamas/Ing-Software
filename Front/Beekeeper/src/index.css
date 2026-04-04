@@ -11,3 +11,39 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+.left-panel {
+    flex: 1;
+    background: linear-gradient(135px, #f1c40f 0%, #f39c12 100%); /* Amarillo abeja */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.overlay-content {
+    max-width: 400px;
+}
+
+.bee-icon img {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 20px;
+    filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.2));
+}
+
+.left-panel h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+}
+
+.left-panel p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}

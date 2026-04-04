@@ -2,7 +2,7 @@
 {
     public class LoginRequestWS
     {
-        public string Identificador { get; set; } = "";
-        public string Clave { get; set; } = "";
+        public string identificador { get; set; } = "";
+        public string clave { get; set; } = "";
     }
 }
