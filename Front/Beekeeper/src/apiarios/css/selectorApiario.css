@@ -1,0 +1,26 @@
+@import '../../styles/variables.css';
+
+.contenedor {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: var(--amber-honeycomb);
+    border: var(--borde-grueso);
+    color: var(--cream-white);
+}
+
+.selector {
+    margin-left: 10px;
+    min-height: var(--fat-finger-height);
+    border: var(--borde-grueso);
+    background-color: var(--cream-white);
+    color: var(--charcoal-black);
+    padding: 0 16px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.selector:focus {
+    outline: none;
+    border-color: var(--honey-gold);
+}

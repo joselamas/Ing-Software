@@ -1,0 +1,13 @@
+:root {
+    /* Paleta Oficial Noctulogic */
+    --deep-umber: #3E2723;
+    --amber-honeycomb: #8D6E63;
+    --rust: #8C2000;
+    --honey-gold: #F9A825;
+    --cream-white: #FAFAFA;
+    --charcoal-black: #212121;
+    
+    /* Especificaciones de Diseño */
+    --fat-finger-height: 52px; 
+    --borde-grueso: 3px solid var(--deep-umber);
+}

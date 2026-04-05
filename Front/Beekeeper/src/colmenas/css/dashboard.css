@@ -1,0 +1,73 @@
+@import '../../styles/variables.css';
+
+body {
+    background-color: var(--charcoal-black);
+    color: var(--cream-white);
+    margin: 0; 
+}
+
+.contenedor {
+    padding: 24px;
+    max-width: 1120px;
+    margin: 24px auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--charcoal-black);
+    border-radius: 12px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
+    border-bottom: 4px solid var(--honey-gold);
+    padding-bottom: 18px;
+    margin-bottom: 24px;
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 1.95rem;
+    color: var(--cream-white);
+}
+
+.subtitulo {
+    margin: 8px 0 0;
+    color: var(--amber-honeycomb);
+    font-size: 0.98rem;
+}
+
+/* Botón Alto Contraste y Fat-Finger */
+.btnVolver {
+    min-height: var(--fat-finger-height);
+    padding: 0 24px;
+    cursor: pointer;
+    background-color: var(--rust);
+    color: var(--cream-white);
+    border: var(--borde-grueso);
+    font-weight: 900;
+    text-transform: uppercase;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.btnVolver:hover {
+    transform: translateY(-2px);
+    background-color: var(--honey-gold);
+    color: var(--deep-umber);
+}
+
+.mensaje, .error {
+    text-align: center;
+    padding: 46px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: var(--borde-grueso);
+    background: var(--amber-honeycomb);
+    color: var(--cream-white);
+    margin: 24px auto;
+    max-width: 640px;
+}
+
+.error {
+    background: var(--rust);
+}

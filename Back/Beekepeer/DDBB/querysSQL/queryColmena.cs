@@ -18,8 +18,8 @@
         INSERT INTO colmena (usuario_acronimo, fecha_inicio, es_enjambre, id_colmena_madre, activo)
         VALUES (@UsuarioAcronimo, @FechaInicio, @EsEnjambre, @IdColmenaMadre, @Activo);
         SET @NuevoID = SCOPE_IDENTITY();
-        INSERT INTO registro_colmera_apiario (colmera_id, apiario_id, fecha_entrada)
-        VALUES (@NuevoID, (SELECT TOP 1 id FROM apiario WHERE usuario_acronimo = @UsuarioAcronimo AND activo = 1), GETDATE());
+        INSERT INTO registro_colmena_apiario (colmera_id, apiario_id, fecha_entrada)
+        VALUES (@NuevoID, @ApiarioId, GETDATE());
         SELECT @NuevoID;"; // Esto devuelve el ID recién creado
 
             // Actualización dinámica (solo cambia lo que no es null)
@@ -45,7 +45,7 @@
                     UPDATE registro_colmena_apiario 
                     SET fecha_salida = GETDATE() 
                     WHERE colmena_id = @Id AND fecha_salida IS NULL;
-                    INSERT INTO registro_colmena_apiario (colmena_id, apiario_id, fecha_ingreso)
+                    INSERT INTO registro_colmena_apiario (colmena_id, apiario_id, fecha_entrada)
                     VALUES (@Id, @ApiarioId, GETDATE());
                 END
         END";

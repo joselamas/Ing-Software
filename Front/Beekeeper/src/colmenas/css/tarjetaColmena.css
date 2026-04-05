@@ -1,0 +1,74 @@
+@import '../../styles/variables.css';
+
+.tarjeta {
+    background-color: var(--cream-white);
+    border: var(--borde-grueso);
+    border-radius: 8px;
+    padding: 22px;
+    box-shadow: 4px 4px 0px var(--amber-honeycomb);
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+    position: relative; /* Importante para el botón X */
+}
+
+.tarjeta-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px dashed var(--amber-honeycomb); /* Una línea divisoria sutil */
+}
+
+.tarjeta:hover {
+    transform: translateY(-4px);
+    box-shadow: 6px 6px 0px var(--rust);
+}
+
+.tarjeta h3 {
+    margin: 0;
+    font-size: 1.35rem;
+    color: var(--deep-umber);
+    font-weight: 900;
+}
+
+.tarjeta p {
+    margin: 8px 0;
+    color: var(--charcoal-black);
+    font-weight: bold;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 14px;
+    background-color: var(--honey-gold);
+    color: var(--deep-umber);
+    border: 2px solid var(--deep-umber);
+    font-weight: 900;
+    margin-top: 16px;
+    text-transform: uppercase;
+}
+
+/* Botón de dar de baja (X) */
+.btn-desactivar {
+    background-color: var(--cream-white);
+    border: 2px solid var(--rust);
+    color: var(--rust);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0; /* Evita que el botón se aplaste si el título es muy largo */
+}
+
+.btn-desactivar:hover {
+    background-color: var(--rust);
+    color: var(--cream-white);
+    transform: scale(1.1);
+}
