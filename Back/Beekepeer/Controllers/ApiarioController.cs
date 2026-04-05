@@ -18,11 +18,33 @@ namespace Beekepeer.Controllers
         }
 
         // 1. OBTENER TODOS (O FILTRAR POR USUARIO)
-        [HttpGet]
-        [Route("list")]
-        public ActionResult<List<Apiario>> GetApiarios([FromQuery] string? acronimoUsuario)
+        [HttpPost]
+        [Route("listar")]
+        public ActionResult GetApiarios([FromBody] RequestListarApiario request)
         {
-            return Ok(_sql.GetApiarios(acronimoUsuario));
+            try
+            {
+                // Validamos que venga el acrónimo
+                if (string.IsNullOrEmpty(request.Acronimo))
+                {
+                    return BadRequest(new { status = 0, mensaje = "El acrónimo del usuario es requerido." });
+                }
+
+                var lista = _sql.GetApiarios(request.Acronimo);
+
+                // Retornamos una estructura que el Front pueda validar fácilmente
+                return Ok(lista);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = -1, mensaje = "Error interno: " + ex.Message });
+            }
+        }
+
+        // Clase de apoyo para el mapeo del JSON
+        public class RequestListarApiario
+        {
+            public string Acronimo { get; set; }
         }
 
         // 2. BUSCAR POR ID
@@ -37,12 +59,12 @@ namespace Beekepeer.Controllers
 
         // 3. INSERTAR NUEVO APIARIO
         [HttpPost]
-        [Route("insert")]
+        [Route("insertar")]
         public IActionResult Insertar([FromBody] Apiario nuevo)
         {
-            if (nuevo == null) return BadRequest("Datos del apiario no válidos.");
+            if (nuevo == null) return BadRequest(new { status = 0, mensaje = "Datos no válidos." });
 
-            int idGenerado = _sql.InsertarApiario(
+            int resultado = _sql.InsertarApiario(
                 nuevo.acronimo_usuario,
                 nuevo.nombre_referencia,
                 nuevo.coordenadas,
@@ -50,11 +72,19 @@ namespace Beekepeer.Controllers
                 nuevo.activo
             );
 
-            if (idGenerado == 0) return StatusCode(500, "Error al crear el registro en la base de datos.");
+            if (resultado == -1)
+            {
+                // 409 Conflict es el código ideal para duplicados
+                return Conflict(new { status = 0, mensaje = "Ya existe un apiario registrado en esas coordenadas." });
+            }
 
-            return Ok(new { mensaje = "Apiario creado con éxito", id = idGenerado });
+            if (resultado == 0)
+            {
+                return StatusCode(500, new { status = 0, mensaje = "Error interno al guardar en BD." });
+            }
+
+            return Ok(new { status = 1, mensaje = "Apiario creado con éxito", id = resultado });
         }
-
         // 4. ACTUALIZACIÓN DINÁMICA (PATCH)
         // Usamos PATCH porque permite actualizaciones parciales
         [HttpPatch]

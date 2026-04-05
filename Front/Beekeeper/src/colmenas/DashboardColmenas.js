@@ -2,7 +2,7 @@ import React from 'react';
 import SelectorApiario from '../apiarios/SelectorApiario';
 import GridColmenas from './GridColmenas';
 import Button from '../componentes/Button';
-import { useDashboardColmenas } from '../hooks/useDashboardColmenas';
+import { useDashboardColmenas } from './hooks/useDashboardColmenas';
 import './css/dashboard.css';
 
 const DashboardColmenas = ({ setViewState, usr }) => {
@@ -14,7 +14,7 @@ const DashboardColmenas = ({ setViewState, usr }) => {
     if (estados.error) return <div className="error">Hubo un problema: {estados.error}</div>;
 
     return (
-        <div className="contenedor">
+        <div className="contenedor main-container">
             <header className="header">
                 <h2>Dashboard de Colmenas Operativas</h2>
                 <Button onClick={() => setViewState('Home')} className="btnVolver">

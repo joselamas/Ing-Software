@@ -16,9 +16,16 @@
 
         // 3. Insertar un nuevo apiario
         public const string InsertarApiario = @"
-            INSERT INTO apiario (acronimo_usuario, nombre_referencia, coordenadas, msnm, activo)
-            VALUES (@AcronimoUsuario, @NombreReferencia, @Coordenadas, @Msnm, @Activo);
-            SELECT SCOPE_IDENTITY();";
+    IF EXISTS (SELECT 1 FROM apiario WHERE coordenadas = @Coordenadas)
+    BEGIN
+        SELECT -1; -- Indicador de que la localización ya está ocupada
+    END
+    ELSE
+    BEGIN
+        INSERT INTO apiario (acronimo_usuario, nombre_referencia, coordenadas, msnm, activo)
+        VALUES (@AcronimoUsuario, @NombreReferencia, @Coordenadas, @Msnm, @Activo);
+        SELECT CAST(SCOPE_IDENTITY() AS INT);
+    END";
 
         // 4. Actualización dinámica (solo lo que no sea null)
         public const string ActualizarApiario = @"

@@ -1,58 +1,17 @@
-
-
-import React, { useState } from 'react';
-import * as WSUsuario from '../webService/WSusuario.js';
+import React from 'react';
 import Modal from '../componentes/modalMSN.js';
-
-import "./css/login.css"
+import { useLogin } from './hooks/useLogin.js';
+import "./css/login.css";
 
 export default function Login(props) {
-    // 1. Estados para controlar el formulario y el Modal
-    const [formData, setFormData] = useState({
-        identificador: '',
-        clave: ''
-    });
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalInfo, setModalInfo] = useState({ titulo: '', mensaje: '' });
-
-    // 2. Manejador de cambios (Sincroniza los inputs con el estado)
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
-    };
-
-    // 3. Función de Login mejorada
-    const aceptarLog = async (e) => {
-        if (e) e.preventDefault(); // Evita recarga de página si se usa en un form
-
-        try {
-            // Enviamos el identificador (acrónimo/correo) y la clave en Base64
-            const respuesta = await WSUsuario.ValidarLogin(formData.identificador, btoa(formData.clave));
-            
-            if (respuesta && respuesta.status === 1) {
-                // ÉXITO: Guardamos el usuario y cambiamos la vista
-                debugger;
-                props.setUsr(respuesta.usuario);
-                props.setViewState('ModificarUsuario'); 
-            } else {
-                // ERROR DE LOGUEO: Mostramos el error en Modal Neobrutalista
-                setModalInfo({
-                    titulo: "Acceso Denegado",
-                    mensaje: respuesta.mensaje || "Credenciales incorrectas. Intenta de nuevo."
-                });
-                setIsModalOpen(true);
-            }
-        } catch (err) {
-            setModalInfo({
-                titulo: "Error de Conexión",
-                mensaje: "No se pudo establecer comunicación con el servidor de Beekeeper."
-            });
-            setIsModalOpen(true);
-        }
-    };
+    const {
+        formData,
+        isModalOpen,
+        setIsModalOpen,
+        modalInfo,
+        handleChange,
+        aceptarLog
+    } = useLogin(props);
 
     const createView = () => {
         return (
@@ -65,7 +24,7 @@ export default function Login(props) {
                     <div className="form-wrapper">
                         <h1 className="main-title">Iniciar Sesión</h1>
                         <p className="sub-title">Accede a tu cuenta de apicultor</p>
-                        <br></br>
+                        <br />
 
                         <form className="login-form" onSubmit={aceptarLog}>
                             <div className="input-group">
@@ -73,7 +32,7 @@ export default function Login(props) {
                                 <div className="input-wrapper">
                                     <i className="fas fa-envelope input-icon"></i>
                                     <input 
-                                        type="text" // Cambiado a text para permitir Acrónimos
+                                        type="text" 
                                         name="identificador" 
                                         placeholder="Ej: JMLT o jose@correo.com" 
                                         value={formData.identificador}
@@ -109,7 +68,6 @@ export default function Login(props) {
                     </div>
                 </div>
 
-                {/* Modal para mostrar errores de validación o conexión */}
                 <Modal 
                     isOpen={isModalOpen} 
                     onClose={() => setIsModalOpen(false)}
@@ -127,4 +85,3 @@ export default function Login(props) {
         </section>
     );
 }
-

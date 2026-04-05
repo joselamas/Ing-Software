@@ -1,14 +1,14 @@
 import React from 'react';
 import Button from '../componentes/Button';
-import { useFormularioColmena } from '../hooks/useFormularioColmena'; 
-import './css/dashboard.css';             // Importamos las clases globales (.contenedor, .header)
-import './css/formularioColmena.css';    // Importamos las clases exclusivas del formulario
+import { useFormularioColmena } from './hooks/useFormularioColmena'; 
+import './css/dashboard.css';            
+import './css/formularioColmena.css';    
 
 const FormularioColmena = ({ setViewState, usr }) => {
     const { estados, setters, handleSubmit } = useFormularioColmena(usr);
 
     return (
-        <div className="contenedor">
+        <div className="contenedor main-container">
             <header className="header">
                 <h2>Registrar Nueva Colmena</h2>
                 <Button onClick={() => setViewState('VerMisColmenas')} className="btnVolver">

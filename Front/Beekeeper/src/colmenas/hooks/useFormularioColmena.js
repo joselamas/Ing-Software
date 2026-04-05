@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { apiService } from '../services/apiService';
+import { apiService } from '../../webService/WS_colmena.js';
 
 export const useFormularioColmena = (usr) => {
     // 1. ESTADOS

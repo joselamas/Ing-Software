@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import * as WSUsuario from '../webService/WSusuario.js';
+import * as WSUsuario from '../webService/WS_usuario.js';
 
 import "./css/modificarUsuario.css"
 

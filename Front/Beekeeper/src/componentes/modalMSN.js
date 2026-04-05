@@ -15,7 +15,8 @@ const ModalMSN = ({ isOpen, onClose, title, message, type , goView , view}) => {
         <div className="modal-overlay">
             <div className={`modal-content ${type === 'error' ? 'modal-error' : ''}`}>
                 <div className="modal-header">
-                    {type === 'error' ? '⚠️ ' + title : '✅' + title}
+                    <h2>   {type === 'error' ? '⚠️ ' + title : '✅' + title}</h2>
+                 
                 </div>
                 <div className="modal-body">
                     <p>{message}</p>

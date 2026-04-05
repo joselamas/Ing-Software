@@ -1,78 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Modal from '../componentes/modalMSN.js';
-import * as WSUsuario from '../webService/WSusuario.js';
-import "./css/crearUsuario.css"
+import { useCrearUsuario } from './hooks/useCrearUsuario.js';
+import "./css/crearUsuario.css";
 
 export default function CrearUsuario(props) {
-    const [formData, setFormData] = useState({
-        acronimo: '',
-        nombre: '',
-        apellido: '',
-        telefono: '',
-        correo: '',
-        localidad_asociada: '',
-        clave: '',
-        repetirClave: '',
-        permiso: 2,
-        activo:true
-    });
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [error, setError] = useState("");
-    const [modalInfo, setModalInfo] = useState({
-        titulo: '',
-        mensaje: ''});
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value 
-        });
-    };
-
-    const manejarRegistro = async (e) => {
-      e.preventDefault();
-
-      if (formData.clave !== formData.repetirClave) {
-          setError("Las contraseñas no coinciden");
-          return;
-      }
-
-      const { repetirClave, ...datosAEnviar } = formData;
-
-      const payload = {
-          ...datosAEnviar,
-          clave: btoa(datosAEnviar.clave) 
-      };
-
-    try {
-      const respuesta =  await WSUsuario.CrearUsuario(payload); 
-      console.log(respuesta)
-      if (respuesta && respuesta.status > 0) {
-        setModalInfo({
-          titulo: "Registro Exitoso",
-          mensaje: "El usuario se ha creado correctamente en Beekeeper"
-        });
-      } else {
-          if(respuesta.status === 0)
-          setModalInfo({
-              titulo: "Error al Crear Usuario",
-              mensaje: respuesta.mensaje || "Ocurrió un error al crear el usuario"
-          });
-          else
-             setModalInfo({
-              titulo: "Error al conectar con el servidor",
-                mensaje: "No se pudo conectar con el servidor. Por favor, intenta nuevamente más tarde."
-          });
-      }
-      } catch (err) {
-              setModalInfo({
-                titulo: "Error de Conexión",
-                mensaje: "No se pudo conectar con el servidor. Por favor, intenta nuevamente más tarde."
-              });
-      }
-      setIsModalOpen(true);
-  };
+    const {
+        formData,
+        handleChange,
+        manejarRegistro,
+        isModalOpen,
+        setIsModalOpen,
+        modalInfo,
+        error
+    } = useCrearUsuario(props.setViewState);
 
     const createView = () => {
         return (
@@ -91,7 +31,6 @@ export default function CrearUsuario(props) {
                     <div className="form-container">
                         <h1>Crear Cuenta</h1>
                         <p className="form-desc">Únete para gestionar tus apiarios fácilmente.</p>
-
                         {error && <p style={{color: 'red', fontWeight: 'bold'}}>{error}</p>}
 
                         <form id="auth-form" onSubmit={manejarRegistro} noValidate>
@@ -140,10 +79,10 @@ export default function CrearUsuario(props) {
                     isOpen={isModalOpen} 
                     onClose={setIsModalOpen} 
                     goView={props.setViewState} 
-                    view = {modalInfo.titulo === 'Registro Exitoso' ? "Login" :""}
+                    view={modalInfo.titulo === 'Registro Exitoso' ? "Login" : ""}
                     title={modalInfo.titulo}
                     message={modalInfo.mensaje}
-                    type = {modalInfo.titulo === 'Registro Exitoso' ? "success" :"error"}
+                    type={modalInfo.titulo === 'Registro Exitoso' ? "success" : "error"}
                 />
             </div>
         );
