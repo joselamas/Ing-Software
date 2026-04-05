@@ -100,7 +100,10 @@
 }
 
 /* IMPORTANTE: Espaciado para el cuerpo de la página */
-
+body {
+    /* Empuja todo el contenido de la aplicación hacia abajo */
+    padding-top: 100px; /* 80px de la barra + 20px de margen visual */
+}
 
 .dropdown-content {
   display: none;
@@ -121,13 +124,100 @@
   display: block;
 }
 
-/* Show the dropdown menu on hover */
-.dropdown:hover .dropdown-content {
-  display: block;
-  z-index: 10;
+.dropdown-content.show {
+    display: block;
+    z-index: 10;
 }
+
+/* Ocultamos el botón de logout móvil en computadoras */
+.mobile-only-logout {
+    display: none;
+}
+
 .dropdown-content:hover > div:hover {
   display: block;
     color: var(--dark-brown);
 }
 
+/* =========================================
+   ESTILOS PARA MÓVILES (MENÚ HAMBURGUESA)
+   ========================================= */
+
+/* Ocultamos el botón hamburguesa en pantallas de computadora */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: var(--dark-brown);
+    cursor: pointer;
+    padding: 0 10px;
+}
+
+/* MEDIA QUERY: Reglas que solo se aplican en pantallas menores a 768px (Tablets y Celulares) */
+@media (max-width: 768px) {
+    
+    /* 1. Mostramos el botón hamburguesa */
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    /* 2. Escondemos la sección del usuario para ahorrar espacio (opcional) */
+    .nav-user {
+        display: none; 
+    }
+
+    /* 3. Convertimos la lista horizontal en un bloque vertical oculto por defecto */
+    .nav-links {
+        display: none; /* Oculto hasta que se presione el botón */
+        flex-direction: column;
+        position: absolute;
+        top: 80px; /* Lo bajamos para que quede justo debajo de la barra principal */
+        left: 0;
+        width: 100%;
+        background-color: var(--bg-cream);
+        border-bottom: var(--border-width) solid var(--dark-brown);
+        padding: 20px 0;
+        gap: 15px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
+
+    /* 4. Cuando React le agrega la clase 'open', el menú se muestra */
+    .nav-links.open {
+        display: flex;
+    }
+
+    /* 5. Ajustes para los botones desplegables (dropdown) en celular */
+    .dropdown {
+        width: 100%;
+        text-align: center;
+    }
+
+    .dropbtn {
+        width: 80%;
+        margin: 0 auto;
+    }
+
+    /* 6. En móviles, los submenús no deben flotar, deben empujar el contenido hacia abajo */
+    .dropdown-content {
+        position: relative;
+        width: 80%;
+        margin: 5px auto 0 auto;
+        box-shadow: none;
+        border: 2px dashed var(--dark-brown);
+    }
+    /* Mostramos el botón de logout solo en el menú celular */
+    .mobile-only-logout {
+        display: block;
+        margin-top: 20px;
+        border-top: 2px dashed var(--dark-brown);
+        padding-top: 20px;
+    }
+
+    /* Le damos color de alerta (Rust) para que resalte */
+    .btn-logout {
+        background-color: var(--rust) !important;
+        color: var(--cream-white) !important;
+        border-color: var(--dark-brown) !important;
+    }
+}
