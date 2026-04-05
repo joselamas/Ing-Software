@@ -99,11 +99,14 @@
     text-decoration: underline;
 }
 
-/* IMPORTANTE: Espaciado para el cuerpo de la página */
-body {
-    /* Empuja todo el contenido de la aplicación hacia abajo */
-    padding-top: 100px; /* 80px de la barra + 20px de margen visual */
-}
+/* IMPORTANTE: Espaciado para el cuerpo de la página 
+/* Empuja todo el contenido de la aplicación hacia abajo 
+* ya este estilo de separacion esta en el contenedor del main-body.*/
+
+/*body {
+    
+    padding-top: 100px; 
+}*/
 
 .dropdown-content {
   display: none;

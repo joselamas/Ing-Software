@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelectorApiario } from '../hooks/useSelectorApiario';
+import { useSelectorApiario } from '../colmenas/hooks/useSelectorApiario';
 import './css/selectorApiario.css';
 
 const SelectorApiario = ({ apiarioSeleccionado, onSeleccion, usr }) => {
