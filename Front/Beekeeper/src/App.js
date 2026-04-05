@@ -5,6 +5,8 @@ import Login from './usuario/login.js'
 import CrearUsuario from './usuario/crearUsuario.js'
 import ModificarUsuario from './usuario/modificarUsuario.js'
 import BarraNavegacion from './nbar/barra.js'
+import DashboardColmenas from './colmenas/DashboardColmenas';
+import FormularioColmena from './colmenas/FormularioColmena';
 
 import './App.css';
 
@@ -33,6 +35,18 @@ function App() {
         setViewState = {setViewState}
         usr={usr}
      />}
+     {viewState === 'VerMisColmenas' && (
+        <DashboardColmenas 
+          setViewState={setViewState} 
+          usr={usr} 
+        />
+      )}
+      {viewState === 'CrearNuevaColmenas' && (
+        <FormularioColmena 
+          setViewState={setViewState} 
+          usr={usr} 
+        />
+      )}
     </div>
   );
 }

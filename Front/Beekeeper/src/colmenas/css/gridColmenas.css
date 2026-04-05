@@ -1,0 +1,19 @@
+@import '../../styles/variables.css';
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    padding-top: 12px;
+}
+
+.mensajeVacio {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--cream-white);
+    font-weight: bold;
+    padding: 22px;
+    background: var(--charcoal-black);
+    border: var(--borde-grueso);
+    border-color: var(--amber-honeycomb);
+}

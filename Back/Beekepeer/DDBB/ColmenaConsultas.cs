@@ -1,5 +1,6 @@
 ﻿using Beekepeer.Model;
 using System.Data.SqlClient;
+using Beekepeer.DTOs;
 using Beekepeer.DDBB.querysSQL;
 using System;
 using System.Collections.Generic;
@@ -17,9 +18,9 @@ namespace Beekepeer.DDBB
         }
 
         // 1. BUSCAR COLMENAS POR USUARIO (O TODAS)
-        public List<Colmena> GetColmenas(string? usuarioAcronimo = null)
+        public List<ColmenaDashboardDTO> GetColmenas(string? usuarioAcronimo = null)
         {
-            List<Colmena> lista = new List<Colmena>();
+            List<ColmenaDashboardDTO> lista = new List<ColmenaDashboardDTO>();
 
             using (SqlConnection connection = new SqlConnection(_sqlurl))
             {
@@ -32,14 +33,15 @@ namespace Beekepeer.DDBB
                 {
                     while (reader.Read())
                     {
-                        lista.Add(new Colmena
+                        lista.Add(new ColmenaDashboardDTO
                         {
                             id = (int)reader["id"],
                             usuario_acronimo = reader["usuario_acronimo"].ToString() ?? "",
                             fecha_inicio = reader["fecha_inicio"] != DBNull.Value ? (DateTime)reader["fecha_inicio"] : DateTime.Now,
                             es_enjambre = reader["es_enjambre"] != DBNull.Value && (bool)reader["es_enjambre"],
-                            id_colmena_madre = (int)(reader["id_colmena_madre"] != DBNull.Value ? (int)reader["id_colmena_madre"] : (int?)null),
-                            activo = reader["activo"] != DBNull.Value && (bool)reader["activo"]
+                            id_colmena_madre = reader["id_colmena_madre"] != DBNull.Value ? (int)reader["id_colmena_madre"] : (int?)null,
+                            activo = reader["activo"] != DBNull.Value && (bool)reader["activo"],
+                            apiario_id = (int)reader["apiario_id"]
                         });
                     }
                 }
@@ -48,7 +50,7 @@ namespace Beekepeer.DDBB
         }
 
         // 2. INSERTAR COLMENA (Retorna el ID generado)
-        public int InsertarColmena(string usuarioAcronimo, DateTime fechaInicio, bool esEnjambre, int? idColmenaMadre, bool activo)
+        public int InsertarColmena(string usuarioAcronimo, DateTime fechaInicio, bool esEnjambre, int? idColmenaMadre, bool activo, int apiarioId)
         {
             using (SqlConnection connection = new SqlConnection(_sqlurl))
             {
@@ -56,8 +58,9 @@ namespace Beekepeer.DDBB
                 cmd.Parameters.AddWithValue("@UsuarioAcronimo", usuarioAcronimo);
                 cmd.Parameters.AddWithValue("@FechaInicio", fechaInicio);
                 cmd.Parameters.AddWithValue("@EsEnjambre", esEnjambre);
-                cmd.Parameters.AddWithValue("@IdColmenaMadre", (object)idColmenaMadre ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@IdColmenaMadre", (object?)idColmenaMadre ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@Activo", activo);
+                cmd.Parameters.AddWithValue("@ApiarioId", apiarioId);
 
                 connection.Open();
                 // Usamos ExecuteScalar porque la query termina con SELECT SCOPE_IDENTITY()
@@ -67,7 +70,7 @@ namespace Beekepeer.DDBB
         }
 
         // 3. ACTUALIZACIÓN DINÁMICA
-        public bool ActualizarColmena(int id, string? usuarioAcronimo, DateTime? fechaInicio, bool? esEnjambre, int? idColmenaMadre, bool? activo)
+        public bool ActualizarColmena(int id, string? usuarioAcronimo, DateTime? fechaInicio, bool? esEnjambre, int? idColmenaMadre, bool? activo, int? apiarioId)
         {
             using (SqlConnection connection = new SqlConnection(_sqlurl))
             {
@@ -78,6 +81,7 @@ namespace Beekepeer.DDBB
                 cmd.Parameters.AddWithValue("@EsEnjambre", (object)esEnjambre ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@IdColmenaMadre", (object)idColmenaMadre ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@Activo", (object)activo ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@ApiarioId", (object)apiarioId ?? DBNull.Value);
 
                 connection.Open();
                 return cmd.ExecuteNonQuery() > 0;

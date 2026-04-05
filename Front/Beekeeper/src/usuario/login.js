@@ -38,7 +38,7 @@ export default function Login(props) {
                 props.setUsr(respuesta.usuario);
                 props.setViewState('ModificarUsuario'); 
             } else {
-                // ERROR DE LOGUEO: Mostramos el error en tu Modal Neobrutalista
+                // ERROR DE LOGUEO: Mostramos el error en Modal Neobrutalista
                 setModalInfo({
                     titulo: "Acceso Denegado",
                     mensaje: respuesta.mensaje || "Credenciales incorrectas. Intenta de nuevo."
@@ -65,6 +65,7 @@ export default function Login(props) {
                     <div className="form-wrapper">
                         <h1 className="main-title">Iniciar Sesión</h1>
                         <p className="sub-title">Accede a tu cuenta de apicultor</p>
+                        <br></br>
 
                         <form className="login-form" onSubmit={aceptarLog}>
                             <div className="input-group">
