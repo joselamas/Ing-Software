@@ -13,6 +13,20 @@ export default function Login(props) {
         aceptarLog
     } = useLogin(props);
 
+    // FUNCIÓN DE LLAVE MAESTRA: Intercepta el login para desarrollo
+    const manejarLoginEspecial = (e) => {
+        e.preventDefault(); 
+
+        // Si los datos son admin/admin, entramos sin consultar al servidor
+        if (formData.identificador === 'admin' && formData.clave === 'admin') {
+            props.setUsr({ nombre: "Administrador", id: 1 }); 
+            props.setViewState("VerMisColmenas"); 
+        } else {
+            // Si no es la llave, ejecutamos la lógica normal del hook
+            aceptarLog(e); 
+        }
+    };
+
     const createView = () => {
         return (
             <div className="login-container">
@@ -26,7 +40,8 @@ export default function Login(props) {
                         <p className="sub-title">Accede a tu cuenta de apicultor</p>
                         <br />
 
-                        <form className="login-form" onSubmit={aceptarLog}>
+                        {/* Cambiamos aceptarLog por manejarLoginEspecial */}
+                        <form className="login-form" onSubmit={manejarLoginEspecial}>
                             <div className="input-group">
                                 <label htmlFor="identificador">Correo o Acrónimo</label>
                                 <div className="input-wrapper">
