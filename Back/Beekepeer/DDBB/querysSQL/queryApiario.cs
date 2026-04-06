@@ -4,7 +4,7 @@
     {
         // 1. Obtener todos los apiarios o filtrar por usuario
         public const string ListarApiarios = @"
-            SELECT id, acronimo_usuario, nombre_referencia, coordenadas, msnm, activo 
+            SELECT id, acronimo_usuario, nombre_referencia, coordenadas, msnm, activo, tipo_flora, capacidad_maxima, fecha_creacion, descripcion_acceso 
             FROM apiario 
             WHERE acronimo_usuario = @AcronimoUsuario OR @AcronimoUsuario IS NULL";
 
@@ -17,19 +17,41 @@
         // 3. Insertar un nuevo apiario
         public const string InsertarApiario = @"
     IF EXISTS (SELECT 1 FROM apiario WHERE coordenadas = @Coordenadas)
-    BEGIN
-        SELECT -1; -- Indicador de que la localización ya está ocupada
-    END
-    ELSE
-    BEGIN
-        INSERT INTO apiario (acronimo_usuario, nombre_referencia, coordenadas, msnm, activo)
-        VALUES (@AcronimoUsuario, @NombreReferencia, @Coordenadas, @Msnm, @Activo);
-        SELECT CAST(SCOPE_IDENTITY() AS INT);
-    END";
+BEGIN
+    SELECT -1; -- Indicador de que la localización ya está ocupada
+END
+ELSE
+BEGIN
+    INSERT INTO apiario 
+    (
+        acronimo_usuario, 
+        nombre_referencia, 
+        coordenadas, 
+        msnm, 
+        activo, 
+        capacidad_maxima, 
+        tipo_flora, 
+        descripcion_acceso,
+        fecha_creacion -- El campo de fecha
+    )
+    VALUES 
+    (
+        @AcronimoUsuario, 
+        @NombreReferencia, 
+        @Coordenadas, 
+        @Msnm, 
+        @Activo, 
+        @CapacidadMaxima, 
+        @TipoFlora, 
+        @DescripcionAcceso,
+        GETDATE() -- Función del sistema para la fecha actual
+    );
+
+    SELECT CAST(SCOPE_IDENTITY() AS INT);
+END";
 
         // 4. Actualización dinámica (solo lo que no sea null)
-        public const string ActualizarApiario = @"
-            UPDATE apiario 
+        public const string ActualizarApiario = @"update apiario 
             SET 
                 acronimo_usuario = COALESCE(@AcronimoUsuario, acronimo_usuario),
                 nombre_referencia = COALESCE(@NombreReferencia, nombre_referencia),

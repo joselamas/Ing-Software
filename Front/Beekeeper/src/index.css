@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
 }
 
 code {
@@ -15,11 +16,11 @@ code {
 
 .left-panel {
     flex: 1;
-    background: linear-gradient(135px, #f1c40f 0%, #f39c12 100%); /* Amarillo abeja */
+    background: var(--honey-gradient); /* Amarillo abeja */
     display: flex;
     justify-content: center;
     align-items: center;
-    color: white;
+    color: var(--white);
     text-align: center;
     padding: 20px;
 }

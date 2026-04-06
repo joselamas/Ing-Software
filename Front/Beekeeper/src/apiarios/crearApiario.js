@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Circle } from 'react-leaflet';
 import { useCrearApiario } from './hooks/useCrearApiario.js';
 import Modal from '../componentes/modalMSN.js';
 import L from 'leaflet';
@@ -50,6 +50,25 @@ export default function CrearApiario({ usr, setViewState }) {
                                 attribution='&copy; OpenStreetMap contributors'
                             />
                             <LocationMarker onMapClick={handleLeafletClick} position={markerPos} />
+                            {markerPos && (
+                                <>
+                                    <Circle
+                                        center={markerPos}
+                                        pathOptions={{ color: '#3399ff', fillColor: '#3399ff', fillOpacity: 0.1 }}
+                                        radius={1000}
+                                    />
+                                    <Circle
+                                        center={markerPos}
+                                        pathOptions={{ color: '#66cc66', fillColor: '#66cc66', fillOpacity: 0.08 }}
+                                        radius={2000}
+                                    />
+                                    <Circle
+                                        center={markerPos}
+                                        pathOptions={{ color: '#ffcc00', fillColor: '#ffcc00', fillOpacity: 0.06 }}
+                                        radius={3000}
+                                    />
+                                </>
+                            )}
                         </MapContainer>
                     </div>
                 </div>
@@ -72,6 +91,29 @@ export default function CrearApiario({ usr, setViewState }) {
                             <div className="input-group">
                                 <label>MSNM</label>
                                 <input type="number" name="msnm" value={formData.msnm} onChange={handleChange} required />
+                            </div>
+                        </div>
+                        <div className="input-group flora-group">
+                            <label>Tipo de Flora</label>
+                            <textarea name="tipo_flora" value={formData.tipo_flora} onChange={handleChange} rows="10" />
+                        </div>
+                        <div className="input-group textarea-group wide-textarea">
+                            <label>Descripción de Acceso</label>
+                            <textarea name="descripcion_acceso" value={formData.descripcion_acceso} onChange={handleChange} rows="3" />
+                        </div>
+                        <div className="input-row centered-row">
+                            <div className="input-group centered-group">
+                                <label>Capacidad Máxima</label>
+                                <input
+                                    type="number"
+                                    name="capacidad_maxima"
+                                    value={formData.capacidad_maxima}
+                                    onChange={handleChange}
+                                    min="0"
+                                    step="1"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                />
                             </div>
                         </div>
                         <button type="submit" className="primary-btn" disabled={loading}>Registrar Apiario</button>

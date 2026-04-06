@@ -13,7 +13,7 @@
 .input-wrapper i {
     position: absolute;
     left: 15px;
-    color: #a1887f;
+    color: var(--muted-gray);
 }
 
 .input-wrapper input {
@@ -30,5 +30,5 @@
 
 .footer-text {
     margin-top: 35px;
-    color: #5d4037;
+    color: var(--muted-brown);
 }

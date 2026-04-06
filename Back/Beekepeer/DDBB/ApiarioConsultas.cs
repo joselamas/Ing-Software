@@ -37,7 +37,11 @@ namespace Beekepeer.DDBB
                             nombre_referencia = reader["nombre_referencia"].ToString() ?? "",
                             coordenadas = reader["coordenadas"].ToString() ?? "",
                             msnm = reader["msnm"] != DBNull.Value ? (int)reader["msnm"] : 0,
-                            activo = reader["activo"] != DBNull.Value && (bool)reader["activo"]
+                            activo = reader["activo"] != DBNull.Value && (bool)reader["activo"],
+                            descripcion_acceso = reader["descripcion_acceso"].ToString() ?? "",
+                            tipo_flora = reader["tipo_flora"].ToString() ?? "",
+                            capacidad_maxima = reader["capacidad_maxima"] != DBNull.Value ? (int)reader["capacidad_maxima"] : 0,
+                            fecha_creacion = reader["fecha_creacion"] != DBNull.Value ? (DateTime)reader["fecha_creacion"] : DateTime.MinValue
                         });
                     }
                 }
@@ -76,7 +80,7 @@ namespace Beekepeer.DDBB
         }
 
         // 3. INSERTAR APIARIO
-        public int InsertarApiario(string acronimoUsuario, string nombreReferencia, string coordenadas, int msnm, bool activo)
+        public int InsertarApiario(string acronimoUsuario, string nombreReferencia, string coordenadas, int msnm, bool activo, int capacidad_maxima, string tipo_flora, string descripcion_acceso)
         {
             using (SqlConnection connection = new SqlConnection(_sqlurl))
             {
@@ -86,7 +90,11 @@ namespace Beekepeer.DDBB
                 cmd.Parameters.AddWithValue("@Coordenadas", coordenadas);
                 cmd.Parameters.AddWithValue("@Msnm", msnm);
                 cmd.Parameters.AddWithValue("@Activo", activo);
+                cmd.Parameters.AddWithValue("@DescripcionAcceso", descripcion_acceso);
+                cmd.Parameters.AddWithValue("@TipoFlora", tipo_flora);
+                cmd.Parameters.AddWithValue("@CapacidadMaxima", capacidad_maxima);
 
+               
                 connection.Open();
                 object result = cmd.ExecuteScalar();
                 return result != null ? Convert.ToInt32(result) : 0;

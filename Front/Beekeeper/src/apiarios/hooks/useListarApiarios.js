@@ -14,13 +14,24 @@ export const useListarApiarios = (usr, setViewState) => {
             const res = await WSApiario.ListarApiarios(usr.acronimo);
             
             if (res && res.status === 1) {
-                // Convertimos el string "lat, lng" de SQL a [lat, lng] para Leaflet
-                const dataProcesada = res.apiarios.map(apiario => ({
-                    ...apiario,
-                    posicion: apiario.coordenadas 
-                        ? apiario.coordenadas.split(',').map(n => parseFloat(n.trim()))
-                        : [8.5891, -71.1450] // Default Mérida si no hay coords
-                }));
+                // Convertimos el string "lat, lng" de SQL a [lat, lng] para Leaflet.
+                // Si el valor es inválido, dejamos posicion como null para no romper el mapa.
+                const dataProcesada = res.apiarios.map(apiario => {
+                    const coordsString = apiario.coordenadas ? String(apiario.coordenadas).trim() : '';
+                    const posicion = coordsString.includes(',')
+                        ? coordsString.split(',').map(n => parseFloat(n.trim()))
+                        : null;
+
+                    const tienePosicionValida = Array.isArray(posicion)
+                        && posicion.length === 2
+                        && Number.isFinite(posicion[0])
+                        && Number.isFinite(posicion[1]);
+
+                    return {
+                        ...apiario,
+                        posicion: tienePosicionValida ? posicion : null
+                    };
+                });
                 setApiarios(dataProcesada);
             } else {
                 setError(res.mensaje || "Error al cargar datos.");

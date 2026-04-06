@@ -94,19 +94,12 @@
 
 .logout-link {
     font-size: 0.7rem;
-    color: #8d6e63;
+    color: var(--muted-brown);
     font-weight: 700;
     text-decoration: underline;
 }
 
-/* IMPORTANTE: Espaciado para el cuerpo de la página 
-/* Empuja todo el contenido de la aplicación hacia abajo 
-* ya este estilo de separacion esta en el contenedor del main-body.*/
 
-/*body {
-    
-    padding-top: 100px; 
-}*/
 
 .dropdown-content {
   display: none;
