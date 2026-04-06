@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 import Login from './usuario/login.js'
 import CrearUsuario from './usuario/crearUsuario.js'
@@ -9,20 +9,24 @@ import DashboardColmenas from './colmenas/DashboardColmenas';
 import FormularioColmena from './colmenas/FormularioColmena';
 import CrearApiario from './apiarios/crearApiario.js';
 import ListarApiarios from './apiarios/listarApiarios.js';
+import DetalleApiario from './apiarios/detalleApiario.js';
+import MiPerfil from './usuario/miPerfil.js';
 
 import './App.css';
+import RegistrarColmena from './colmenas/RegistrarColmena.js';
 
 function App() {
 
     const [viewState, setViewState] = useState("Login");
     const [usr, setUsr] = useState(null);
+    const [selectedApiario, setSelectedApiario] = useState(null);
 
-  
   return (
     <div className="App">
       {viewState !== 'Login' && viewState !== 'CrearUsuario' && <BarraNavegacion
         setViewState = {setViewState}
         setUsr={setUsr}
+        usr = {usr}
       />}
       { viewState === 'Login' &&
         <Login
@@ -36,6 +40,7 @@ function App() {
      {viewState  === 'ActualizarDatos' && <ModificarUsuario
         setViewState = {setViewState}
         usr={usr}
+        setUsr={setUsr}
      />}
      {viewState === 'VerMisColmenas' && (
         <DashboardColmenas 
@@ -44,7 +49,7 @@ function App() {
         />
       )}
       {viewState === 'CrearNuevaColmenas' && (
-        <FormularioColmena 
+        <RegistrarColmena 
           setViewState={setViewState} 
           usr={usr} 
         />
@@ -52,13 +57,27 @@ function App() {
        {viewState === 'VerMisApiarios' && (
         <ListarApiarios 
           setViewState={setViewState}
+          setSelectedApiario={setSelectedApiario}
           usr={usr}/>
           )}
+      {viewState === 'DetalleApiario' && (
+        <DetalleApiario
+          apiario={selectedApiario}
+          setViewState={setViewState}
+          usr={usr}
+        />
+      )}
       {viewState === 'CrearApiaro' && (
         <CrearApiario 
           setViewState={setViewState}
           usr={usr}/>
           )}
+      {viewState === 'MiPerfil' && (
+        <MiPerfil 
+          setViewState={setViewState}
+          usr={usr}
+        />
+      )}
     </div>
   );
 }

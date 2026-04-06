@@ -5,7 +5,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); /* Fondo semi-transparente */
+    background-color: var(--overlay-dark); /* Fondo semi-transparente */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15,11 +15,11 @@
 
 /* Caja del Modal */
 .modal-content {
-    background-color: #fff;
+    background-color: var(--white);
     padding: 2rem;
     border-radius: 0px; /* Estilo cuadrado neobrutalista */
-    border: 4px solid #000;
-    box-shadow: 8px 8px 0px #000; /* Sombra sólida característica */
+    border: 4px solid var(--dark-brown);
+    box-shadow: 8px 8px 0px var(--dark-brown); /* Sombra sólida característica */
     width: 90%;
     max-width: 400px;
     text-align: center;
@@ -29,13 +29,13 @@
 
 /* Variantes de color según el tipo */
 .modal-success {
-    border-color: #2ecc71;
-    box-shadow: 8px 8px 0px #2ecc71;
+    border-color: var(--success-dark);
+    box-shadow: 8px 8px 0px var(--success-dark);
 }
 
 .modal-error {
-    border-color: #e74c3c;
-    box-shadow: 8px 8px 0px #e74c3c;
+    border-color: var(--danger-dark);
+    box-shadow: 8px 8px 0px var(--danger-dark);
 }
 
 /* Encabezado e Icono */
@@ -55,7 +55,7 @@
 
 /* Cuerpo del mensaje */
 .modal-body p {
-    color: #333;
+    color: var(--text-dark);
     font-size: 1.1rem;
     margin: 20px 0;
     line-height: 1.5;
@@ -63,8 +63,8 @@
 
 /* Botón de acción */
 .modal-button {
-    background-color: #000;
-    color: #fff;
+    background-color: var(--dark-brown);
+    color: var(--white);
     border: none;
     padding: 12px 30px;
     font-size: 1rem;
@@ -76,7 +76,7 @@
 
 .modal-button:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 4px 4px 0px #555;
+    box-shadow: 4px 4px 0px var(--dark-gray);
 }
 
 .modal-button:active {

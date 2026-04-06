@@ -69,7 +69,10 @@ namespace Beekepeer.Controllers
                 nuevo.nombre_referencia,
                 nuevo.coordenadas,
                 nuevo.msnm,
-                nuevo.activo
+                nuevo.activo,
+                nuevo.capacidad_maxima,
+                nuevo.tipo_flora,
+                nuevo.descripcion_acceso
             );
 
             if (resultado == -1)

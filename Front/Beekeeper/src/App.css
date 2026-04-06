@@ -7,6 +7,22 @@
     --honey-gradient: radial-gradient(circle at center, #8d5a36 0%, #432818 100%);
     --bg-cream: #f9f9f5;
     --border-width: 2.5px;
+    --white: #ffffff;
+    --soft-border: #d7ccc8;
+    --primary-yellow-dark: #c68400;
+    --yellow-soft: rgba(255, 179, 0, 0.08);
+    --muted-brown: #8d6e63;
+    --muted-gray: #a1887f;
+    --success-light: #e8f5e9;
+    --success-dark: #2e7d32;
+    --danger-light: #ffebee;
+    --danger-dark: #c62828;
+    --shadow-soft: rgba(0,0,0,0.1);
+    --shadow-strong: rgba(0,0,0,0.2);
+    --dark-gray: #555555;
+    --black: #000000;
+    --overlay-dark: rgba(0,0,0,0.7);
+    --text-dark: #333333;
 }
 
 .App {
@@ -38,7 +54,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: var(--white);
     text-align: center;
     padding: 40px;
     background: var(--honey-gradient);
@@ -84,7 +100,7 @@ h1, .title {
 }
 
 .form-desc, .subtitle {
-    color: #8d6e63;
+    color: var(--muted-brown);
     margin-bottom: 30px;
 }
 
@@ -102,7 +118,7 @@ h1, .title {
 .input-group input {
     width: 100%;
     padding: 12px;
-    border: 1.5px solid #d7ccc8;
+    border: 1.5px solid var(--soft-border);
     border-radius: 8px;
     font-size: 1rem;
     outline: none;
@@ -121,14 +137,14 @@ h1, .title {
     font-weight: 700;
     font-size: 1.1rem;
     cursor: pointer;
-    box-shadow: 0 4px 0 #c68400;
+    box-shadow: 0 4px 0 var(--primary-yellow-dark);
     transition: all 0.1s;
     margin-bottom: 10px;
 }
 
 .primary-btn:active {
     transform: translateY(2px);
-    box-shadow: 0 2px 0 #c68400;
+    box-shadow: 0 2px 0 var(--primary-yellow-dark);
 }
 
 .form-footer, .footer-text {

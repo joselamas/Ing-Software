@@ -5,7 +5,10 @@ export const useCrearApiario = (usr, setViewState) => {
     const [formData, setFormData] = useState({
         nombre_referencia: '',
         coordenadas: '',
-        msnm: ''
+        msnm: '',
+        tipo_flora: '',
+        capacidad_maxima: '',
+        descripcion_acceso: ''
     });
 
     const [loading, setLoading] = useState(false);
@@ -13,8 +16,11 @@ export const useCrearApiario = (usr, setViewState) => {
     const [modalInfo, setModalInfo] = useState({ titulo: '', mensaje: '', tipo: '' });
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        const { name, value, type, checked } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value
+        }));
     };
 
     // Función para manejar el clic en el mapa de Leaflet
@@ -50,6 +56,9 @@ export const useCrearApiario = (usr, setViewState) => {
             nombre_referencia: formData.nombre_referencia,
             coordenadas: formData.coordenadas,
             msnm: parseInt(formData.msnm) || 0,
+            tipo_flora: formData.tipo_flora,
+            capacidad_maxima: parseInt(formData.capacidad_maxima) || 0,
+            descripcion_acceso: formData.descripcion_acceso,
             activo: true
         };
 

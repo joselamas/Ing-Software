@@ -24,12 +24,12 @@
     font-size: 0.75rem;
     letter-spacing: 1px;
     text-transform: uppercase;
-    color: #6d4c41;
+    color: var(--muted-brown);
 }
 
 /* Campo no editable */
 .input-group.disabled .static-info {
-    color: #a1887f;
+    color: var(--muted-gray);
     font-size: 0.85rem;
     font-weight: 600;
     margin-top: 5px;
@@ -46,7 +46,7 @@
 /* Botón Cancelar (Blanco con borde negro) */
 .secondary-btn {
     flex: 1;
-    background-color: white;
+    background-color: var(--white);
     color: var(--dark-brown);
     border: 2px solid var(--dark-brown);
     padding: 12px;
@@ -57,7 +57,7 @@
 }
 
 .secondary-btn:hover {
-    background-color: #f5f5f5;
+    background-color: var(--bg-cream);
 }
 
 /* Botón Guardar (Mismo estilo que el botón de entrar) */

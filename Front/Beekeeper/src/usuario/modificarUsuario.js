@@ -1,110 +1,129 @@
-import React, { useState, useEffect } from 'react';
-import * as WSUsuario from '../webService/WS_usuario.js';
+import React from 'react';
+import { useModificarUsuario } from './hooks/useModificarUsuario.js';
+import Modal from '../componentes/modalMSN.js'; 
+import "./css/modificarUsuario.css";
 
-import "./css/modificarUsuario.css"
+export default function ModificarUsuario({setUsr , usr, setViewState }) {
+    const { 
+        handleSubmit, 
+        loading, 
+        error, 
+        isModalOpen, 
+        setIsModalOpen, 
+        modalInfo 
+    } = useModificarUsuario(usr, setUsr);
 
+    return (
+        <section>
+            <div className="main-container">
+                <div className="left-panel">
+                    <div className="overlay-content">
+                        <div className="bee-icon">
+                            <img src="https://cdn-icons-png.flaticon.com/512/517/517563.png" alt="Abeja" />
+                        </div>
+                        <h2>Actualizar perfil</h2>
+                        <p>Actualiza tus datos y sigue gestionando tus colmenas con facilidad.</p>
+                    </div>
+                </div>
 
-export default function ModificarUsuario(props){
-  const [error, setError] = useState();
+                <div className="right-panel">
+                    <div className="form-container edit-profile">
+                        <div className="header-inline">
+                            <h1>Actualizar <span>Perfil</span></h1>
+                        </div>
 
-  console.log(props.urs)
-    useEffect(() => {
-    }, []);
+                        {error && <p className="error-msg" style={{color: 'red'}}>{error}</p>}
 
-    const aceptarLog = async() =>{
-      var usuario = document.getElementById("usr").value;
-      var clave = document.getElementById('clave').value;
+                        <form id="edit-form" onSubmit={handleSubmit}>
+                            <div className="input-group">
+                                <label>Acrónimo</label>
+                                <input type="text" value={usr.acronimo}  disabled />
+                            </div>
+                            
+                            <div className="input-group">
+                                <label>Nombres</label>
+                                <input type="text" value={usr.nombre}  disabled />
+                            </div>
 
-      var urs = {
-        idAsociado:usuario,
-        clave:btoa(clave)
-      }
-      var usuarioF = null//await WScolibri.Login(urs)
-      if(usuarioF.status > 0 )
-      {
-        props.setUsr(usuarioF)
-        setError("")
-      }
-      else
-        setError("Usuario invalido")
+                            <div className="input-group">
+                                <label>Apellidos</label>
+                                <input type="text" value={usr.apellido}  disabled />
+                            </div>
 
-      console.log(usuarioF)
-    }
+                            <div className="input-group">
+                                <label>Teléfono</label>
+                                <input 
+                                    type="tel" 
+                                    name="telefono" 
+                                    defaultValue={usr.telefono}                                      
+                                />
+                            </div>
 
-    const restarLog = () =>{
-      document.getElementById("usr").value = '';
-      document.getElementById('clave').value = '';
-    }
-    
-    const createView = () => {
-      return (
-        <div className="main-container">
-    <div className="left-panel">
-        </div>
+                            <div className="input-group">
+                                <label>Correo Electrónico</label>
+                                <input type="email" defaultValue={usr.correo}  disabled />
+                            </div>
 
-    <div className="right-panel">
-        <div className="form-container edit-profile">
-            <div className="header-inline">
-                <h1>Editar <span>Perfil</span></h1>
+                            <div className="input-group">
+                                <label>Localidad</label>
+                                <input 
+                                    type="text" 
+                                    name="localidad" 
+                                    defaultValue={usr.localidad_asociada} 
+                                    required 
+                                />
+                            </div>
+
+                            <div className="input-group">
+                                <label>Contraseña</label>
+                                <input 
+                                    type="password" 
+                                    name="password" 
+                                    placeholder="Mínimo 8 caracteres" 
+                                    required 
+                                    minLength="8" 
+                                    maxLength="20" 
+                                />
+                            </div>
+
+                            <div className="input-group">
+                                <label>Repetir Contraseña</label>
+                                <input 
+                                    type="password" 
+                                    name="repeatPassword" 
+                                    placeholder="Mínimo 8 caracteres" 
+                                    required 
+                                    minLength="8" 
+                                    maxLength="20" 
+                                />
+                            </div>
+
+                            <div className="button-group">
+                                <button 
+                                    type="button" 
+                                    className="secondary-btn" 
+                                    onClick={() => setViewState("Dashboard")}
+                                >
+                                    Cancelar
+                                </button>
+                                <button type="submit" className="primary-btn" disabled={loading}>
+                                    {loading ? "Guardando..." : "Guardar Cambios"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
 
-            <form id="edit-form">
-               <div className="input-group">
-                        <label>Acronimo</label>
-                        <input type="text" value={props.usr.acronimo} required disabled/>
-                    </div>
-                  <div className="input-group">
-                        <label>Nombres</label>
-                        <input type="text" value={props.usr.nombre} required disabled/>
-                    </div>
-                    <div className="input-group">
-                        <label>Apellidos </label>
-                        <input type="text" value={props.usr.apellido} required disabled/>
-                    </div>
-
-                    <div className="input-group">
-                        <label>Teléfono</label>
-                        <input type="tel" defaultValue={props.usr.telefono} required/>
-                    </div>
-
-                    <div className="input-group">
-                        <label>Correo Electrónico</label>
-                        <input type="email" defaultValue={props.usr.correo} required disabled/>
-                    </div>
-
-                      <div className="input-group">
-                        <label>Localidad</label>
-                        <input type="password" defaultValue={props.usr.localidad_asociada} required/>
-                    </div>
-
-                    <div className="input-group">
-                        <label>Contraseña</label>
-                        <input type="password" placeholder="Mínimo 8 caracteres" required minLength="8" maxLength="20"/>
-                    </div>
-
-                      <div className="input-group">
-                        <label>Repetir Contraseña</label>
-                        <input type="password" placeholder="Mínimo 8 caracteres" required minLength="8" maxLength="20"/>
-                    </div>
-
-                <div className="button-group">
-                    {false&& <button type="button" className="secondary-btn">Cancelar</button>}
-                    <button type="submit" className="primary-btn">Guardar Cambios</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-      )
-    }
-return(
-  <section>
-    {createView()}
-  </section>
-    
- 
-  )
+            <Modal 
+                isOpen={isModalOpen} 
+                onClose={() => setIsModalOpen(false)} 
+                goView={setViewState} 
+                view={modalInfo.tipo === 'success' ? "Dashboard" : ""}
+                title={modalInfo.titulo}
+                message={modalInfo.mensaje}
+                type={modalInfo.tipo}
+            />
+        </section>
+    );
 }
-
-
-

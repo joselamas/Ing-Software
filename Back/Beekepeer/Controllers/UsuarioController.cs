@@ -109,28 +109,48 @@ namespace Beekepeer.Controllers
         }
 
         // 4. ACTUALIZACIÓN DINÁMICA (PATCH)
-        [HttpPatch]
-        [Route("update/{acronimo}")]
-        public IActionResult Update(string acronimo, [FromBody] Usuario datos)
+        [HttpPost] // Cambiado a POST para coincidir con el fetch del Front
+        [Route("modificarUsuario")] // Ruta exacta usada en el Web Service
+        public IActionResult ModificarUsuario([FromBody] Usuario datos)
         {
-            // El acrónimo viene de la URL para identificar al usuario, 
-            // el resto de datos viene del cuerpo del JSON.
-            bool exito = _sql.ActualizarUsuario(
-                acronimo,
-                datos.permiso != 0 ? datos.permiso : (int?)null,
-                datos.nombre,
-                datos.apellido,
-                datos.correo,
-                datos.clave,
-                datos.telefono,
-                datos.localidad_asociada,
-                datos.activo
-            );
+            try
+            {
+                // Validamos que el acrónimo no sea nulo
+                if (string.IsNullOrEmpty(datos.acronimo))
+                {
+                    return BadRequest(new { status = 0, mensaje = "El acrónimo es obligatorio." });
+                }
 
-            if (!exito) return NotFound("No se pudo actualizar el usuario. Verifique el acrónimo.");
-            return Ok("Datos de usuario actualizados correctamente.");
+                // Llamamos a tu lógica de SQL. 
+                // Nota: Pasamos 'datos.acronimo' como identificador y los campos que vienen del form.
+                bool exito = _sql.ActualizarUsuario(
+                    datos.acronimo,
+                    null, // permiso (no se modifica en el perfil de usuario)
+                    null, // nombre (viniendo del front está disabled)
+                    null, // apellido (viniendo del front está disabled)
+                    null, // correo (viniendo del front está disabled)
+                    datos.clave, // La nueva contraseña
+                    datos.telefono,
+                    datos.localidad_asociada,
+                    null  // activo (no se modifica desde aquí)
+                );
+
+                if (exito)
+                {
+                    // Retornamos el formato que el Hook espera para mostrar el éxito
+                    return Ok(new { status = 1, mensaje = "¡Perfil actualizado con éxito!", data = datos });
+                }
+                else
+                {
+                    return NotFound(new { status = 0, mensaje = "No se encontró el usuario con el acrónimo proporcionado." });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Manejo de errores técnicos
+                return StatusCode(500, new { status = -1, mensaje = "Error interno: " + ex.Message });
+            }
         }
-
         // 5. ELIMINAR (Borrado Físico)
         [HttpDelete]
         [Route("delete/{acronimo}")]

@@ -32,23 +32,30 @@ export async function CrearUsuario(usr) {
 
     return usuario;
 }
-export async function UpdateUsuario(usr) {
-    var _body =  JSON.stringify(usr)
-    var usuario = {};
-    await fetch(url + "UpdateUsuario",{
-      headers: {"content-type": 'application/json',   body: _body},
-    })
-            .then((response) => response.json())
-            .then((data) => {   
-               usuario = data
-              })
-            .catch((err) => {              
-              console.log("---------------error--------------------------")
-              console.log(err.message);        
-            });
-    return usuario;    
-}
+export async function ModificarUsuario(usr) {
+    const _body = JSON.stringify(usr);    
+    try {
+        const response = await fetch(url + "modificarUsuario", {
+            method: "POST", // Especificamos el método POST para enviar datos
+            headers: { 
+                "Content-Type": "application/json" 
+            },
+            body: _body // El cuerpo va fuera de los headers
+        });
 
+        const data = await response.json();
+
+        if (response.ok) {
+            // Retornamos éxito y la data actualizada del usuario
+            return { status: 1, mensaje: "Perfil actualizado", data: data };
+        } else {
+            return { status: 0, mensaje: data.mensaje || "Error al actualizar perfil" };
+        }
+    } catch (err) {
+        console.error("Error de conexión:", err.message);
+        return { status: -1, mensaje: "Error de conexión con el servidor" };
+    }
+}
 export async function ValidarLogin(identificador, clave) {
     // Creamos el objeto con los nombres que espera C# (LoginRequest)
     const datosLogin = {

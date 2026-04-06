@@ -82,9 +82,9 @@ export default function BarraNavegacion(props){
 
                     {/* El panel de usuario tradicional (Se oculta en móviles) */}
                     <div className="nav-user">
-                        <div className="user-avatar">CM</div>
+                        <div className="user-avatar">{props.usr?.nombre?.[0]}{props.usr?.apellido?.[0]}</div>
                         <div className="user-info">
-                            <p className="user-name">Carlos M.</p>
+                            <p className="user-name">{props.usr?.nombre + " " + props.usr?.apellido|| 'Usuario'}</p>
                             <a href="#" className="logout-link" onClick={() => closeSesion()}>
                                 Cerrar Sesión
                             </a>
