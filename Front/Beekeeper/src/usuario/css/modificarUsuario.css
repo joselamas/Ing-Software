@@ -46,7 +46,7 @@
 /* Botón Cancelar (Blanco con borde negro) */
 .secondary-btn {
     flex: 1;
-    background-color: var(--white);
+    background-color: white;
     color: var(--dark-brown);
     border: 2px solid var(--dark-brown);
     padding: 12px;

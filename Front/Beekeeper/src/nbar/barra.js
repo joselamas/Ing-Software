@@ -68,7 +68,7 @@ export default function BarraNavegacion(props){
                             </button>
                             <div className={`dropdown-content active ${openDropdown === "perfil" ? "show" : ""}`}>
                                 <div onClick={() => handleNavigation("MiPerfil")}>Mi Perfil</div>
-                                <div onClick={() => handleNavigation("ActualizarDatos")}>Actualizar datos</div>
+                                <div onClick={() => handleNavigation("ActualizarDatos")}>Actualizar Perfil</div>
                             </div>
                         </li>
 

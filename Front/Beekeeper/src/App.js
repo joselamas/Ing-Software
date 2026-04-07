@@ -1,19 +1,21 @@
 
 import React, { useState } from 'react';
+import BarraNavegacion from './nbar/barra.js'
 
 import Login from './usuario/login.js'
 import CrearUsuario from './usuario/crearUsuario.js'
 import ModificarUsuario from './usuario/modificarUsuario.js'
-import BarraNavegacion from './nbar/barra.js'
-import DashboardColmenas from './colmenas/DashboardColmenas';
-import FormularioColmena from './colmenas/FormularioColmena';
+import MiPerfil from './usuario/miPerfil.js';
+
+import VerColmenas from './colmenas/VerColmenas.js';
+import RegistrarColmena from './colmenas/RegistrarColmena.js';
+
 import CrearApiario from './apiarios/crearApiario.js';
 import ListarApiarios from './apiarios/listarApiarios.js';
 import DetalleApiario from './apiarios/detalleApiario.js';
-import MiPerfil from './usuario/miPerfil.js';
+import ModificarApiario from './apiarios/ModificarApiario.js';
 
 import './App.css';
-import RegistrarColmena from './colmenas/RegistrarColmena.js';
 
 function App() {
 
@@ -43,7 +45,7 @@ function App() {
         setUsr={setUsr}
      />}
      {viewState === 'VerMisColmenas' && (
-        <DashboardColmenas 
+        <VerColmenas 
           setViewState={setViewState} 
           usr={usr} 
         />
@@ -65,6 +67,12 @@ function App() {
           apiario={selectedApiario}
           setViewState={setViewState}
           usr={usr}
+        />
+      )}
+      {viewState === 'ModificarApiario' && usr && selectedApiario && (
+        <ModificarApiario
+          apiario={selectedApiario}
+          setViewState={setViewState}
         />
       )}
       {viewState === 'CrearApiaro' && (

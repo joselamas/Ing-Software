@@ -76,8 +76,7 @@ export default function CrearApiario({ usr, setViewState }) {
 
             <div className="right-panel">
                 <div className="form-container">
-                    <h2>Nuevo <span>Apiario</span></h2>
-                    <p className="form-desc">Gestionar tus apiarios fácilmente.</p>
+                    <h2 className='main-title' style={{marginBottom:'20px'}}>Nuevo <span>Apiario</span></h2>
                     <form onSubmit={handleSubmit} className="beekeeping-form">
                         <div className="input-group">
                             <label>Nombre de Referencia</label>

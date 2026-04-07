@@ -32,7 +32,9 @@ export default function ListarApiarios({ usr, setViewState, setSelectedApiario }
         <div className="gestion-container">
             <header className="perfil-header list-header">
                 <div>
-                <h1>Mis <span>Apiarios</span></h1>
+                  <h1>Mis <span>Apiarios</span></h1>
+                  <p>Mostramos la Geolocalización de tus apiarios, para facilitar el manejo</p>
+
                 </div>
                 <button className="perfil-btn" onClick={() => setViewState('CrearApiaro')}>
                         + Nuevo Apiario
@@ -61,9 +63,11 @@ export default function ListarApiarios({ usr, setViewState, setSelectedApiario }
                                 <div className="card-info">
                                     <h3>{apiario.nombre_referencia}</h3>
                                     <p><span>Altitud:</span> {apiario.msnm} MSNM</p>
+                                </div>
+                                   <div className="card-info">
                                     <p><span>Colmenas:</span> 0</p>
                                     <p><span>Capacidad:</span> {apiario.capacidad_maxima ?? 'Pendiente'} colmenas</p>
-                                </div>
+                                 </div>
                                 <button 
                                     onClick={() => {
                                         setSelectedApiario(apiario);

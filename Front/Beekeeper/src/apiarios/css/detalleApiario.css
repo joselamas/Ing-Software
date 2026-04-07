@@ -12,6 +12,9 @@
     background: rgba(255, 255, 255, 0.15);
     border-radius: 18px;
     padding: 18px 22px;
+    background-color: var( --overlay-dark);  
+    padding: 10px;
+
 }
 
 .detalle-header h1 {
@@ -56,6 +59,8 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
+    border: solid var(--soft-border) 1.5px;
+    border-radius: 18px;
 }
 
 .detalle-card {
