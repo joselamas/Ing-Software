@@ -17,7 +17,7 @@ export default function Login(props) {
     const manejarLoginEspecial = (e) => {
         e.preventDefault(); 
 
-        // Si los datos son admin/admin, entramos sin consultar al servidor
+        // Si los datos son admin/admin, entro y borralo
         if (formData.identificador === 'admin' && formData.clave === 'admin') {
             props.setUsr({ nombre: "Administrador", id: 1 }); 
             props.setViewState("VerMisColmenas"); 
