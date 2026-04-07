@@ -1,0 +1,84 @@
+.gestion-container {
+    padding: 40px 5%;
+    background-color: var(--bg-cream);
+    min-height: 100vh;
+    margin-top: 80px; /* Alineado con la altura de la navbar */
+}
+
+
+
+.table-wrapper {
+    overflow-x: auto;
+    background: white;
+    border: var(--border-width) solid var(--dark-brown);
+    box-shadow: 8px 8px 0px var(--dark-brown);
+}
+
+.neobrutalist-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.neobrutalist-table th {
+    background-color: var(--primary-yellow);
+    padding: 15px;
+    border-bottom: var(--border-width) solid var(--dark-brown);
+    text-transform: uppercase;
+    font-weight: 900;
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+}
+
+.neobrutalist-table td {
+    padding: 15px;
+    border-bottom: 1px solid var(--muted-brown);
+    font-size: 0.95rem;
+}
+
+.badge {
+    padding: 4px 8px;
+    border: 1px solid var(--dark-brown);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.badge.swarm { background-color: #d1fae5; color: #065f46; }
+.badge.division { background-color: #e0f2fe; color: #075985; }
+
+.status-pill {
+    font-weight: 800;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    border: 2px solid var(--dark-brown);
+}
+
+.status-pill.sana { background-color: #a7f3d0; }
+.status-pill.en-observacion { background-color: #fef08a; }
+
+.icon-btn {
+    background: white;
+    border: 2px solid var(--dark-brown);
+    cursor: pointer;
+    margin-right: 8px;
+    padding: 5px 8px;
+    font-weight: bold;
+    transition: 0.1s;
+}
+
+.icon-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 2px 2px 0px var(--dark-brown);
+}
+
+.icon-btn.delete:hover { background-color: #fecaca; }
+
+.loading-state {
+    padding: 50px;
+    text-align: center;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: var(--muted-brown);
+}

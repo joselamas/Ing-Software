@@ -98,6 +98,11 @@ export default function DetalleApiario({ apiario, setViewState }) {
                             <span>Descripción de Vía</span>
                             <strong>{apiario.descripcion_acceso ?? 'Sin datos'}</strong>
                         </div>
+                        <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'center' }}>
+                            <button className="perfil-btn" onClick={() => setViewState('ModificarApiario')}>
+                                Editar Apiario
+                            </button>
+                        </div>
                     </div>
                 </section>
 
