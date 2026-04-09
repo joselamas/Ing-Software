@@ -1,74 +1,56 @@
 import { useState, useEffect } from 'react';
-import * as WSApiario from '../../webService/WS_apiario.js';
-import { apiService } from '../../webService/WS_colmena.js';
+import * as WSColmena from '../../webService/WS_colmena';
+import * as WSApiario from '../../webService/WS_apiario';
 
+/**
+ * Hook para gestionar las estadísticas y datos del perfil del usuario.
+ */
 export const useMiPerfil = (usr) => {
+    const [stats, setStats] = useState({
+        totalColmenas: 0,
+        activas: 0,
+        historicas: 0,
+        totalApiarios: 0,
+        kgAnual: [0, 0, 0] // Datos hardcodeados para kgAnual
+    });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [apiarios, setApiarios] = useState([]);
-    const [colmenas, setColmenas] = useState([]);
-    const [kgAnual, setKgAnual] = useState([0, 0, 0]);
-    const [activeApiariosCount, setActiveApiariosCount] = useState(0);
-    const [historicalApiariosCount, setHistoricalApiariosCount] = useState(0);
-    const [activeColmenasCount, setActiveColmenasCount] = useState(0);
-    const [historicalColmenasCount, setHistoricalColmenasCount] = useState(0);
 
     useEffect(() => {
-        const fetchPerfil = async () => {
-            if (!usr) return;
+        const cargarEstadisticas = async () => {
+            if (!usr?.acronimo) return;
             setLoading(true);
-            setError(null);
-
             try {
-                const [apiarioRes, colmenasRes] = await Promise.all([
-                    WSApiario.ListarApiarios(usr.acronimo),
-                    null
+                // Ejecutamos ambas consultas en paralelo para mayor eficiencia
+                const [resColmenas, resApiarios] = await Promise.all([
+                    WSColmena.getListColmenasUsr(usr.acronimo),
+                    WSApiario.ListarApiarios(usr.acronimo)
                 ]);
 
-                const listaApiarios = apiarioRes.status === 1 ? apiarioRes.apiarios : [];
-                const listaColmenas = Array.isArray(colmenasRes) ? colmenasRes : [];
+                let colmenasRaw = [];
+                if (resColmenas.status === 1) colmenasRaw = resColmenas.data || [];
 
-                setApiarios(listaApiarios);
-                setColmenas(listaColmenas);
+                let apiariosCount = 0;
+                if (resApiarios.status === 1) apiariosCount = resApiarios.apiarios?.length || 0;
 
-                const activeColmenas = listaColmenas.filter(c => {
-                    const prod = c.produccion_kg ?? c.kg_producidos ?? c.kg ?? c.produccion ?? 0;
-                    return prod > 0;
-                }).length;
-                const historicalColmenas = listaColmenas.length - activeColmenas;
-                setActiveColmenasCount(activeColmenas);
-                setHistoricalColmenasCount(historicalColmenas);
-                setActiveApiariosCount(listaApiarios.length);
-                setHistoricalApiariosCount(0);
+                const activas = colmenasRaw.filter(c => c.colmena?.activo).length;
 
-                const totals = [2024, 2025, 2026].map((year) => {
-                    return listaColmenas.reduce((sum, colmena) => {
-                        const produced = colmena.produccion_kg ?? colmena.kg_producidos ?? colmena.kg ?? colmena.produccion ?? 0;
-                        return sum + (typeof produced === 'number' ? produced : 0);
-                    }, 0);
+                setStats({
+                    totalColmenas: colmenasRaw.length,
+                    activas: activas,
+                    historicas: colmenasRaw.length - activas,
+                    totalApiarios: apiariosCount,
+                    kgAnual: [150, 200, 250] // Valores de ejemplo para 2024, 2025, 2026
                 });
-
-                setKgAnual(totals);
             } catch (err) {
-                setError('No se pudo cargar la información de perfil.');
+                setError("Error al sincronizar estadísticas del perfil.");
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchPerfil();
+        cargarEstadisticas();
     }, [usr]);
 
-    return {
-        loading,
-        error,
-        apiarios,
-        colmenas,
-        kgAnual,
-        activeApiariosCount,
-        historicalApiariosCount,
-        activeColmenasCount,
-        historicalColmenasCount,
-        usuario: usr
-    };
+    return { stats, loading, error };
 };

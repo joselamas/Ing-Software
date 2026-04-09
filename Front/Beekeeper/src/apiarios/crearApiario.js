@@ -54,17 +54,17 @@ export default function CrearApiario({ usr, setViewState }) {
                                 <>
                                     <Circle
                                         center={markerPos}
-                                        pathOptions={{ color: '#3399ff', fillColor: '#3399ff', fillOpacity: 0.1 }}
+                                        pathOptions={{ color: '#3399ff', fillColor: '#3399ff', fillOpacity: 0.3 }}
                                         radius={1000}
                                     />
                                     <Circle
                                         center={markerPos}
-                                        pathOptions={{ color: '#66cc66', fillColor: '#66cc66', fillOpacity: 0.08 }}
+                                        pathOptions={{ color: '#66cc66', fillColor: '#66cc66', fillOpacity: 0.1 }}
                                         radius={2000}
                                     />
                                     <Circle
                                         center={markerPos}
-                                        pathOptions={{ color: '#ffcc00', fillColor: '#ffcc00', fillOpacity: 0.06 }}
+                                        pathOptions={{ color: '#ffcc00', fillColor: '#ffcc00', fillOpacity: 0.08 }}
                                         radius={3000}
                                     />
                                 </>
@@ -85,16 +85,16 @@ export default function CrearApiario({ usr, setViewState }) {
                         <div className="input-row">
                             <div className="input-group">
                                 <label>Coordenadas</label>
-                                <input type="text" name="coordenadas" value={formData.coordenadas} readOnly />
+                                <input type="text" name="coordenadas" value={formData.coordenadas} readOnly enabled />
                             </div>
                             <div className="input-group">
                                 <label>MSNM</label>
-                                <input type="number" name="msnm" value={formData.msnm} onChange={handleChange} required />
+                                <input type="number" name="msnm" value={formData.msnm} onChange={handleChange} required enabled />
                             </div>
                         </div>
                         <div className="input-group flora-group">
                             <label>Tipo de Flora</label>
-                            <textarea name="tipo_flora" value={formData.tipo_flora} onChange={handleChange} rows="10" />
+                            <textarea name="tipo_flora" value={formData.tipo_flora} onChange={handleChange} rows="3" />
                         </div>
                         <div className="input-group textarea-group wide-textarea">
                             <label>Descripción de Acceso</label>

@@ -14,6 +14,37 @@ L.Icon.Default.mergeOptions({
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
+// Función para generar un icono de color dinámico según la capacidad
+const getApiaryIcon = (apiario) => {
+    const total = apiario.colmenas?.length || 0;
+    const capacidad = apiario.capacidad_maxima || 0;
+    // Si capacidad es 0 y hay colmenas, es 100% (verde oscuro). Si no hay nada, es 0 (negro).
+    const porcentaje = capacidad > 0 ? (total / capacidad) * 100 : (total > 0 ? 100 : 0);
+
+    let color = '#000000'; // Negro por defecto (0 colmenas)
+
+    if (total > 0) {
+        if (porcentaje < 10) color = '#d32f2f'; // Rojo (< 10%)
+        else if (porcentaje < 45) color = '#f57c00'; // Naranja (Rango del 30%)
+        else if (porcentaje < 75) color = '#fbc02d'; // Amarillo (Rango del 60%)
+        else if (porcentaje < 100) color = '#388e3c'; // Verde (Sobre el 80%)
+        else color = '#1b5e20'; // Verde Oscuro (100% o más)
+    }
+
+    const svgHtml = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" width="34px" height="34px">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+        </svg>`;
+
+    return L.divIcon({
+        html: svgHtml,
+        className: 'custom-apiary-marker',
+        iconSize: [34, 34],
+        iconAnchor: [17, 34],
+        popupAnchor: [0, -32]
+    });
+};
+
 export default function ListarApiarios({ usr, setViewState, setSelectedApiario }) {
     const { apiarios, loading, error } = useListarApiarios(usr, setViewState);
     const [searchTerm, setSearchTerm] = useState('');
@@ -65,8 +96,8 @@ export default function ListarApiarios({ usr, setViewState, setSelectedApiario }
                                     <p><span>Altitud:</span> {apiario.msnm} MSNM</p>
                                 </div>
                                    <div className="card-info">
-                                    <p><span>Colmenas:</span> 0</p>
-                                    <p><span>Capacidad:</span> {apiario.capacidad_maxima ?? 'Pendiente'} colmenas</p>
+                                    <p><span>Colmenas:</span> {apiario.colmenas?.length || 0}</p>
+                                    <p><span>Capacidad:</span> {apiario.capacidad_maxima ?? 'Pendiente'}</p>
                                  </div>
                                 <button 
                                     onClick={() => {
@@ -118,16 +149,36 @@ export default function ListarApiarios({ usr, setViewState, setSelectedApiario }
                                         pathOptions={{ color: '#ffcc00', fillColor: '#ffcc00', fillOpacity: 0.06 }}
                                         radius={3000}
                                     />
-                                    <Marker position={apiario.posicion}>
-                                        <Popup>
+                                        <Marker
+                                        position={apiario.posicion}
+                                        icon={getApiaryIcon(apiario)}
+                                    >                                        <Popup>
                                             <strong>{apiario.nombre_referencia}</strong><br/>
-                                            {apiario.msnm} MSNM
+                                            {apiario.msnm} MSNM<br/>
+                                            <hr />
+                                            <strong>Colmenas ({apiario.colmenas?.length || 0}):</strong>
+                                            <ul style={{ margin: '5px 0 0 15px', padding: 0, fontSize: '0.85rem' }}>
+                                                {apiario.colmenas?.map(col => (
+                                                    <li key={col.id}>{col.id_colmena_usuario || 'S/N'}</li>
+                                                ))}
+                                            </ul>
                                         </Popup>
                                     </Marker>
                                 </React.Fragment>
                             ) : null;
                         })}
                     </MapContainer>
+
+                    {/* Leyenda de colores de capacidad */}
+                    <div className="map-legend">
+                        <h4>Ocupación</h4>
+                        <div className="legend-item"><span className="dot" style={{backgroundColor: '#000000'}}></span> Vacío (0)</div>
+                        <div className="legend-item"><span className="dot" style={{backgroundColor: '#d32f2f'}}></span> Crítico (&lt;10%)</div>
+                        <div className="legend-item"><span className="dot" style={{backgroundColor: '#f57c00'}}></span> Bajo (10-45%)</div>
+                        <div className="legend-item"><span className="dot" style={{backgroundColor: '#fbc02d'}}></span> Medio (45-75%)</div>
+                        <div className="legend-item"><span className="dot" style={{backgroundColor: '#388e3c'}}></span> Óptimo (75-99%)</div>
+                        <div className="legend-item"><span className="dot" style={{backgroundColor: '#1b5e20'}}></span> Lleno (100%+)</div>
+                    </div>
                 </div>
             </div>
         </div>

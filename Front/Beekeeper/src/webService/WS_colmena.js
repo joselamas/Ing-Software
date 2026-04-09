@@ -1,54 +1,135 @@
 // La URL base centralizada. Si mañana se sube el backend a un servidor real, solo se cambia aquí.
-const BASE_URL = 'https://localhost:7153/api';
+const url = 'http://localhost:5283/api/Colmena/';
 
-export const apiService = {
-    // Servicio para obtener los apiarios
-    obtenerApiarios: async (usr) => {
-        const url = usr 
-            ? `${BASE_URL}/Apiario/list?usuarioAcronimo=${usr.acronimo}`
-            : `${BASE_URL}/Apiario/list`;
-            
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error('Error al conectar con la base de datos de Apiarios');
-        }
-        return await response.json();
-    },
+export async function insertarColmena(nuevaColmena, apiarioId) {
+    // 1. Construimos la URL con el parámetro de consulta
+    const urlConParams = `${url}insert?apiarioId=${apiarioId}`;
+    const _body = JSON.stringify(nuevaColmena);
 
-    // Servicio para insertar una colmena
-    insertarColmena: async (nuevaColmena) => {
-        const response = await fetch(`${BASE_URL}/Colmena/insert`, {
+    try {
+        const response = await fetch(urlConParams, {    
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(nuevaColmena)
+            body: _body
         });
 
-        if (!response.ok) {
-            throw new Error('Error al registrar la colmena en la base de datos.');
+        // Intentamos obtener el JSON de respuesta (ya sea éxito o error del servidor)
+        const data = await response.json();
+
+        if (response.ok) {
+            // Alineado con la estructura: status 1 = Éxito
+            return { 
+                status: 1, 
+                mensaje: "¡Colmena registrada exitosamente!", 
+                data: data 
+            };
+        } else {
+            // Alineado con la estructura: status 0 = Error controlado por el Back
+            return { 
+                status: 0, 
+                mensaje: data.mensaje || "Error al registrar la colmena en el apiario" 
+            };
         }
-        return response;
-    },
 
-    // Servicio para buscar colmenas
-    obtenerColmenas: async (usr) => {
-        const url = usr 
-            ? `${BASE_URL}/Colmena/list?usuarioAcronimo=${usr.acronimo}`
-            : `${BASE_URL}/Colmena/list`;
-
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Error al conectar con la base de datos de Beekeeper');
-        return await response.json();
-    },
-
-    // Servicio para desactivar una colmena
-    desactivarColmena: async (id) => {
-        const response = await fetch(`${BASE_URL}/Colmena/desactivate/${id}`, {
-            method: 'PUT' 
-        });
-
-        if (!response.ok) {
-            throw new Error('No se pudo desactivar la colmena.');
-        }
-        return response;
+    } catch (err) {
+        // Alineado con la estructura: status -1 = Error de red/conexión
+        console.error("Error de conexión en insertarColmena:", err.message);
+        return { 
+            status: -1, 
+            mensaje: "No se pudo conectar con el servidor de Beekeeper" 
+        };
     }
-};
+}
+
+export async function getListColmenasUsr(usuarioAcronimo) {
+    const urlConParams = `${url}getListColmenasUsr?usuarioAcronimo=${encodeURIComponent(usuarioAcronimo)}`;
+    try {
+        const response = await fetch(urlConParams, {
+            method: 'GET', // Coincide con [HttpGet] en el Back
+            headers: { 
+                'Content-Type': 'application/json' 
+            }
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // status 1 = Éxito (Igual que tu función base)
+            return { 
+                status: 1, 
+                mensaje: "Colmenas obtenidas con éxito", 
+                data: data 
+            };
+        } else {
+            // status 0 = Error controlado (BadRequest, NotFound, etc.)
+            return { 
+                status: 0, 
+                mensaje: data.mensaje || data || "Error al obtener el listado de colmenas" 
+            };
+        }
+
+    } catch (err) {
+        // status -1 = Error de red o servidor caído
+        console.error("Error de conexión en getListColmenasUsr:", err.message);
+        return { 
+            status: -1, 
+            mensaje: "No se pudo conectar con el servidor de Beekeeper" 
+        };
+    }
+}
+export async function getColmena_Id_IdAsig(acronimoUsuario) {
+        const urlConParams = `${url}Colmena_Id_IdAsig?usuarioAcronimo=${encodeURIComponent(acronimoUsuario)}`;
+
+    try {
+        // Al ser GET, el parámetro viaja en la URL
+        // Si acronimoUsuario es "JMLT", la URL queda: .../listarColmenas/JMLT
+        const response = await fetch(urlConParams, {
+            method: "GET", 
+            headers: { "Content-Type": "application/json" }
+            // No se incluye 'body' porque es una petición GET
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            // Retornamos status 1 y extraemos la lista de 'data.data' del controlador
+            return { 
+                status: 1, 
+                data: data 
+            }; 
+        } else {
+            // Manejo de errores devueltos por el backend (status 400, 404, 500)
+            return { 
+                status: 0, 
+                mensaje: data.mensaje || "Error al obtener el listado de colmenas" 
+            };
+        }
+    } catch (err) {
+        // Error de red (CORS, servidor apagado, sin internet)
+        console.error("Error de conexión:", err.message);
+        return { 
+            status: -1, 
+            mensaje: "No se pudo establecer conexión con el servidor" 
+        };
+    }
+}
+
+export async function actualizarColmena(colmena) {
+    try {
+        const response = await fetch(url + "actualizar", {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(colmena)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            return { status: 1, mensaje: "Colmena actualizada", data: data };
+        } else {
+            return { status: 0, mensaje: data.mensaje || "Error al actualizar" };
+        }
+    } catch (err) {
+        console.error("Error de conexión:", err.message);
+        return { status: -1, mensaje: "Error de conexión con el servidor" };
+    }
+}

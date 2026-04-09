@@ -9,15 +9,16 @@ export const useListarApiarios = (usr, setViewState) => {
     const obtenerApiarios = async () => {
         if (!usr) return;
         setLoading(true);
-        
+        console.log("paso por useListarApiarios con usr:", usr);
         try {
-            const res = await WSApiario.ListarApiarios(usr.acronimo);
+            const res = await WSApiario.ObtenerColmenas(usr.acronimo);
             
             if (res && res.status === 1) {
                 // Convertimos el string "lat, lng" de SQL a [lat, lng] para Leaflet.
                 // Si el valor es inválido, dejamos posicion como null para no romper el mapa.
-                const dataProcesada = res.apiarios.map(apiario => {
-                    const coordsString = apiario.coordenadas ? String(apiario.coordenadas).trim() : '';
+                const dataProcesada = res.apiarios.map(item => {
+                    const apiData = item.apiario;
+                    const coordsString = apiData?.coordenadas ? String(apiData.coordenadas).trim() : '';
                     const posicion = coordsString.includes(',')
                         ? coordsString.split(',').map(n => parseFloat(n.trim()))
                         : null;
@@ -28,7 +29,8 @@ export const useListarApiarios = (usr, setViewState) => {
                         && Number.isFinite(posicion[1]);
 
                     return {
-                        ...apiario,
+                        ...apiData,
+                        colmenas: item.listColmenas || [],
                         posicion: tienePosicionValida ? posicion : null
                     };
                 });

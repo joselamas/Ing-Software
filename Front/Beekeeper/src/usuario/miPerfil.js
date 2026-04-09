@@ -3,10 +3,10 @@ import { useMiPerfil } from './hooks/useMiPerfil.js';
 import './css/miPerfil.css';
 
 export default function MiPerfil({ usr, setViewState }) {
-    const { loading, kgAnual, activeApiariosCount, historicalApiariosCount, activeColmenasCount, historicalColmenasCount } = useMiPerfil(usr);
+    const { stats, loading, error } = useMiPerfil(usr);
 
     if (loading) return <div className="mensajePerfil">Cargando información de perfil...</div>;
-    //if (error) return <div className="errorPerfil">{error}</div>;
+    if (error) return <div className="errorPerfil">{error}</div>;
 
     return (
         <div className="perfil-page">
@@ -52,42 +52,42 @@ export default function MiPerfil({ usr, setViewState }) {
                     <div className="estadisticas-grid">
                         
                         <div className="estadistica-item">
-                            <span>Kg producidos 2024</span>
-                            <strong>{kgAnual[0]}</strong>
+                            <span>Kg producidos 2024</span> {/* Asumiendo que kgAnual[0] es para 2024 */}
+                            <strong>{stats.kgAnual[0]}</strong>
                         </div>
                         <div className="estadistica-item">
-                            <span>Kg producidos 2025</span>
-                            <strong>{kgAnual[1]}</strong>
+                            <span>Kg producidos 2025</span> {/* Asumiendo que kgAnual[1] es para 2025 */}
+                            <strong>{stats.kgAnual[1]}</strong>
                         </div>
                         <div className="estadistica-item">
-                            <span>Kg producidos 2026</span>
-                            <strong>{kgAnual[2]}</strong>
+                            <span>Kg producidos 2026</span> {/* Asumiendo que kgAnual[2] es para 2026 */}
+                            <strong>{stats.kgAnual[2]}</strong>
                         </div>
                         
                         <div className="estadistica-item">
                             <span>Costos 2024</span>
-                            <strong>{kgAnual[0]}</strong>
+                            <strong>{stats.kgAnual[0]}</strong> {/* Usando el mismo valor temporalmente */}
                         </div>
                         <div className="estadistica-item">
                             <span>Costos 2025</span>
-                            <strong>{kgAnual[1]}</strong>
+                            <strong>{stats.kgAnual[1]}</strong>
                         </div>
                         <div className="estadistica-item">
                             <span>Costos 2026</span>
-                            <strong>{kgAnual[2]}</strong>
+                            <strong>{stats.kgAnual[2]}</strong>
                           </div>
                         
                         <div className="estadistica-item">
                             <span>Rentabilidad 2024</span>
-                            <strong>{kgAnual[0]}</strong>
+                            <strong>{stats.kgAnual[0]}</strong>
                         </div>
                         <div className="estadistica-item">
                             <span>Rentabilidad 2025</span>
-                            <strong>{kgAnual[1]}</strong>
+                            <strong>{stats.kgAnual[1]}</strong>
                         </div>
                         <div className="estadistica-item">
                             <span>Rentabilidad 2026</span>
-                            <strong>{kgAnual[2]}</strong>
+                            <strong>{stats.kgAnual[2]}</strong>
                         </div>
                     </div>
                         
@@ -98,23 +98,23 @@ export default function MiPerfil({ usr, setViewState }) {
                 <div className="summary-card">
                     <h3>Apiarios</h3>
                     <div className="summary-block">
-                        <span>Activos</span>
-                        <strong>{activeApiariosCount}</strong>
+                        <span>Total</span>
+                        <strong>{stats.totalApiarios}</strong>
                     </div>
                     <div className="summary-block">
-                        <span>Históricos</span>
-                        <strong>{historicalApiariosCount}</strong>
+                        <span>Activos</span>
+                        <strong>{stats.totalApiarios}</strong> {/* Asumiendo que todos los listados son activos por ahora */}
                     </div>
                 </div>
                 <div className="summary-card">
                     <h3>Colmenas</h3>
                     <div className="summary-block">
                         <span>Activas</span>
-                        <strong>{activeColmenasCount}</strong>
+                        <strong>{stats.activas}</strong>
                     </div>
                     <div className="summary-block">
                         <span>Históricas</span>
-                        <strong>{historicalColmenasCount}</strong>
+                        <strong>{stats.historicas}</strong>
                     </div>
                 </div>
             </div>

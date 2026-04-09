@@ -2,11 +2,12 @@ import React from 'react';
 import { useRegistrarColmena } from './hooks/useRegistrarColmena';
 import './css/registrarColmena.css';
 import apitherapy from '../imagenes/apitherapy.png';
+import ModalMSN from '../componentes/modalMSN';
 // URL de imagen externa para evitar errores de carga local
 const imagenColmena = apitherapy;
 
 const RegistrarColmena = (props) => {
-    const { colmena, apiarios, manejarCambio, registrar, cargando, error } = useRegistrarColmena(props.usr);
+    const { colmena, apiarios, colmenasMadreDisponibles, searchTermMadre, manejarCambio, manejarCambioMadre, registrar, cargando, isModalOpen, setIsModalOpen, modalInfo } = useRegistrarColmena(props.usr);
 
     return (
         <div className="main-container">
@@ -29,6 +30,19 @@ const RegistrarColmena = (props) => {
 
                     <form onSubmit={registrar} className="login-form">
                         <div className="input-group">
+                            <label htmlFor="id_colmena_usuario">Identificador / Marca Propia</label>
+                            <input
+                                type="text"
+                                id="id_colmena_usuario"
+                                name="id_colmena_usuario"
+                                placeholder="Ej: COL-001-2024"
+                                value={colmena.id_colmena_usuario}
+                                onChange={manejarCambio}
+                                required
+                            />
+                        </div>
+
+                        <div className="input-group">
                             <label htmlFor="tipo_colmena">Tipo de Colmena</label>
                             <select
                                 id="tipo_colmena"
@@ -43,6 +57,24 @@ const RegistrarColmena = (props) => {
                                 <option value="Keniana">Keniana</option>
                                 <option value="Layens">Layens</option>
                                 <option value="Nucleo">Núcleo</option>
+                            </select>
+                        </div>
+
+                        <div className="input-group">
+                            <label htmlFor="estado">Estado Inicial</label>
+                            <select
+                                id="estado"
+                                name="estado"
+                                value={colmena.estado}
+                                onChange={manejarCambio}
+                                required
+                            >
+                                <option value="" disabled>Seleccione un estado</option>
+                                <option value="Nucleo">Núcleo</option>
+                                <option value="Crecimiento">Crecimiento</option>
+                                <option value="Mantenimiento">Mantenimiento</option>
+                                <option value="Produccion">Producción</option>
+                                <option value="Vencimiento">Vencimiento</option>
                             </select>
                         </div>
 
@@ -70,7 +102,7 @@ const RegistrarColmena = (props) => {
                                 <option value="" disabled>Seleccione un apiario</option>
                                 {apiarios.map((apiario) => (
                                     <option key={apiario.id} value={apiario.id}>
-                                        ID: {apiario.id} - {apiario.nombre_referencia} 
+                                       {apiario.nombre_referencia} 
                                     </option>
                                 ))}
                             </select>
@@ -90,19 +122,25 @@ const RegistrarColmena = (props) => {
 
                         {!colmena.es_enjambre && (
                             <div className="animate-fade-in" style={{ display: "flex", flexDirection: "column", gap: "25px" }}>
+                                <div className="input-group">
+                                    <label htmlFor="id_colmena_madre">Colmena Madre (Marca o Identificador)</label>
+                                    <input
+                                        type="text"
+                                        id="id_colmena_madre"
+                                        name="id_colmena_madre"
+                                        list="colmenas_madre_list"
+                                        placeholder="Escribe para buscar (ej: ME-22)..."
+                                        value={searchTermMadre}
+                                        onChange={manejarCambioMadre}
+                                        required
+                                    />
+                                    <datalist id="colmenas_madre_list">
+                                        {colmenasMadreDisponibles.map(col => (
+                                            <option key={col.id} value={col.id_colmena_usuario} />
+                                        ))}
+                                    </datalist>
+                                </div>
                                 <div style={{ display: "flex", gap: "10px" }}>
-                                    <div className="input-group" style={{ flex: 1 }}>
-                                        <label htmlFor="id_colmena_madre">ID Colmena Madre</label>
-                                        <input
-                                            type="number"
-                                            id="id_colmena_madre"
-                                            name="id_colmena_madre"
-                                            placeholder="Ej. 12"
-                                            value={colmena.id_colmena_madre}
-                                            onChange={manejarCambio}
-                                            required
-                                        />
-                                    </div>
                                     <div className="input-group" style={{ flex: 1 }}>
                                         <label htmlFor="fecha_inicio_reina">Inicio Reina</label>
                                         <input
@@ -118,8 +156,6 @@ const RegistrarColmena = (props) => {
                             </div>
                         )}
 
-                        {error && <p style={{ color: 'red', marginBottom: '10px', fontWeight: 'bold' }}>{error}</p>}
-
                         <div className="button-group">
                             <button type="button" className="secondary-btn" onClick={() => window.history.back()}>
                                 CANCELAR
@@ -131,6 +167,16 @@ const RegistrarColmena = (props) => {
                     </form>
                 </div>
             </div>
+
+            <ModalMSN 
+                isOpen={isModalOpen}
+                onClose={setIsModalOpen}
+                title={modalInfo.titulo}
+                message={modalInfo.mensaje}
+                type={modalInfo.tipo}
+                goView={props.setViewState}
+                view=""
+            />
         </div>
     );
 };
