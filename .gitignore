@@ -18,4 +18,5 @@ Back/Beekepeer/.vs/ProjectEvaluation/beekepeer.strings.v9.bin
 *.exe
 *.dll
 *.csproj
-Back/Beekepeer/Program.cs
+Back/Beekepeer/appsettings.json
+Back/Beekepeer/Beekepeer.csproj.user
