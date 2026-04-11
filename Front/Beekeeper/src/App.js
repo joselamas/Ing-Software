@@ -9,6 +9,7 @@ import MiPerfil from './usuario/miPerfil.js';
 
 import VerColmenas from './colmenas/VerColmenas.js';
 import RegistrarColmena from './colmenas/RegistrarColmena.js';
+import ModificarColmena from './colmenas/ModificarColmena.js';
 
 import CrearApiario from './apiarios/crearApiario.js';
 import ListarApiarios from './apiarios/listarApiarios.js';
@@ -22,6 +23,10 @@ function App() {
     const [viewState, setViewState] = useState("Login");
     const [usr, setUsr] = useState(null);
     const [selectedApiario, setSelectedApiario] = useState(null);
+    const [selectedApiarioID, setSelectedApiarioID] = useState(null);
+
+    const [selectedColmena, setSelectedColmena] = useState(null);
+
 
   return (
     <div className="App">
@@ -44,18 +49,36 @@ function App() {
         usr={usr}
         setUsr={setUsr}
      />}
+
+
+
      {viewState === 'VerMisColmenas' && (
         <VerColmenas 
           setViewState={setViewState} 
+          setSelectedColmena={setSelectedColmena}
           usr={usr} 
+          setSelectedApiarioID= {setSelectedApiarioID}
         />
       )}
+
       {viewState === 'CrearNuevaColmenas' && (
         <RegistrarColmena 
           setViewState={setViewState} 
           usr={usr} 
         />
       )}
+      {viewState === 'ModificarColmena' && usr && selectedColmena && (
+        <ModificarColmena 
+          colmena={selectedColmena} 
+          usr={usr}
+          setViewState={setViewState} 
+          selectedColmena={selectedColmena}
+          setSelectedApiarioID={setSelectedApiarioID}
+          selectedApiarioID={selectedApiarioID} 
+        />
+      )}
+
+
        {viewState === 'VerMisApiarios' && (
         <ListarApiarios 
           setViewState={setViewState}
@@ -73,6 +96,7 @@ function App() {
         <ModificarApiario
           apiario={selectedApiario}
           setViewState={setViewState}
+          usr ={usr}
         />
       )}
       {viewState === 'CrearApiaro' && (

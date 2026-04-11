@@ -3,10 +3,12 @@ import { useModificarApiario } from './hooks/useModificarApiario';
 import '../usuario/css/modificarUsuario.css'; // Estilos comunes
 import './css/modificarApiario.css'; // Estilos específicos
 import apitherapy from '../imagenes/apitherapy.png';
+import ModalMSN from '../componentes/modalMSN';
 
-const ModificarApiario = ({ apiario, setViewState }) => {
-    const { formData, handleChange, manejarEdicion, loading, error } = useModificarApiario(apiario, setViewState);
+const ModificarApiario = ({ apiario, setViewState, usr }) => {
+    const { formData, handleChange, manejarEdicion, loading, error, isModalOpen, setIsModalOpen, modalInfo } = useModificarApiario(apiario, setViewState, usr);
 
+    console.log("APIARIO INICIAL:", apiario);
     return (
         <div className="login-container edit-apiario-layout">
             <div className="left-panel">
@@ -49,14 +51,15 @@ const ModificarApiario = ({ apiario, setViewState }) => {
 
                     {/* Campos Editables (Gestión Operativa) */}
                     <div className="input-group">
-                        <label htmlFor="tipo_flor">Tipo de Floración Predominante</label>
+                        <label htmlFor="tipo_flora">Tipo de Floración Predominante</label>
                         <input 
                             type="text" 
-                            id="tipo_flor" 
-                            name="tipo_flor" 
-                            value={formData.tipo_flor} 
+                            id="tipo_flora" 
+                            name="tipo_flora" 
+                            value={formData.tipo_flora} 
                             onChange={handleChange} 
-                            placeholder="Ej. Eucalipto, Romero, Multifloral"
+                            placeholder={apiario.tipo_flora || 'Ej: Eucalipto, Trigo, etc.'}
+                            required
                         />
                     </div>
 
@@ -68,7 +71,7 @@ const ModificarApiario = ({ apiario, setViewState }) => {
                             name="capacidad_maxima" 
                             value={formData.capacidad_maxima} 
                             onChange={handleChange} 
-                            required
+                            min={0}
                         />
                     </div>
 
@@ -78,7 +81,7 @@ const ModificarApiario = ({ apiario, setViewState }) => {
                             id="estado" 
                             name="estado" 
                             value={formData.estado} 
-                            onChange={handleChange} 
+                            onChange={handleChange}
                             required
                         >
                             <option value="Activo">Activo</option>
@@ -88,14 +91,14 @@ const ModificarApiario = ({ apiario, setViewState }) => {
                     </div>
 
                     <div className="input-group">
-                        <label htmlFor="descripcion_vialidad">Descripción de Vialidad / Acceso</label>
+                        <label htmlFor="descripcion_acceso">Descripción de Vialidad / Acceso</label>
                         <textarea 
-                            id="descripcion_vialidad" 
-                            name="descripcion_vialidad" 
-                            value={formData.descripcion_vialidad} 
+                            id="descripcion_acceso" 
+                            name="descripcion_acceso" 
+                            value={formData.descripcion_acceso} 
                             onChange={handleChange} 
                             rows="3"
-                            placeholder="Describa el estado del camino y acceso al apiario..."
+                            required
                         />
                     </div>
 
@@ -112,6 +115,17 @@ const ModificarApiario = ({ apiario, setViewState }) => {
                 </form>
                 </div>
             </div>
+
+            {/* Modal de Feedback para el usuario */}
+            <ModalMSN 
+                isOpen={isModalOpen}
+                onClose={setIsModalOpen}
+                title={modalInfo.titulo}
+                message={modalInfo.mensaje}
+                type={modalInfo.tipo}
+                goView={setViewState}
+                view={""}
+            />
         </div>
     );
 };

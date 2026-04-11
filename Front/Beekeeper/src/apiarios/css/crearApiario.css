@@ -36,11 +36,8 @@
     resize: vertical;
 }
 
-.flora-group textarea {
-    min-height: 160px;
-}
 
-.wide-textarea textarea {
+.wide-textarea textarea, .flora-group textarea  {
     min-height: 100px;
 }
 

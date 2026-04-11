@@ -17,15 +17,7 @@ export default function DetalleApiario({ apiario, setViewState }) {
         return () => window.removeEventListener('resize', measure);
     }, [apiario]);
 
-    const placeholderColmenas = Array.from({ length: 40 }, (_, index) => ({
-        id: index + 1,
-        nombre: `Colmena ${index + 1}`,
-        tipo: ['Langstroth', 'Dadant', 'Núcleo'][index % 3],
-        produccion_kg: [24, 18, 0, 12, 15][index % 5],
-        estado: index % 5 === 2 ? 'En mantenimiento' : 'Activa',
-    }));
-
-    const totalColmenas = placeholderColmenas.length;
+    const totalColmenas = apiario?.colmenas?.length || 0;
 
     if (!apiario) {
         return (
@@ -80,7 +72,7 @@ export default function DetalleApiario({ apiario, setViewState }) {
                         </div>
                         <div className="info-row">
                             <span>Fecha de Creación</span>
-                            <strong>{apiario.fecha_creacion ? new Date(apiario.fecha_creacion).toLocaleDateString() : 'Sin datos'}</strong>
+                            <strong>{apiario.fecha_creacion ? apiario.fecha_creacion.split('T')[0] : 'Sin datos'}</strong>
                         </div>
                         <div className="info-row">
                             <span>Capacidad Máxima</span>
@@ -113,18 +105,17 @@ export default function DetalleApiario({ apiario, setViewState }) {
                     >
                         <div className="section-title">
                             <h2>Colmenas</h2>
-                            <span>{totalColmenas} registros temporales</span>
+                            <span>{totalColmenas} colmenas registradas</span>
                         </div>
                         <div className="colmenas-list">
-                            {placeholderColmenas.map(colmena => (
+                            {apiario.colmenas?.map(colmena => (
                                 <article key={colmena.id} className="colmena-card">
                                     <div>
-                                        <h3>{colmena.nombre}</h3>
-                                        <p>{colmena.tipo}</p>
+                                        <h3>{colmena.id_colmena_usuario || colmena.idColmenaUsuario}</h3>
+                                        <p>{colmena.tipo_colmena || colmena.tipoColmena}</p>
                                     </div>
                                     <div className="colmena-meta">
                                         <span>{colmena.estado}</span>
-                                        <strong>{colmena.produccion_kg} kg</strong>
                                     </div>
                                 </article>
                             ))}

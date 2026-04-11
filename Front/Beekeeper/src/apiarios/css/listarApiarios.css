@@ -50,10 +50,56 @@ padding: 30px;
 
 .map-side-panel {
     flex: 2;
+    position: relative;
     border-radius: 12px;
     overflow: hidden;
     border: 3px solid var(--primary-yellow);
     margin-top: 30px;
+    box-shadow: 8px 8px 0px var(--dark-brown);
+}
+
+.map-legend {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: white;
+    padding: 12px;
+    border: 2px solid var(--dark-brown);
+    border-radius: 8px;
+    box-shadow: 4px 4px 0px var(--dark-brown);
+    font-family: inherit;
+}
+
+.map-legend h4 {
+    margin: 0 0 8px 0;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: 900;
+    border-bottom: 1px solid var(--soft-border);
+    padding-bottom: 4px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--dark-brown);
+}
+
+.legend-item:last-child {
+    margin-bottom: 0;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.2);
+    display: inline-block;
 }
 
 .search-bar {

@@ -13,7 +13,7 @@ export async function CrearUsuario(usr) {
             },
             body: _body 
         });
-            debugger;
+            
 
         console.log(response)
         if (response.ok) {

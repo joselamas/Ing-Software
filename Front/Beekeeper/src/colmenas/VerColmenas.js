@@ -26,7 +26,7 @@ const VerColmenas = (props) => {
                     <table className="neobrutalist-table">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>MARCA</th>
                                 <th>APIARIO</th>
                                 <th>TIPO</th>
                                 <th>ORIGEN</th>
@@ -39,24 +39,28 @@ const VerColmenas = (props) => {
                         <tbody>
                             {colmenas.map((c) => (
                                 <tr key={c.id}>
-                                    <td><strong>#{c.id}</strong></td>
-                                    <td>{c.apiario}</td>
-                                    <td>{c.tipo_colmena}</td>
+                                    <td><strong>{c.colmena.id_colmena_usuario }</strong></td>
+                                    <td>{c.nombre_apiario ||  "Sin Apiario"}</td>
+                                    <td>{c.colmena.tipo_colmena}</td>
                                     <td>
-                                        {c.es_enjambre ? 
+                                        {(c.colmena.es_enjambre ) ? 
                                             <span className="badge swarm">Enjambre</span> : 
-                                            <span className="badge division">División (Madre: {c.id_colmena_madre})</span>
+                                            <span className="badge division">División (Madre: {c.colmena.id_colmena_madre})</span>
                                         }
                                     </td>
-                                    <td>{c.fecha_inicio}</td>
-                                    <td>{c.fecha_inicio_reina || "N/A"}</td>
+                                    <td>{c.colmena.fecha_inicio?.split('T')[0]}</td>
+                                    <td>{c.colmena.fecha_inicio_reina?.split('T')[0] || "N/A"}</td>
                                     <td>
-                                        <span className={`status-pill ${c.estado.toLowerCase().replace(" ", "-")}`}>
-                                            {c.estado}
+                                        <span className={`status-pill ${c.estado ? c.estado.toLowerCase().replace(/\s+/g, "-") : 'desconocido'}`}>
+                                            {c.colmena.estado || 'N/A'}
                                         </span>
                                     </td>
                                     <td>
-                                        <button className="icon-btn edit">✎</button>
+                                        <button className="icon-btn edit" onClick={() => {
+                                            props.setSelectedColmena(c);
+                                            props.setSelectedApiarioID(c.apiario_id);
+                                            props.setViewState("ModificarColmena");
+                                        }}>✎</button>
                                         <button className="icon-btn delete">✖</button>
                                     </td>
                                 </tr>

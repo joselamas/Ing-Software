@@ -49,6 +49,8 @@ namespace Beekepeer.DDBB
             return lista;
         }
 
+
+
         // 2. BUSCAR POR ID
         public Apiario? GetApiarioPorId(int id)
         {
@@ -102,7 +104,7 @@ namespace Beekepeer.DDBB
         }
 
         // 4. ACTUALIZACIÓN DINÁMICA
-        public bool ActualizarApiario(int id, string? acronimoUsuario, string? nombreReferencia, string? coordenadas, int? msnm, bool? activo)
+        public bool ActualizarApiario(int id, string? acronimoUsuario, string? nombreReferencia, string? coordenadas, int? msnm, bool? activo, string? tipo_flora, string? descripcion_acceso, int? capacidad_maxima)
         {
             using (SqlConnection connection = new SqlConnection(_sqlurl))
             {
@@ -113,6 +115,9 @@ namespace Beekepeer.DDBB
                 cmd.Parameters.AddWithValue("@Coordenadas", (object)coordenadas ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@Msnm", (object)msnm ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@Activo", (object)activo ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Tipo_flora", (object)tipo_flora ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Descripcion_acceso", (object)descripcion_acceso ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Capacidad_maxima", (object)capacidad_maxima ?? DBNull.Value);
 
                 connection.Open();
                 return cmd.ExecuteNonQuery() > 0;
