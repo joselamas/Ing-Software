@@ -105,6 +105,14 @@ namespace Beekepeer.DDBB
                                                  : (DateTime?)null)
                         };
                     }
+                    if (Api.id != 0) 
+                    {
+                        lista.Add(new ColmenaApiarioWS 
+                        {
+                            listColmenas = listaEnapiarios,
+                            apiario = Api
+                        });
+                    }
                 }
             }
             return lista;
