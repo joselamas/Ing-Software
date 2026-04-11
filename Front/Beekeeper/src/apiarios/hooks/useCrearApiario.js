@@ -23,28 +23,69 @@ export const useCrearApiario = (usr, setViewState) => {
         }));
     };
 
-    const handleLeafletClick = (lat, lng) => {
+    // Función para manejar el clic en el mapa de Leaflet
+    const handleLeafletClick = async (lat, lng) => {
+        const coordsString = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+        
         setFormData(prev => ({
             ...prev,
-            coordenadas: `${lat.toFixed(6)}, ${lng.toFixed(6)}`
+            coordenadas: coordsString
         }));
+
+        // Intento de obtener altitud gratuita vía Open-Elevation
+        try {
+            const response = await fetch(`https://api.open-elevation.com/api/v1/lookup?locations=${lat},${lng}`);
+            const data = await response.json();
+            if (data.results && data.results[0]) {
+                setFormData(prev => ({
+                    ...prev,
+                    msnm: Math.round(data.results[0].elevation)
+                }));
+            }
+        } catch (error) {
+            console.error("No se pudo obtener la altitud automáticamente:", error);
+        }
     };
 
     const handleSubmit = async (e) => {
         if (e) e.preventDefault();
         setLoading(true);
+
+        const payload = {
+            acronimo_usuario: usr.acronimo,
+            nombre_referencia: formData.nombre_referencia,
+            coordenadas: formData.coordenadas,
+            msnm: parseInt(formData.msnm) || 0,
+            tipo_flora: formData.tipo_flora,
+            capacidad_maxima: parseInt(formData.capacidad_maxima) || 0,
+            descripcion_acceso: formData.descripcion_acceso,
+            activo: true
+        };
+
         try {
-            const res = await WSApiario.CrearApiario({ ...formData, acronimo_usuario: usr.acronimo });
+            const res = await WSApiario.CrearApiario(payload);
             if (res && res.status === 1) {
                 setModalInfo({ titulo: 'Éxito', mensaje: 'Apiario creado correctamente', tipo: 'success' });
+            } else {
+                setModalInfo({ titulo: 'Error', mensaje: res.mensaje || 'Error al guardar', tipo: 'error' });
             }
         } catch (error) {
-            setModalInfo({ titulo: 'Error', mensaje: 'Fallo de conexión', tipo: 'error' });
+            setModalInfo({ titulo: 'Error', mensaje: 'Error de conexión con el servidor', tipo: 'error' });
         } finally {
             setLoading(false);
             setIsModalOpen(true);
         }
     };
 
-    return { formData, handleChange, handleSubmit, handleLeafletClick, loading, isModalOpen, setIsModalOpen, modalInfo };
+    // AQUÍ ESTÁ EL RETURN CORREGIDO (Sin los puntos suspensivos)
+    return { 
+        formData, 
+        handleChange, 
+        handleSubmit, 
+        handleLeafletClick, 
+        loading, 
+        isModalOpen, 
+        setIsModalOpen, 
+        modalInfo 
+    };
 };
