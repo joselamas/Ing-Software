@@ -133,3 +133,40 @@ export async function actualizarColmena(colmena) {
         return { status: -1, mensaje: "Error de conexión con el servidor" };
     }
 }
+
+export async function desactivarColmena(colmenaId) {
+    const urlConParams = `${url}desactivate/${colmenaId}`;
+    try {
+        const response = await fetch(urlConParams, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        // Como el C# devuelve Ok("string") y no un JSON, usamos .text()
+        const dataText = await response.text(); 
+
+        if (response.ok) {
+            // Alineado con la estructura: status 1 = Éxito
+            return { 
+                status: 1, 
+                mensaje: dataText || "Colmena desactivada exitosamente", 
+                data: null 
+            };
+        } else {
+            // Alineado con la estructura: status 0 = Error controlado por el Back
+            // Si devuelve NotFound("La colmena no existe."), caerá aquí
+            return { 
+                status: 0, 
+                mensaje: dataText || "Error al desactivar la colmena" 
+            };
+        }
+
+    } catch (err) {
+        // Alineado con la estructura: status -1 = Error de red/conexión
+        console.error("Error de conexión en desactivarColmena:", err.message);
+        return { 
+            status: -1, 
+            mensaje: "No se pudo conectar con el servidor de Beekeeper" 
+        };
+    }
+}

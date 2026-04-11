@@ -116,8 +116,13 @@
                                                     END";
 
             // Borrado lógico (recomendado en lugar de DELETE físico)
+            // Al desactivar una colmena también cerramos su registro activo en registro_colmena_apiario
             public const string DesactivarColmena = @"
-        UPDATE colmena SET activo = 0 WHERE id = @Id";
+        UPDATE colmena SET activo = 0 WHERE id = @Id;
+
+        UPDATE registro_colmena_apiario
+        SET activo = 0
+        WHERE colmena_id = @Id;";
 
             // Borrado  DELETE físico Colmena
             public const string BorrarColmena = @"
