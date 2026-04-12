@@ -5,8 +5,7 @@ export const useVerColmenas = (usr) => {
     const [colmenas, setColmenas] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalInfo, setModalInfo] = useState({ titulo: '', mensaje: '' });
+
     useEffect(() => {
         const fetchColmenas = async () => {
             if (!usr) return;
@@ -27,33 +26,24 @@ export const useVerColmenas = (usr) => {
         fetchColmenas();
     }, [usr]);
 
+    // CAMBIO: La función ahora retorna el resultado en lugar de abrir el modal aquí mismo.
+    // Esto permite que la VISTA decida qué mensaje mostrar.
+    
     const desactivarColmena = async (idColmena) => {
-        // Confirmación nativa para evitar clics accidentales
-        const confirmar = window.confirm("¿Estás seguro de que deseas desactivar esta colmena?");
-        if (!confirmar) return;
-
-        // Llamamos al servicio web que acabamos de crear
-        const res = await WSColmena.desactivarColmena(idColmena);
-
-        if (res && res.status === 1) {
-            // Eliminamos la tarjeta de la memoria de React 
-            // en lugar de volver a cargar toda la página
-            setColmenas(colmenasActuales => 
-                colmenasActuales.filter(c => c.colmena.id !== idColmena)
-            );
-            setModalInfo({
-                    titulo: "Confirmarción",
-                    mensaje: res.mensaje || "Realmente desea eliminar esta colmena?."
-                });
-                setIsModalOpen(true);
-        } else {
-            setModalInfo({
-                    titulo: "Error",
-                    mensaje: res.mensaje || "Hubo un error al intentar desactivar la colmena."
-                });
-            setIsModalOpen(true);
+        try {
+            // Se eliminó el window.confirm que causaba la ventana gris
+            const res = await WSColmena.desactivarColmena(idColmena);
+            if (res && res.status === 1) {
+                setColmenas(colmenasActuales => 
+                    colmenasActuales.filter(c => c.colmena.id !== idColmena)
+                );
+                return { success: true, mensaje: res.mensaje };
+            }
+            return { success: false, mensaje: res.mensaje || "No se pudo desactivar." };
+        } catch (err) {
+            return { success: false, mensaje: "Error de conexión con el servidor." };
         }
     };
 
-    return { colmenas, cargando, error, isModalOpen, setIsModalOpen, modalInfo, desactivarColmena };
+    return { colmenas, cargando, error, desactivarColmena };
 };

@@ -1,9 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useVerColmenas } from './hooks/useVerColmenas';
+import ModalMSN from '../componentes/modalMSN';
 import './css/verColmenas.css';
 
 const VerColmenas = (props) => {
     const { colmenas, cargando, error, desactivarColmena } = useVerColmenas(props.usr);
+
+    // Estados para el manejo del modal de confirmación
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [idSeleccionado, setIdSeleccionado] = useState(null);
+
+    const abrirConfirmacion = (id) => {
+        setIdSeleccionado(id);
+        setIsModalOpen(true);
+    };
+
+    const ejecutarDesactivacion = () => {
+        desactivarColmena(idSeleccionado);
+        setIsModalOpen(false);
+    };
 
     return (
         <div className="gestion-container">
@@ -51,7 +66,7 @@ const VerColmenas = (props) => {
                                     <td>{c.colmena.fecha_inicio?.split('T')[0]}</td>
                                     <td>{c.colmena.fecha_inicio_reina?.split('T')[0] || "N/A"}</td>
                                     <td>
-                                        <span className={`status-pill ${c.estado ? c.estado.toLowerCase().replace(/\s+/g, "-") : 'desconocido'}`}>
+                                        <span className={`status-pill ${c.colmena.estado ? c.colmena.estado.toLowerCase().replace(/\s+/g, "-") : 'desconocido'}`}>
                                             {c.colmena.estado || 'N/A'}
                                         </span>
                                     </td>
@@ -61,7 +76,8 @@ const VerColmenas = (props) => {
                                             props.setSelectedApiarioID(c.apiario_id);
                                             props.setViewState("ModificarColmena");
                                         }}>✎</button>
-                                        <button className="icon-btn delete" onClick={() => desactivarColmena(c.colmena.id)}>
+                                        
+                                        <button className="icon-btn delete" onClick={() => abrirConfirmacion(c.colmena.id)}>
                                             ✖
                                         </button>
                                     </td>
@@ -71,8 +87,18 @@ const VerColmenas = (props) => {
                     </table>
                 )}
             </div>
+
+            {/* Modal de confirmación que sustituye al confirm() del navegador */}
+            <ModalMSN 
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                title="¿DESACTIVAR ESTA COLMENA?"
+                message="La colmena dejará de aparecer en tus registros activos. ¿Estás seguro de continuar?"
+                type="confirmar"
+                onConfirm={ejecutarDesactivacion}
+            />
         </div>
     );
 };
 
-export default VerColmenas;
+export default VerColmenas
