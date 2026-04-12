@@ -3,7 +3,7 @@ import { useVerColmenas } from './hooks/useVerColmenas';
 import './css/verColmenas.css';
 
 const VerColmenas = (props) => {
-    const { colmenas, cargando, error } = useVerColmenas(props.usr);
+    const { colmenas, cargando, error, desactivarColmena } = useVerColmenas(props.usr);
 
     return (
         <div className="gestion-container">
@@ -61,7 +61,9 @@ const VerColmenas = (props) => {
                                             props.setSelectedApiarioID(c.apiario_id);
                                             props.setViewState("ModificarColmena");
                                         }}>✎</button>
-                                        <button className="icon-btn delete">✖</button>
+                                        <button className="icon-btn delete" onClick={() => desactivarColmena(c.colmena.id)}>
+                                            ✖
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
