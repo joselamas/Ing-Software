@@ -1,0 +1,182 @@
+.tabs-container {
+    display: flex;
+    border-bottom: 2px solid var(--dark-brown);
+    margin-bottom: 15px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px;
+    background: none;
+    border: none;
+    font-weight: 800;
+    text-transform: uppercase;
+    cursor: pointer;
+    color: var(--muted-brown);
+    transition: all 0.2s;
+}
+
+.tab-btn.active {
+    background-color: var(--primary-yellow);
+    color: var(--dark-brown);
+}
+
+.helper-text {
+    font-size: 0.8rem;
+    color: var(--muted-brown);
+    font-style: italic;
+    margin-top: 10px;
+}
+
+.feeding-selector-card {
+    padding: 20px !important;
+}
+
+.tabs-container {
+    display: flex;
+    border-bottom: 2px solid var(--dark-brown);
+    margin-bottom: 15px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px;
+    background: none;
+    border: none;
+    font-weight: 800;
+    text-transform: uppercase;
+    cursor: pointer;
+    color: var(--muted-brown);
+    transition: all 0.2s;
+}
+
+.tab-btn.active {
+    background-color: var(--primary-yellow);
+    color: var(--dark-brown);
+    border-bottom: 2px solid var(--dark-brown);
+}
+
+.feeding-selector-card {
+    padding: 20px !important;
+    background-color: var(--white);
+}
+
+.tabs-container {
+    display: flex;
+    border: 2px solid var(--dark-brown);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px;
+    background: white;
+    border: none;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tab-btn.active {
+    background-color: var(--primary-yellow);
+    color: var(--dark-brown);
+}
+
+.tab-btn:not(.active):hover {
+    background-color: var(--bg-cream);
+}
+
+.matched-hives-preview {
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 2px dashed var(--muted-brown);
+}
+
+.hives-tag-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+    max-height: 180px;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+.hive-tag {
+    background: var(--primary-yellow);
+    border: 1.5px solid var(--dark-brown);
+    padding: 4px 10px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    border-radius: 4px;
+    box-shadow: 2px 2px 0px var(--dark-brown);
+}
+
+.no-hives-found {
+    font-size: 0.85rem;
+    color: var(--danger-dark);
+    font-weight: 700;
+}
+
+.feeding-section {
+    background: white;
+    border: var(--border-width) solid var(--dark-brown);
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.row-align {
+    margin-bottom: 0 !important;
+}
+
+.row-inputs {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+/* Bloque de precios/costos unitarios */
+.costs-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 35px; /* Mayor separación de las pestañas */
+    background-color: var(--yellow-soft); /* Fondo que resalte */
+    padding: 15px;
+    border: var(--border-width) solid var(--dark-brown);
+    border-radius: 8px;
+    box-shadow: 4px 4px 0px var(--dark-brown);
+}
+
+.costs-container .input-group {
+    margin-bottom: 0;
+}
+
+.costs-container label {
+    font-size: 0.65rem !important;
+}
+
+.costs-container input {
+    padding: 8px !important;
+}
+
+.detalle-left-panel .overlay-content p {
+    white-space: nowrap; /* Texto en una sola línea */
+    max-width: none;
+}
+
+/* Estado de espera de selección para el botón principal */
+.btn-waiting {
+    background-color: var(--muted-gray) !important;
+    box-shadow: 4px 4px 0px var(--dark-brown) !important;
+    cursor: not-allowed;
+    color: var(--white) !important;
+}

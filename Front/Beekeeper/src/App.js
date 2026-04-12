@@ -10,6 +10,7 @@ import MiPerfil from './usuario/miPerfil.js';
 import VerColmenas from './colmenas/VerColmenas.js';
 import RegistrarColmena from './colmenas/RegistrarColmena.js';
 import ModificarColmena from './colmenas/ModificarColmena.js';
+import AlimentarColmena from './colmenas/AlimentarColmena.js';
 
 import CrearApiario from './apiarios/crearApiario.js';
 import ListarApiarios from './apiarios/listarApiarios.js';
@@ -75,6 +76,13 @@ function App() {
           selectedColmena={selectedColmena}
           setSelectedApiarioID={setSelectedApiarioID}
           selectedApiarioID={selectedApiarioID} 
+        />
+      )}
+      {viewState === 'AlimentarColmena' &&  (
+        <AlimentarColmena 
+          colmena={selectedColmena} 
+          setViewState={setViewState} 
+          usr={usr}
         />
       )}
 

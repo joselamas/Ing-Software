@@ -49,6 +49,8 @@ export default function BarraNavegacion(props){
                             <div className={`dropdown-content active ${openDropdown === "colmenas" ? "show" : ""}`}>
                                 <div onClick={() => handleNavigation("VerMisColmenas")}>Ver mis Colmenas</div>
                                 <div onClick={() => handleNavigation("CrearNuevaColmenas")}>Crear Nueva Colmena</div>
+                                <div onClick={() => handleNavigation("AlimentarColmena")}>AlimentarColmena</div>
+
                             </div>
                         </li>
 
