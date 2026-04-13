@@ -50,6 +50,7 @@ export default function ListarApiarios({ usr, setViewState, setSelectedApiario }
     const [searchTerm, setSearchTerm] = useState('');
     const centroDefecto = [8.5891, -71.1450]; // Mérida
 
+    console.log(apiarios)
     const apiariosFiltrados = useMemo(() => {
         const filter = searchTerm.trim().toLowerCase();
         return filter.length === 0

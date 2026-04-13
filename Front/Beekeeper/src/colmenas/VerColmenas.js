@@ -1,9 +1,10 @@
 import React from 'react';
 import { useVerColmenas } from './hooks/useVerColmenas';
 import './css/verColmenas.css';
+import ModalMSN from '../componentes/modalMSN';
 
 const VerColmenas = (props) => {
-    const { colmenas, cargando, error, desactivarColmena } = useVerColmenas(props.usr);
+    const { colmenas, cargando, error, isModalOpen, setIsModalOpen, modalInfo, desactivarColmena } = useVerColmenas(props.usr);
 
     return (
         <div className="gestion-container">
@@ -71,6 +72,14 @@ const VerColmenas = (props) => {
                     </table>
                 )}
             </div>
+
+            <ModalMSN 
+                isOpen={isModalOpen}
+                onClose={setIsModalOpen}
+                title={modalInfo.titulo}
+                message={modalInfo.mensaje}
+                type={modalInfo.tipo}
+            />
         </div>
     );
 };
