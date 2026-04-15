@@ -11,6 +11,7 @@ import VerColmenas from './colmenas/VerColmenas.js';
 import RegistrarColmena from './colmenas/RegistrarColmena.js';
 import ModificarColmena from './colmenas/ModificarColmena.js';
 import AlimentarColmena from './colmenas/AlimentarColmena.js';
+import RegistrarProduccion from './produccion_mantenimiento/RegistrarProduccion.js';
 
 import CrearApiario from './apiarios/crearApiario.js';
 import ListarApiarios from './apiarios/listarApiarios.js';
@@ -51,6 +52,12 @@ function App() {
         setUsr={setUsr}
      />}
 
+      {viewState === 'MiPerfil' && (
+        <MiPerfil 
+          setViewState={setViewState}
+          usr={usr}
+        />
+      )}
 
 
      {viewState === 'VerMisColmenas' && (
@@ -107,14 +114,16 @@ function App() {
           usr ={usr}
         />
       )}
+     
       {viewState === 'CrearApiaro' && (
         <CrearApiario 
           setViewState={setViewState}
           usr={usr}/>
           )}
-      {viewState === 'MiPerfil' && (
-        <MiPerfil 
-          setViewState={setViewState}
+
+           {viewState === 'RegistrarProduccion' && (
+        <RegistrarProduccion 
+          setViewState={setViewState} 
           usr={usr}
         />
       )}

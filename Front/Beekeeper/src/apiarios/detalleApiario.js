@@ -17,6 +17,15 @@ export default function DetalleApiario({ apiario, setViewState }) {
         return () => window.removeEventListener('resize', measure);
     }, [apiario]);
 
+    const esReinaVencida = (col) => {
+        const fechaRef = col.fecha_inicio_reina || col.fecha_inicio;
+        if (!fechaRef || fechaRef === "N/A") return false;
+        const fechaDate = new Date(fechaRef);
+        const limite = new Date();
+        limite.setFullYear(limite.getFullYear() - 2);
+        return fechaDate < limite;
+    };
+
     const totalColmenas = apiario?.colmenas?.length || 0;
 
     if (!apiario) {
@@ -109,13 +118,18 @@ export default function DetalleApiario({ apiario, setViewState }) {
                         </div>
                         <div className="colmenas-list">
                             {apiario.colmenas?.map(colmena => (
-                                <article key={colmena.id} className="colmena-card">
+                                <article key={colmena.id} className={`colmena-card ${esReinaVencida(colmena) ? 'vencida-border' : ''}`}>
                                     <div>
-                                        <h3>{colmena.id_colmena_usuario || colmena.idColmenaUsuario}</h3>
-                                        <p>{colmena.tipo_colmena || colmena.tipoColmena}</p>
+                                        <h3>{colmena.id_colmena_usuario}</h3>
+                                        <p>Tipo: {colmena.tipo_colmena}</p>
                                     </div>
                                     <div className="colmena-meta">
-                                        <span>{colmena.estado}</span>
+                                        <span>Estado: {colmena.estado}</span>
+                                        <span className={esReinaVencida(colmena) ? 'text-vencida' : ''}>
+                                            {esReinaVencida(colmena) ? '⚠️ REEMPLAZO REINA' : colmena.estado}
+                                        </span>
+                                        <span>Inicio: {colmena.fecha_inicio?.split('T')[0]}</span>
+                                        <span>Reina: {colmena.fecha_inicio_reina?.split('T')[0] || 'N/A'}</span>
                                     </div>
                                 </article>
                             ))}

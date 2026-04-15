@@ -89,7 +89,7 @@ export default function CrearApiario({ usr, setViewState }) {
                             </div>
                             <div className="input-group">
                                 <label>MSNM</label>
-                                <input type="number" name="msnm" value={formData.msnm} onChange={handleChange} required enabled />
+                                <input type="number" name="msnm" value={formData.msnm}  required enabled />
                             </div>
                         </div>
                         <div className="input-group flora-group">

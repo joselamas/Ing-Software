@@ -1,10 +1,86 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { useVerColmenas } from './hooks/useVerColmenas';
 import './css/verColmenas.css';
 import ModalMSN from '../componentes/modalMSN';
 
 const VerColmenas = (props) => {
     const { colmenas, cargando, error, isModalOpen, setIsModalOpen, modalInfo, desactivarColmena } = useVerColmenas(props.usr);
+
+    const [hiveToDeactivate, setHiveToDeactivate] = useState(null);
+    const [showFilters, setShowFilters] = useState(false);
+    const [filters, setFilters] = useState({
+        marca: '',
+        apiario: '',
+        estado: '',
+        tipo: '',
+        origen: '',
+        fechaDesde: '',
+        fechaHasta: '',
+        soloVencidas: false
+    });
+
+    const handleOpenConfirm = (colmena) => {
+        setHiveToDeactivate(colmena);
+        setIsModalOpen(true);
+        // Configuramos el modal en modo confirmación
+        modalInfo.titulo = "¿Confirmar Baja?";
+        modalInfo.mensaje = `¿Estás seguro de que deseas dar de baja la colmena ${colmena.colmena.id_colmena_usuario}?`;
+        modalInfo.tipo = "confirm";
+    };
+
+    const handleActionConfirm = () => {
+        if (hiveToDeactivate) {
+            desactivarColmena(hiveToDeactivate.colmena.id);
+            // El hook desactivarColmena se encargará de cambiar el modal a éxito/error
+        }
+    };
+
+    // Función para determinar si la reina tiene más de 2 años (vencida)
+    const esReinaVencida = (col) => {
+        const fechaRef = col.fecha_inicio_reina || col.fecha_inicio;
+        if (!fechaRef || fechaRef === "N/A") return false;
+        const fechaDate = new Date(fechaRef);
+        const limite = new Date();
+        limite.setFullYear(limite.getFullYear() - 2);
+        return fechaDate < limite;
+    };
+
+    const handleFilterChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setFilters(prev => ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value
+        }));
+    };
+
+    const colmenasFiltradas = useMemo(() => {
+        return colmenas.filter(item => {
+            const col = item.colmena;
+            const matchMarca = col.id_colmena_usuario.toLowerCase().includes(filters.marca.toLowerCase());
+            const matchApiario = (item.nombre_apiario || "").toLowerCase().includes(filters.apiario.toLowerCase());
+            const matchEstado = filters.estado === '' || col.estado === filters.estado;
+            const matchTipo = filters.tipo === '' || col.tipo_colmena === filters.tipo;
+            const matchOrigen = filters.origen === '' || 
+                (filters.origen === 'Enjambre' && col.es_enjambre) || 
+                (filters.origen === 'División' && !col.es_enjambre);
+            
+            const fechaCol = col.fecha_inicio ? col.fecha_inicio.split('T')[0] : '';
+            const matchFechaDesde = !filters.fechaDesde || fechaCol >= filters.fechaDesde;
+            const matchFechaHasta = !filters.fechaHasta || fechaCol <= filters.fechaHasta;
+            
+            const vencida = esReinaVencida(col);
+            const matchVencimiento = !filters.soloVencidas || vencida;
+
+            return matchMarca && matchApiario && matchEstado && matchTipo && matchOrigen && matchFechaDesde && matchFechaHasta && matchVencimiento;
+        });
+    }, [colmenas, filters]);
+
+    const clearFilters = () => {
+        setFilters({
+            marca: '', apiario: '', estado: '', tipo: '', origen: '',
+            fechaDesde: '', fechaHasta: '', soloVencidas: false
+        });
+    };
 
     return (
         <div className="gestion-container">
@@ -13,12 +89,87 @@ const VerColmenas = (props) => {
                     <h1>Mis <span>Colmenas</span></h1>
                     <p>Resumen de tus Colmenas: estado, ubicacion,  etc.</p>
                 </div>
-                <button className="perfil-btn" onClick={() => props.setViewState("CrearNuevaColmenas")}>
-                    + Nueva Colmena
-                </button>
+                <div style={{ display: 'flex', gap: '15px' }}>
+                    <button className={`perfil-btn ${showFilters ? 'active-filter' : ''}`} onClick={() => setShowFilters(!showFilters)}>
+                        {showFilters ? '✕ Cerrar Filtros' : '🔍 Filtros'}
+                    </button>
+                    <button className="perfil-btn" onClick={() => props.setViewState("CrearNuevaColmenas")}>
+                        + Nueva Colmena
+                    </button>
+                </div>
             </header>
 
             {error && <div className="error-msg">{error}</div>}
+
+            {showFilters && (
+                <div className="filters-section animate-fade-in">
+                    <div className="filters-grid">
+                        <div className="input-group">
+                            <label>Identificador</label>
+                            <input type="text" name="marca" value={filters.marca} onChange={handleFilterChange} placeholder="Buscar marca..." />
+                        </div>
+                        <div className="input-group">
+                            <label>Apiario</label>
+                            <input type="text" name="apiario" value={filters.apiario} onChange={handleFilterChange} placeholder="Nombre apiario..." />
+                        </div>
+                        <div className="input-group">
+                            <label>Estado</label>
+                            <select name="estado" value={filters.estado} onChange={handleFilterChange}>
+                                <option value="">Todos</option>
+                                <option value="Nucleo">Núcleo</option>
+                                <option value="Crecimiento">Crecimiento</option>
+                                <option value="Mantenimiento">Mantenimiento</option>
+                                <option value="Produccion">Producción</option>
+                                <option value="Vencimiento">Vencimiento</option>
+                            </select>
+                        </div>
+                        <div className="input-group">
+                            <label>Tipo</label>
+                            <select name="tipo" value={filters.tipo} onChange={handleFilterChange}>
+                                <option value="">Todos</option>
+                                <option value="Langstroth">Langstroth</option>
+                                <option value="Dadant">Dadant</option>
+                                <option value="Keniana">Keniana</option>
+                                <option value="Layens">Layens</option>
+                                <option value="Nucleo">Núcleo</option>
+                            </select>
+                        </div>
+                        <div className="input-group">
+                            <label>Origen</label>
+                            <select name="origen" value={filters.origen} onChange={handleFilterChange}>
+                                <option value="">Todos</option>
+                                <option value="Enjambre">Enjambre</option>
+                                <option value="División">División</option>
+                            </select>
+                        </div>
+                        <div className="input-group">
+                            <label>Desde</label>
+                            <input type="date" name="fechaDesde" value={filters.fechaDesde} onChange={handleFilterChange} />
+                        </div>
+                        <div className="input-group">
+                            <label>Hasta</label>
+                            <input type="date" name="fechaHasta" value={filters.fechaHasta} onChange={handleFilterChange} />
+                        </div>
+                        <div className="input-group checkbox-group" style={{ justifyContent: 'center' }}>
+                            <input 
+                                type="checkbox" 
+                                id="soloVencidas" 
+                                name="soloVencidas" 
+                                checked={filters.soloVencidas} 
+                                onChange={handleFilterChange} 
+                            />
+                            <label htmlFor="soloVencidas" style={{ margin: 0, color: 'var(--danger-dark)' }}>
+                                ⚠️ Solo Vencidas
+                            </label>
+                        </div>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
+                        <button className="secondary-btn btn-clear-filters" onClick={clearFilters}>
+                            Limpiar Filtros
+                        </button>
+                    </div>
+                </div>
+            )}
 
             <div className="table-wrapper">
                 {cargando ? (
@@ -38,8 +189,8 @@ const VerColmenas = (props) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {colmenas.map((c) => (
-                                <tr key={c.id}>
+                            {colmenasFiltradas.map((c) => (
+                                <tr key={c.colmena.id}>
                                     <td><strong>{c.colmena.id_colmena_usuario }</strong></td>
                                     <td>{c.nombre_apiario ||  "Sin Apiario"}</td>
                                     <td>{c.colmena.tipo_colmena}</td>
@@ -52,8 +203,11 @@ const VerColmenas = (props) => {
                                     <td>{c.colmena.fecha_inicio?.split('T')[0]}</td>
                                     <td>{c.colmena.fecha_inicio_reina?.split('T')[0] || "N/A"}</td>
                                     <td>
-                                        <span className={`status-pill ${c.estado ? c.estado.toLowerCase().replace(/\s+/g, "-") : 'desconocido'}`}>
-                                            {c.colmena.estado || 'N/A'}
+                                        <span className={`status-pill 
+                                            ${c.colmena.estado ? c.colmena.estado.toLowerCase().replace(/\s+/g, "-") : 'desconocido'} 
+                                            ${esReinaVencida(c.colmena) ? 'vencida' : ''}`}
+                                        >
+                                            {esReinaVencida(c.colmena) ? 'VENCIDA' : (c.colmena.estado || 'N/A')}
                                         </span>
                                     </td>
                                     <td>
@@ -62,7 +216,7 @@ const VerColmenas = (props) => {
                                             props.setSelectedApiarioID(c.apiario_id);
                                             props.setViewState("ModificarColmena");
                                         }}>✎</button>
-                                        <button className="icon-btn delete" onClick={() => desactivarColmena(c.colmena.id)}>
+                                        <button className="icon-btn delete" onClick={() => handleOpenConfirm(c)}>
                                             ✖
                                         </button>
                                     </td>
@@ -79,6 +233,7 @@ const VerColmenas = (props) => {
                 title={modalInfo.titulo}
                 message={modalInfo.mensaje}
                 type={modalInfo.tipo}
+                onConfirm={handleActionConfirm}
             />
         </div>
     );

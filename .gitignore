@@ -20,3 +20,6 @@ Back/Beekepeer/.vs/ProjectEvaluation/beekepeer.strings.v9.bin
 *.csproj
 Back/Beekepeer/appsettings.json
 Back/Beekepeer/Beekepeer.csproj.user
+Back/Beekepeer/Beekepeer.csproj.user
+Back/Beekepeer/Beekepeer.csproj
+*.user

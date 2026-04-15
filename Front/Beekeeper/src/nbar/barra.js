@@ -40,7 +40,17 @@ export default function BarraNavegacion(props){
                     </button>
 
                     <ul className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
-                        
+                         <li className="dropdown">
+                            <button className="dropbtn active" onClick={() => toggleDropdown("Mantenimiento")}>
+                                Produccion Mantenimiento {openDropdown === "Mantenimiento" ? '▲' : '▼'}
+                            </button>
+                            {/* Se agrega la clase 'show' solo si este menú está activo */}
+                            <div className={`dropdown-content active ${openDropdown === "Mantenimiento" ? "show" : ""}`}>
+                                <div onClick={() => handleNavigation("AlimentarColmena")}>Registrar Alimentación</div>
+                                <div onClick={() => handleNavigation("RegistrarProduccion")}>Registrar Producción</div>
+
+                            </div>
+                        </li>
                         <li className="dropdown">
                             <button className="dropbtn active" onClick={() => toggleDropdown("colmenas")}>
                                 Mis Colmenas {openDropdown === "colmenas" ? '▲' : '▼'}
@@ -49,7 +59,6 @@ export default function BarraNavegacion(props){
                             <div className={`dropdown-content active ${openDropdown === "colmenas" ? "show" : ""}`}>
                                 <div onClick={() => handleNavigation("VerMisColmenas")}>Ver mis Colmenas</div>
                                 <div onClick={() => handleNavigation("CrearNuevaColmenas")}>Crear Nueva Colmena</div>
-                                <div onClick={() => handleNavigation("AlimentarColmena")}>AlimentarColmena</div>
 
                             </div>
                         </li>

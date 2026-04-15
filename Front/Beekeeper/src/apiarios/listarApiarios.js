@@ -133,6 +133,13 @@ export default function ListarApiarios({ usr, setViewState, setSelectedApiario }
                                 && Number.isFinite(apiario.posicion[0])
                                 && Number.isFinite(apiario.posicion[1]);
 
+                            // Calculamos el resumen de estados para este apiario
+                            const resumenEstados = apiario.colmenas?.reduce((acc, col) => {
+                                const est = col.estado || 'Indefinido';
+                                acc[est] = (acc[est] || 0) + 1;
+                                return acc;
+                            }, {});
+
                             return tienePosicionValida ? (
                                 <React.Fragment key={apiario.id}>
                                     <Circle
@@ -157,12 +164,14 @@ export default function ListarApiarios({ usr, setViewState, setSelectedApiario }
                                             <strong>{apiario.nombre_referencia}</strong><br/>
                                             {apiario.msnm} MSNM<br/>
                                             <hr />
-                                            <strong>Colmenas ({apiario.colmenas?.length || 0}):</strong>
-                                            <ul style={{ margin: '5px 0 0 15px', padding: 0, fontSize: '0.85rem' }}>
-                                                {apiario.colmenas?.map(col => (
-                                                    <li key={col.id}>{col.id_colmena_usuario || 'S/N'}</li>
+                                            <div style={{ fontSize: '0.85rem', lineHeight: '1.4' }}>
+                                                {resumenEstados && Object.entries(resumenEstados).map(([estado, cantidad]) => (
+                                                    <div key={estado}>{cantidad} {estado.toLowerCase()}</div>
                                                 ))}
-                                            </ul>
+                                                <div style={{ borderTop: '1px solid #eee', marginTop: '5px', paddingTop: '2px' }}>
+                                                    <strong>{apiario.colmenas?.length || 0} total</strong>
+                                                </div>
+                                            </div>
                                         </Popup>
                                     </Marker>
                                 </React.Fragment>

@@ -5,7 +5,79 @@
     margin-top: 80px; /* Alineado con la altura de la navbar */
 }
 
+.filters-section {
+    background-color: var(--white);
+    border: var(--border-width) solid var(--dark-brown);
+    box-shadow: 6px 6px 0px var(--dark-brown);
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 4px;
+}
 
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    align-items: flex-end;
+}
+
+.filters-grid .input-group {
+    margin-bottom: 0;
+}
+
+.filters-grid label {
+    font-size: 0.65rem;
+    margin-bottom: 5px;
+}
+
+.filters-grid input, .filters-grid select {
+    padding: 8px;
+    border: 1.5px solid var(--dark-brown);
+    font-size: 0.85rem;
+    border-radius: 4px;
+}
+
+.active-filter {
+    background-color: var(--dark-brown) !important;
+    color: var(--white) !important;
+}
+
+.perfil-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.perfil-header h1 {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--dark-brown);
+    margin: 0;
+}
+
+.perfil-header h1 span {
+    font-weight: 400;
+    color: var(--muted-brown);
+}
+
+.perfil-btn {
+    background-color: var(--primary-yellow);
+    color: var(--dark-brown);
+    border: var(--border-width) solid var(--dark-brown);
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-weight: 800;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px var(--dark-brown);
+    transition: all 0.1s;
+}
+
+.perfil-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px var(--dark-brown);
+}
 
 .table-wrapper {
     overflow-x: auto;
@@ -58,6 +130,11 @@
 .status-pill.sana { background-color: #a7f3d0; }
 .status-pill.en-observacion { background-color: #fef08a; }
 
+.status-pill.vencida {
+    background-color: var(--danger-dark) !important;
+    color: var(--white) !important;
+}
+
 .icon-btn {
     background: white;
     border: 2px solid var(--dark-brown);
@@ -81,4 +158,12 @@
     font-weight: 900;
     text-transform: uppercase;
     color: var(--muted-brown);
+}
+
+.btn-clear-filters {
+    padding: 12px 25px !important; /* Más gordo */
+    width: fit-content !important; /* Más corto */
+    flex: none !important;
+    font-size: 0.85rem !important;
+    line-height: 1;
 }

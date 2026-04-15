@@ -1,46 +1,38 @@
+import React from 'react';
 import './css/modalMSN.css';
 
-const ModalMSN = ({ isOpen, onClose, title, message, type, goView, view, onConfirm }) => {
+const ModalMSN = ({ isOpen, onClose, title, message, type, onConfirm, goView, view }) => {
     if (!isOpen) return null;
 
-    const closeModal = () => {
-        if (goView && view && view !== "") {
+    const handleClose = () => {
+        onClose(false);
+        if (goView && view) {
             goView(view);
         }
-        onClose(false);
     };
 
     return (
-        <div className="modal-overlay">
-            <div className={`modal-content ${type === 'error' ? 'modal-error' : ''}`}>
-                <div className="modal-header">
-                    <h2>{type === 'error' ? '⚠️ ' + title : '✅ ' + title}</h2>
-                </div>
-                <div className="modal-body">
-                    <p>{message}</p>
-                </div>
-
-                <div className="modal-footer" style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginTop: '25px' }}>
-                    {type === 'confirmar' ? (
+        <div className="modal-msn-overlay">
+            <div className="modal-msn-content">
+                <h2 className="modal-msn-title" style={{ color: type === 'error' ? 'var(--danger-dark)' : 'inherit' }}>
+                    {type === 'confirm' ? '⚠️ ' : ''}{title}
+                </h2>
+                <p className="modal-msn-message" style={{ marginBottom: '30px', fontWeight: '600', color: 'var(--muted-brown)' }}>
+                    {message}
+                </p>
+                
+                <div className="button-group" style={{ justifyContent: 'center' }}>
+                    {type === 'confirm' ? (
                         <>
-                            <button className="modal-button" onClick={onConfirm}>
-                                ACEPTAR
-                            </button>
-                            <button 
-                                className="modal-button" 
-                                onClick={() => onClose(false)} 
-                                style={{ 
-                                    backgroundColor: '#e5e7eb', 
-                                    color: '#4b5563', 
-                                    border: '2px solid #4b5563', 
-                                    boxShadow: '4px 4px 0px #4b5563' 
-                                }}
-                            >
+                            <button className="secondary-btn" onClick={() => onClose(false)}>
                                 CANCELAR
+                            </button>
+                            <button className="primary-btn" onClick={onConfirm}>
+                                CONFIRMAR
                             </button>
                         </>
                     ) : (
-                        <button className="modal-button" onClick={() => closeModal()}>
+                        <button className="primary-btn" onClick={handleClose} style={{ minWidth: '150px' }}>
                             ENTENDIDO
                         </button>
                     )}
