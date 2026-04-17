@@ -1,10 +1,6 @@
 ﻿using Beekepeer.Model;
 using System.Data.SqlClient;
-using Beekepeer.DTOs;
 using Beekepeer.DDBB.querysSQL;
-using System;
-using System.Collections.Generic;
-using static Beekepeer.DDBB.querysSQL.queryColmena;
 using Beekepeer.Model.ws;
 
 namespace Beekepeer.DDBB

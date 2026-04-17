@@ -75,8 +75,6 @@
             
         
         // Actualización dinámica (solo cambia lo que no es null)
-
-
         public const string ActualizarColmena = @"  UPDATE colmena SET 
                                                         usuario_acronimo   = COALESCE(@UsuarioAcronimo, usuario_acronimo),
                                                         fecha_inicio       = COALESCE(@FechaInicio, fecha_inicio),
@@ -115,18 +113,18 @@
                                                         END
                                                     END";
 
-            // Borrado lógico (recomendado en lugar de DELETE físico)
-            // Al desactivar una colmena también cerramos su registro activo en registro_colmena_apiario
-            public const string DesactivarColmena = @"
+        // Borrado lógico (recomendado en lugar de DELETE físico)
+        // Al desactivar una colmena también cerramos su registro activo en registro_colmena_apiario
+        public const string DesactivarColmena = @"
         UPDATE colmena SET activo = 0 WHERE id = @Id;
 
         UPDATE registro_colmena_apiario
         SET activo = 0
         WHERE colmena_id = @Id;";
 
-            // Borrado  DELETE físico Colmena
-            public const string BorrarColmena = @"
-            DELETE from registro_colmena_apiario WHERE colmena_id = @Id;
-            DELETE from colmena WHERE id = @Id;";
-        }
+        // Borrado  DELETE físico Colmena
+        public const string BorrarColmena = @"
+        DELETE from registro_colmena_apiario WHERE colmena_id = @Id;
+        DELETE from colmena WHERE id = @Id;";
     }
+  }

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useVerColmenas } from './hooks/useVerColmenas';
 import './css/verColmenas.css';
 import ModalMSN from '../componentes/modalMSN';
@@ -18,6 +18,14 @@ const VerColmenas = (props) => {
         fechaHasta: '',
         soloVencidas: false
     });
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+
+    // Reiniciar a la página 1 cuando cambian los filtros o la lista base para evitar confusiones
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filters, colmenas, itemsPerPage]);
 
     const handleOpenConfirm = (colmena) => {
         setHiveToDeactivate(colmena);
@@ -74,6 +82,13 @@ const VerColmenas = (props) => {
             return matchMarca && matchApiario && matchEstado && matchTipo && matchOrigen && matchFechaDesde && matchFechaHasta && matchVencimiento;
         });
     }, [colmenas, filters]);
+
+    const totalPages = Math.ceil(colmenasFiltradas.length / itemsPerPage);
+
+    const colmenasPaginadas = useMemo(() => {
+        const inicio = (currentPage - 1) * itemsPerPage;
+        return colmenasFiltradas.slice(inicio, inicio + itemsPerPage);
+    }, [colmenasFiltradas, currentPage]);
 
     const clearFilters = () => {
         setFilters({
@@ -189,7 +204,7 @@ const VerColmenas = (props) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {colmenasFiltradas.map((c) => (
+                            {colmenasPaginadas.map((c) => (
                                 <tr key={c.colmena.id}>
                                     <td><strong>{c.colmena.id_colmena_usuario }</strong></td>
                                     <td>{c.nombre_apiario ||  "Sin Apiario"}</td>
@@ -224,6 +239,35 @@ const VerColmenas = (props) => {
                             ))}
                         </tbody>
                     </table>
+                )}
+            </div>
+
+            <div className="table-footer">
+                <div className="items-per-page">
+                    <label>Ver:</label>
+                    <select 
+                        value={itemsPerPage} 
+                        onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                        className="items-select"
+                    >
+                        <option value={5}>5</option>
+                        <option value={10}>10</option>
+                        <option value={20}>20</option>
+                        <option value={50}>50</option>
+                    </select>
+                    <span className="results-count">de {colmenasFiltradas.length} colmenas</span>
+                </div>
+
+                {totalPages > 1 && (
+                    <div className="pagination">
+                        <button className="page-btn" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>
+                            « Anterior
+                        </button>
+                        <span className="page-info">Página {currentPage} de {totalPages}</span>
+                        <button className="page-btn" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
+                            Siguiente »
+                        </button>
+                    </div>
                 )}
             </div>
 

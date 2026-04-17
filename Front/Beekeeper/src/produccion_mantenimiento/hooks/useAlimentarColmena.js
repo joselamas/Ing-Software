@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import * as WSColmena from '../../webService/WS_colmena';
 import * as WSApiario from '../../webService/WS_apiario';
+import * as WSProduccionAlimentacion from '../../webService/WS_produccion';
+
 
 export const useAlimentarColmena = (colmenaInicial, setViewState, usr) => {
     const [loading, setLoading] = useState(false);
@@ -131,7 +133,7 @@ export const useAlimentarColmena = (colmenaInicial, setViewState, usr) => {
                 filtro_estado: formData.filtro_estado || null
             };
 
-            const res = await WSColmena.registrarAlimentacion(payload);
+            const res = await WSProduccionAlimentacion.registrarAlimentacion(payload);
             if (res.status === 1) {
                 setModalInfo({
                     titulo: "¡Registro Exitoso!",

@@ -1,15 +1,13 @@
 import React from 'react';
 import { useRegistrarProduccion } from './hooks/useRegistrarProduccion';
-import '../colmenas/css/alimentarColmena.css'; // Reutilizamos estilos de layout
-import '../usuario/css/modificarUsuario.css';
-import '../apiarios/css/detalleApiario.css';
+import './css/registrarProduccion.css'; 
 import apitherapy from '../imagenes/apitherapy.png';
 import ModalMSN from '../componentes/modalMSN';
 
 const RegistrarProduccion = ({ setViewState, usr }) => {
     const { 
         formData, handleChange, submitProduccion, loading, isModalOpen, setIsModalOpen, modalInfo,
-        activeTab, setActiveTab, apiarios, todasLasColmenas, searchTermColmena, manejarCambioColmena, colmenasFiltradas 
+        activeTab, setActiveTab, apiarios, todasLasColmenas, searchTermColmena, manejarCambioColmena, colmenasFiltradas, countProductivas 
     } = useRegistrarProduccion(usr, setViewState);
 
     const itemEnEdicion = todasLasColmenas.find(c => c.colmena.id === formData.colmena_id);
@@ -20,7 +18,7 @@ const RegistrarProduccion = ({ setViewState, usr }) => {
         : (!!formData.apiario_id && colmenasFiltradas.length > 0);
 
     return (
-        <div className="detalle-container" style={{marginTop: '80px'}}>
+        <div className="detalle-container detalle-container-margin">
              <div className="detalle-header">
                 <button className="back-btn" onClick={() => setViewState('MiPerfil')}>
                     ← Volver
@@ -32,27 +30,43 @@ const RegistrarProduccion = ({ setViewState, usr }) => {
                 <section className="detalle-left-panel">
                     <div className="overlay-content">
                         <div className="bee-icon">
-                            <img src={apitherapy} alt="Logo" style={{width: '80px'}} />
+                            <img src={apitherapy} alt="Logo" className="bee-logo-small" />
                         </div>
                         <h2>Planificación</h2>
                         <p>Selecciona el apiario o colmena para registrar la cosecha.</p>
                     </div>
 
                     <div className="detalle-card info-card feeding-selector-card">
+                        <div className="input-group">
+                            <h3>PRECIOS DE MERCADO</h3>
+                            <div className="costs-container costs-container-small">
+                                <div className="input-group input-group-compact">
+                                    <label className="label-tiny">Miel ($/kg)</label>
+                                    <input type="number" step="0.01" name="precio_miel" value={formData.precio_miel} onChange={handleChange} placeholder="0.00" />
+                                </div>
+                                <div className="input-group input-group-compact">
+                                    <label className="label-tiny">Polen ($/kg)</label>
+                                    <input type="number" step="0.01" name="precio_polen" value={formData.precio_polen} onChange={handleChange} placeholder="0.00" />
+                                </div>
+                            </div>
+                        </div>
                         <div className="tabs-container">
                             <button className={`tab-btn ${activeTab === 'individual' ? 'active' : ''}`} onClick={() => setActiveTab('individual')}>Individual</button>
                             <button className={`tab-btn ${activeTab === 'bloque' ? 'active' : ''}`} onClick={() => setActiveTab('bloque')}>Por Apiario</button>
                         </div>
 
-                        <div className="tab-content" style={{marginTop: '20px'}}>
+                        <div className="tab-content tab-content-spacing">
                             {activeTab === 'individual' ? (
                                 <div className="input-group">
                                     <label>Identificador de Colmena</label>
                                     <input type="text" list="hives_list_prod" placeholder="Ej: ME-22..." value={searchTermColmena} onChange={manejarCambioColmena} autoComplete="off" />
                                     <datalist id="hives_list_prod">
-                                        {todasLasColmenas.map(c => (
-                                            <option key={c.colmena.id} value={c.colmena.id_colmena_usuario}>{c.nombre_apiario || 'Sin apiario'}</option>
-                                        ))}
+                                        {todasLasColmenas
+                                            .filter(c => c.colmena?.estado?.toLowerCase().includes('produccion'))
+                                            .map(c => (
+                                                <option key={c.colmena.id} value={c.colmena.id_colmena_usuario}>{c.nombre_apiario || 'Sin apiario'}</option>
+                                            ))
+                                        }
                                     </datalist>
                                     {colmenaEnEdicion && (
                                         <div className="matched-hives-preview animate-fade-in">
@@ -73,7 +87,7 @@ const RegistrarProduccion = ({ setViewState, usr }) => {
                                     </div>
                                     {formData.apiario_id && (
                                         <div className="matched-hives-preview animate-fade-in">
-                                            <label>Colmenas detectadas ({colmenasFiltradas.length})</label>
+                                            <label>Colmenas productivas detectadas ({colmenasFiltradas.length})</label>
                                             <div className="hives-tag-container">
                                                 {colmenasFiltradas.map(c => <span key={c.colmena.id} className="hive-tag">{c.colmena.id_colmena_usuario}</span>)}
                                             </div>
@@ -82,28 +96,31 @@ const RegistrarProduccion = ({ setViewState, usr }) => {
                                 </div>
                             )}
                         </div>
+
+                        {/* Sección de especificación de metodología */}
+                        <div className="metodo-info-container animate-fade-in metodo-info-divider">
+                            
+                                <div className="info-box">
+                                    <p className="info-box-text">
+                                        ℹ️ Seleccionado un apiario, la totalidad de la producción se divide entre las colmenas <strong>PRODUCTIVAS</strong> del momento ({countProductivas} detectadas), manejando los volúmenes de una forma más fácil pero perdiendo el detalle de la información por colmena. Pudiendo determinar cuáles son los apiarios más productivos.
+                                    </p>
+                                </div>
+                         
+                                <div className="info-box">
+                                    <p className="info-box-text">
+                                        ℹ️ Si registramos la producción por colmena, además de saber el total producido por apiario, sabemos en detalle qué colmenas son mejores para <strong>futuras divisiones</strong> y mejora genética.
+                                    </p>
+                                </div>
+                           
+                        </div>
                     </div>
                 </section>
 
                 <section className="detalle-right-panel">
-                    <div className="detalle-card info-card" style={{background: 'white'}}>
-                        <h1 className="main-title" style={{marginBottom: '30px'}}>REGISTRAR <span>COSECHA</span></h1>
+                    <div className="detalle-card info-card card-white-bg">
+                        <h1 className="main-title main-title-spacing">REGISTRAR <span>COSECHA</span></h1>
                         <form onSubmit={submitProduccion} className="login-form">
-                            {/* Bloque de Precios del Mercado */}
-                            <div className="input-group">
-                                <label>PRECIOS DE MERCADO</label>
-                                <div className="costs-container" style={{ marginBottom: '10px' }}>
-                                    <div className="input-group" style={{ marginBottom: 0 }}>
-                                        <label style={{ fontSize: '0.65rem' }}>Miel ($/kg)</label>
-                                        <input type="number" step="0.01" name="precio_miel" value={formData.precio_miel} onChange={handleChange} placeholder="0.00" />
-                                    </div>
-                                    <div className="input-group" style={{ marginBottom: 0 }}>
-                                        <label style={{ fontSize: '0.65rem' }}>Polen ($/kg)</label>
-                                        <input type="number" step="0.01" name="precio_polen" value={formData.precio_polen} onChange={handleChange} placeholder="0.00" />
-                                    </div>
-                                </div>
-                            </div>
-
+                        
                             <div className="input-group">
                                 <label>Fecha de Cosecha</label>
                                 <input type="date" name="fecha" value={formData.fecha} onChange={handleChange} required />
@@ -112,12 +129,12 @@ const RegistrarProduccion = ({ setViewState, usr }) => {
                             {/* Producción Obtenida */}
                             <div className="feeding-section">
                                 <label>PRODUCCIÓN (Kg)</label>
-                                <div style={{display:'flex', gap:'15px', marginTop:'15px'}}>
-                                    <div className="input-group" style={{flex:1}}>
+                                <div className="production-inputs-flex">
+                                    <div className="input-group flex-equal">
                                         <label>Miel (Kg)</label>
                                         <input type="number" step="0.1" name="cantidad_miel" value={formData.cantidad_miel} onChange={handleChange} placeholder="0.0" />
                                     </div>
-                                    <div className="input-group" style={{flex:1}}>
+                                    <div className="input-group flex-equal">
                                         <label>Polen (Kg)</label>
                                         <input type="number" step="0.1" name="cantidad_polen" value={formData.cantidad_polen} onChange={handleChange} placeholder="0.0" />
                                     </div>
@@ -126,14 +143,14 @@ const RegistrarProduccion = ({ setViewState, usr }) => {
 
                             {/* Características y Tipo */}
                             <div className="feeding-section">
-                                <div className="input-group checkbox-group" style={{ flexDirection: 'row', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                                <div className="input-group checkbox-group checkbox-row-align">
                                     <input 
                                         type="checkbox" 
                                         id="es_monofloral" 
                                         name="es_monofloral" 
                                         checked={formData.es_monofloral} 
                                         onChange={handleChange} 
-                                        style={{ width: 'auto' }}
+                                        className="input-width-auto"
                                     />
                                     <label htmlFor="es_monofloral" style={{ margin: 0 }}>¿Es cosecha Monofloral?</label>
                                 </div>
@@ -156,9 +173,8 @@ const RegistrarProduccion = ({ setViewState, usr }) => {
                             </div>
                             <button 
                                 type="submit" 
-                                className={`primary-btn ${!hayColmenasSeleccionadas && !loading ? 'btn-waiting' : ''}`} 
+                                className={`primary-btn btn-submit-full ${!hayColmenasSeleccionadas && !loading ? 'btn-waiting' : ''}`} 
                                 disabled={loading || !hayColmenasSeleccionadas}
-                                style={{width: '100%', marginTop: '20px'}}
                             >
                                 {loading ? 'GUARDANDO...' : hayColmenasSeleccionadas ? 'GUARDAR COSECHA' : 'SELECCIONA ORIGEN'}
                             </button>

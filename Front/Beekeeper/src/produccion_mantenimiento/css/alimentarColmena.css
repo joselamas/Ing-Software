@@ -1,8 +1,4 @@
-.tabs-container {
-    display: flex;
-    border-bottom: 2px solid var(--dark-brown);
-    margin-bottom: 15px;
-}
+
 
 .tab-btn {
     flex: 1;
@@ -32,11 +28,6 @@
     padding: 20px !important;
 }
 
-.tabs-container {
-    display: flex;
-    border-bottom: 2px solid var(--dark-brown);
-    margin-bottom: 15px;
-}
 
 .tab-btn {
     flex: 1;
@@ -63,7 +54,6 @@
 
 .tabs-container {
     display: flex;
-    border: 2px solid var(--dark-brown);
     border-radius: 6px;
     overflow: hidden;
     margin-bottom: 20px;

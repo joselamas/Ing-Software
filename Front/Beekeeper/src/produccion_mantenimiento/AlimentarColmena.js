@@ -1,8 +1,6 @@
 import React from 'react';
 import { useAlimentarColmena } from './hooks/useAlimentarColmena';
 import './css/alimentarColmena.css';
-import '../usuario/css/modificarUsuario.css';
-import '../apiarios/css/detalleApiario.css';
 import apitherapy from '../imagenes/apitherapy.png';
 import ModalMSN from '../componentes/modalMSN';
 
@@ -55,7 +53,7 @@ const AlimentarColmena = ({ colmena, setViewState, usr }) => {
 
                     <div className="detalle-card info-card feeding-selector-card">
                         {/* SECCIÓN DE COSTOS UNITARIOS */}
-                        <h3>Costos</h3>
+                        <h3 >Costos</h3>
                         <div className="costs-container">
                             <div className="input-group">
                                 <label>Azúcar ($/kg)</label>

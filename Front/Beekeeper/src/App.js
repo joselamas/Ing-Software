@@ -10,7 +10,8 @@ import MiPerfil from './usuario/miPerfil.js';
 import VerColmenas from './colmenas/VerColmenas.js';
 import RegistrarColmena from './colmenas/RegistrarColmena.js';
 import ModificarColmena from './colmenas/ModificarColmena.js';
-import AlimentarColmena from './colmenas/AlimentarColmena.js';
+
+import AlimentarColmena from './produccion_mantenimiento/AlimentarColmena.js';
 import RegistrarProduccion from './produccion_mantenimiento/RegistrarProduccion.js';
 
 import CrearApiario from './apiarios/crearApiario.js';

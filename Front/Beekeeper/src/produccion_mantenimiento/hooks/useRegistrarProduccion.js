@@ -45,8 +45,16 @@ export const useRegistrarProduccion = (usr, setViewState) => {
 
     const colmenasFiltradas = useMemo(() => {
         if (activeTab !== 'bloque' || !formData.apiario_id) return [];
-        return todasLasColmenas.filter(item => parseInt(formData.apiario_id) === item.apiario_id);
+        return todasLasColmenas.filter(item => 
+            parseInt(formData.apiario_id) === item.apiario_id &&
+            item.colmena?.estado?.includes("Productiva")
+        );
     }, [activeTab, formData.apiario_id, todasLasColmenas]);
+
+    // Contamos las colmenas que están en estado 'Produccion' para el modo apiario
+    const countProductivas = useMemo(() => {
+        return colmenasFiltradas.length;
+    }, [colmenasFiltradas]);
 
     const manejarCambioColmena = (e) => {
         const text = e.target.value;
@@ -100,6 +108,6 @@ export const useRegistrarProduccion = (usr, setViewState) => {
 
     return { 
         formData, handleChange, submitProduccion, loading, isModalOpen, setIsModalOpen, modalInfo,
-        activeTab, setActiveTab, apiarios, todasLasColmenas, searchTermColmena, manejarCambioColmena, colmenasFiltradas 
+        activeTab, setActiveTab, apiarios, todasLasColmenas, searchTermColmena, manejarCambioColmena, colmenasFiltradas, countProductivas 
     };
 };
