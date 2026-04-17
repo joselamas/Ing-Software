@@ -140,9 +140,7 @@ export const useAlimentarColmena = (colmenaInicial, setViewState, usr) => {
                 { activo: 'polen_activo', tipo: 'Polen', detalle: 'N/A', cant: 'polen_cantidad', costo: 'costo_polen' }
             ];
 
-            /**
-             * Crea la lista de objetos Alimentacion para una colmena específica
-             */
+           
             const obtenerAlimentacionColmena = (id) => {
                 return tiposConfig
                     .filter(cfg => formData[cfg.activo])

@@ -3,6 +3,7 @@ const url = 'http://localhost:5283/api/Usuario/';
 
 
 export async function CrearUsuario(usr) {
+    debugger;
     const _body = JSON.stringify(usr);
     let usuario = {};
     try {

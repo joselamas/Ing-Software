@@ -1,6 +1,8 @@
 const url = 'http://localhost:5283/api/ProduccionMantenimiento/';
 
 export async function registrarProduccion(datos) {
+    console.log("Datos enviados a WS_produccion.registrarProduccion:", datos);
+
     try {
         const response = await fetch(url + "insertarProduccion", {
             method: 'POST',

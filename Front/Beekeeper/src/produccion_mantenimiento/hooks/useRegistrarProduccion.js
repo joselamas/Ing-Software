@@ -22,8 +22,7 @@ export const useRegistrarProduccion = (usr, setViewState) => {
         precio_miel: '',
         precio_polen: '',
         caracteristicas: '',
-        es_monofloral: false,
-        notas: ''
+        es_monofloral: false
     });
 
     useEffect(() => {
@@ -45,11 +44,36 @@ export const useRegistrarProduccion = (usr, setViewState) => {
 
     const colmenasFiltradas = useMemo(() => {
         if (activeTab !== 'bloque' || !formData.apiario_id) return [];
-        return todasLasColmenas.filter(item => 
-            parseInt(formData.apiario_id) === item.apiario_id &&
-            item.colmena?.estado?.includes("Productiva")
-        );
+        return todasLasColmenas.filter(item => {
+            const matchApiario = String(formData.apiario_id) === String(item.apiario_id);
+            const estado = item.colmena?.estado?.toLowerCase() || "";
+            const matchEstado = estado.includes("produccion") || estado.includes("producción");
+            return matchApiario && matchEstado;
+        });
     }, [activeTab, formData.apiario_id, todasLasColmenas]);
+
+    // Validación de formulario completo y correcto
+    const isFormValid = useMemo(() => {
+        const originSelected = activeTab === 'individual' 
+            ? !!formData.colmena_id 
+            : (!!formData.apiario_id && colmenasFiltradas.length > 0);
+        
+        if (!originSelected) return false;
+
+        const cantMiel = parseFloat(formData.cantidad_miel) || 0;
+        const cantPolen = parseFloat(formData.cantidad_polen) || 0;
+        const precioMiel = parseFloat(formData.precio_miel) || 0;
+        const precioPolen = parseFloat(formData.precio_polen) || 0;
+
+        // Debe haber al menos una cantidad registrada
+        if (cantMiel <= 0 && cantPolen <= 0) return false;
+
+        // Si hay cantidad de un producto, debe haber un precio asociado > 0
+        if (cantMiel > 0 && precioMiel <= 0) return false;
+        if (cantPolen > 0 && precioPolen <= 0) return false;
+
+        return true;
+    }, [formData, activeTab, colmenasFiltradas]);
 
     // Contamos las colmenas que están en estado 'Produccion' para el modo apiario
     const countProductivas = useMemo(() => {
@@ -76,20 +100,57 @@ export const useRegistrarProduccion = (usr, setViewState) => {
 
     const submitProduccion = async (e) => {
         e.preventDefault();
+
+        const cantMiel = parseFloat(formData.cantidad_miel) || 0;
+        const cantPolen = parseFloat(formData.cantidad_polen) || 0;
+        const precioMiel = parseFloat(formData.precio_miel) || 0;
+        const precioPolen = parseFloat(formData.precio_polen) || 0;
+
+        // Validación de seguridad antes de procesar costos
+        if ((cantMiel > 0 && precioMiel <= 0) || (cantPolen > 0 && precioPolen <= 0)) {
+            setModalInfo({ titulo: "Atención", mensaje: "agregar costo al pruducto a ingresar", tipo: "error" });
+            setIsModalOpen(true);
+            return;
+        }
+
         setLoading(true);
         try {
-            const payload = { 
-                ...formData, 
-                modo: activeTab,
-                colmena_id: formData.colmena_id ? parseInt(formData.colmena_id) : null,
-                apiario_id: formData.apiario_id ? parseInt(formData.apiario_id) : null,
-                cantidad_miel: parseFloat(formData.cantidad_miel) || 0,
-                cantidad_polen: parseFloat(formData.cantidad_polen) || 0,
-                precio_miel: parseFloat(formData.precio_miel) || 0,
-                precio_polen: parseFloat(formData.precio_polen) || 0,
-                caracteristicas: formData.caracteristicas,
-                es_monofloral: formData.es_monofloral
+            // Función para generar la lista de productos por colmena (Miel/Polen)
+            const obtenerProductosColmena = (id) => {
+                const productos = [];
+                const base = {
+                    colmena_id: parseInt(id),
+                    fecha: formData.fecha,
+                    tipo_origen: formData.es_monofloral ? "Monofloral" : "Multifloral",
+                    descripcion_flora: formData.caracteristicas
+                };
+
+                if (cantMiel > 0) {
+                    productos.push({
+                        ...base,
+                        tipo_producto: "Miel",
+                        cantidad_kg: cantMiel,
+                        precio_aprox_kg: precioMiel
+                    });
+                }
+                if (cantPolen > 0) {
+                    productos.push({
+                        ...base,
+                        tipo_producto: "Polen",
+                        cantidad_kg: cantPolen,
+                        precio_aprox_kg: precioPolen
+                    });
+                }
+                return productos;
             };
+
+            let payload = [];
+            if (activeTab === 'individual') {
+                payload = obtenerProductosColmena(formData.colmena_id);
+            } else {
+                // En bloque, aplanamos la lista de todos los productos para todas las colmenas filtradas
+                payload = colmenasFiltradas.flatMap(item => obtenerProductosColmena(item.colmena.id));
+            }
 
             const res = await WSProduccion.registrarProduccion(payload);
             if (res.status === 1) {
@@ -116,6 +177,6 @@ export const useRegistrarProduccion = (usr, setViewState) => {
 
     return { 
         formData, handleChange, submitProduccion, loading, isModalOpen, setIsModalOpen, modalInfo,
-        activeTab, setActiveTab, apiarios, todasLasColmenas, searchTermColmena, manejarCambioColmena, colmenasFiltradas, countProductivas 
+        activeTab, setActiveTab, apiarios, todasLasColmenas, searchTermColmena, manejarCambioColmena, colmenasFiltradas, countProductivas, isFormValid
     };
 };

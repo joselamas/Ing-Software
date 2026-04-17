@@ -24,6 +24,7 @@ namespace Beekepeer.DDBB
                 cmd.Parameters.AddWithValue("@Colmena_id", data.colmena_id);
                 cmd.Parameters.AddWithValue("@Fecha", data.fecha);
                 cmd.Parameters.AddWithValue("@Tipo_origen", data.tipo_origen);
+                cmd.Parameters.AddWithValue("@Tipo_producto", data.tipo_producto);
                 cmd.Parameters.AddWithValue("@Descripcion_flora", data.descripcion_flora);
                 cmd.Parameters.AddWithValue("@Cantidad_kg", data.cantidad_kg);
                 cmd.Parameters.AddWithValue("@Precio_aprox_kg", data.precio_aprox_kg);

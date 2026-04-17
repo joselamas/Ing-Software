@@ -7,15 +7,8 @@ import ModalMSN from '../componentes/modalMSN';
 const RegistrarProduccion = ({ setViewState, usr }) => {
     const { 
         formData, handleChange, submitProduccion, loading, isModalOpen, setIsModalOpen, modalInfo,
-        activeTab, setActiveTab, apiarios, todasLasColmenas, searchTermColmena, manejarCambioColmena, colmenasFiltradas, countProductivas 
+        activeTab, setActiveTab, apiarios, todasLasColmenas, searchTermColmena, manejarCambioColmena, colmenasFiltradas, countProductivas, isFormValid
     } = useRegistrarProduccion(usr, setViewState);
-
-    const itemEnEdicion = todasLasColmenas.find(c => c.colmena.id === formData.colmena_id);
-    const colmenaEnEdicion = itemEnEdicion?.colmena;
-
-    const hayColmenasSeleccionadas = activeTab === 'individual' 
-        ? !!formData.colmena_id 
-        : (!!formData.apiario_id && colmenasFiltradas.length > 0);
 
     return (
         <div className="detalle-container detalle-container-margin">
@@ -61,20 +54,10 @@ const RegistrarProduccion = ({ setViewState, usr }) => {
                                     <label>Identificador de Colmena</label>
                                     <input type="text" list="hives_list_prod" placeholder="Ej: ME-22..." value={searchTermColmena} onChange={manejarCambioColmena} autoComplete="off" />
                                     <datalist id="hives_list_prod">
-                                        {todasLasColmenas
-                                            .filter(c => c.colmena?.estado?.toLowerCase().includes('produccion'))
-                                            .map(c => (
-                                                <option key={c.colmena.id} value={c.colmena.id_colmena_usuario}>{c.nombre_apiario || 'Sin apiario'}</option>
-                                            ))
-                                        }
+                                        {todasLasColmenas.map(c => (
+                                            <option key={c.colmena.id} value={c.colmena.id_colmena_usuario}>{c.nombre_apiario || 'Sin apiario'}</option>
+                                        ))}
                                     </datalist>
-                                    {colmenaEnEdicion && (
-                                        <div className="matched-hives-preview animate-fade-in">
-                                            <label>Detalles:</label>
-                                            <div className="info-row"><span>Tipo:</span><strong>{colmenaEnEdicion.tipo_colmena}</strong></div>
-                                            <div className="info-row"><span>Estado:</span><strong>{colmenaEnEdicion.estado}</strong></div>
-                                        </div>
-                                    )}
                                 </div>
                             ) : (
                                 <div className="block-filters">
@@ -166,17 +149,12 @@ const RegistrarProduccion = ({ setViewState, usr }) => {
                                     />
                                 </div>
                             </div>
-
-                            <div className="input-group">
-                                <label>Notas</label>
-                                <textarea name="notas" value={formData.notas} onChange={handleChange} rows="3" placeholder="Detalles de la cosecha..." />
-                            </div>
                             <button 
                                 type="submit" 
-                                className={`primary-btn btn-submit-full ${!hayColmenasSeleccionadas && !loading ? 'btn-waiting' : ''}`} 
-                                disabled={loading || !hayColmenasSeleccionadas}
+                                className={`primary-btn btn-submit-full ${!isFormValid && !loading ? 'btn-waiting' : ''}`} 
+                                disabled={loading || !isFormValid}
                             >
-                                {loading ? 'GUARDANDO...' : hayColmenasSeleccionadas ? 'GUARDAR COSECHA' : 'SELECCIONA ORIGEN'}
+                                {loading ? 'GUARDANDO...' : isFormValid ? 'GUARDAR COSECHA' : 'COMPLETA LOS DATOS'}
                             </button>
                         </form>
                     </div>
@@ -190,7 +168,7 @@ const RegistrarProduccion = ({ setViewState, usr }) => {
                 message={modalInfo.mensaje || 'Procesando solicitud...'} 
                 type={modalInfo.tipo} 
                 goView={setViewState} 
-                view="MiPerfil" 
+                view="" 
             />
         </div>
     );

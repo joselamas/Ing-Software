@@ -20,16 +20,71 @@ namespace Beekepeer.Controllers
 
         [HttpPost]
         [Route("insertarProduccion")]
-        public IActionResult insertarProduccion([FromBody] Produccion data)
+        public IActionResult insertarProduccion([FromBody] List<Produccion> data)
         {
-            if (data.precio_aprox_kg == null || data.precio_aprox_kg < 0)
-                return BadRequest("Datos de produccion no válidos.");
+            // 1. Validación de lista nula o vacía
+            if (data == null || !data.Any())
+                return BadRequest(new { status = 0, mensaje = "No se recibió ninguna producción para registrar." });
 
-            int exito = _sql.InsertarProduccion(data);
+            int totalAProcesar = data.Count;
+            int exitos = 0;
+            List<string> errores = new List<string>();
 
-            if (exito == 0 )
-                return StatusCode(500, new { status = 0, mensaje = "Error al registrar la Produccion, intentelo mas tarde." });
-            return Ok(new { status = 1, mensaje = "Produccion registrado con éxito." });
+            foreach (var item in data)
+            {
+                // 2. Validación de reglas de negocio para cada registro
+                if (item.precio_aprox_kg < 0 || item.cantidad_kg <= 0)
+                {
+                    errores.Add($"[ID Colmena: {item.colmena_id}]: Cantidad o precio inválidos.");
+                    continue;
+                }
+
+                try
+                {
+                    // 3. Intento de inserción en la DB
+                    // Usamos el método que ya preparamos con SCOPE_IDENTITY() y GETDATE()
+                    int idGenerado = _sql.InsertarProduccion(item);
+
+                    if (idGenerado > 0)
+                        exitos++;
+                    else
+                        errores.Add($"[ID Colmena: {item.colmena_id}]: La base de datos rechazó el registro.");
+                }
+                catch (Exception ex)
+                {
+                    // Capturamos cualquier error de conexión o SQL específico de este item
+                    errores.Add($"[ID Colmena: {item.colmena_id}]: {ex.Message}");
+                }
+            }
+
+            // --- CONSTRUCCIÓN DE LA RESPUESTA (MISMA ESTRUCTURA QUE ALIMENTACIÓN) ---
+
+            if (exitos == totalAProcesar)
+            {
+                return Ok(new
+                {
+                    status = 1,
+                    mensaje = $"Éxito: Se registraron las {totalAProcesar} cosechas correctamente."
+                });
+            }
+            else if (exitos > 0)
+            {
+                // Resultado mixto
+                return Ok(new
+                {
+                    status = 1,
+                    mensaje = $"Registro parcial: {exitos} de {totalAProcesar} procesados. Detalles: {string.Join(" | ", errores)}"
+                });
+            }
+            else
+            {
+                // Fallo total
+                return StatusCode(500, new
+                {
+                    status = 0,
+                    mensaje = $"No se pudo registrar ninguna producción. Errores: {string.Join(" | ", errores)}"
+                });
+            }
         }
 
 
