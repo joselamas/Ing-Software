@@ -120,29 +120,63 @@ export const useAlimentarColmena = (colmenaInicial, setViewState, usr) => {
             return;
         }
 
+        // Validación de costos obligatorios por cada suministro activo
+        const faltaCostoJarabe = formData.jarabe_activo && (!formData.costo_azucar || parseFloat(formData.costo_azucar) <= 0);
+        const faltaCostoTorta = formData.torta_activo && (!formData.costo_torta || parseFloat(formData.costo_torta) <= 0);
+        const faltaCostoPolen = formData.polen_activo && (!formData.costo_polen || parseFloat(formData.costo_polen) <= 0);
+
+        if (faltaCostoJarabe || faltaCostoTorta || faltaCostoPolen) {
+            setModalInfo({ titulo: "Atención", mensaje: "agregar costo al pruducto a ingresar", tipo: "error" });
+            setIsModalOpen(true);
+            return;
+        }
+
         setLoading(true);
         try {
-            const payload = { 
-                ...formData, 
-                modo: activeTab,
-                // Aseguramos que los IDs sean números o null
-                colmena_id: formData.colmena_id ? parseInt(formData.colmena_id) : null,
-                apiario_id: formData.apiario_id ? parseInt(formData.apiario_id) : null,
-                // Enviamos null si los filtros no están seleccionados
-                filtro_tipo: formData.filtro_tipo || null,
-                filtro_estado: formData.filtro_estado || null
+            // Mapeo dinámico según la estructura "Alimentacion" del backend
+            const tiposConfig = [
+                { activo: 'jarabe_activo', tipo: 'Jarabe', detalle: formData.jarabe_concentracion, cant: 'jarabe_cantidad', costo: 'costo_azucar' },
+                { activo: 'torta_activo', tipo: 'Torta Proteica', detalle: 'N/A', cant: 'torta_cantidad', costo: 'costo_torta' },
+                { activo: 'polen_activo', tipo: 'Polen', detalle: 'N/A', cant: 'polen_cantidad', costo: 'costo_polen' }
+            ];
+
+            /**
+             * Crea la lista de objetos Alimentacion para una colmena específica
+             */
+            const obtenerAlimentacionColmena = (id) => {
+                return tiposConfig
+                    .filter(cfg => formData[cfg.activo])
+                    .map(cfg => ({
+                        colmena_id: parseInt(id),
+                        fecha: formData.fecha,
+                        tipo_suministro: cfg.tipo,
+                        detalle_mezcla: cfg.detalle,
+                        cantidad: parseFloat(formData[cfg.cant]) || 0,
+                        precio_total_insumo: parseFloat(formData[cfg.costo]) || 0,
+                        observaciones: formData.notas || ""
+                    }));
             };
 
+            let payload = [];
+            if (activeTab === 'individual') {
+                payload = obtenerAlimentacionColmena(formData.colmena_id);
+            } else {
+                // En bloque, aplanamos la lista de todos los alimentos para todas las colmenas filtradas
+                payload = colmenasFiltradas.flatMap(item => obtenerAlimentacionColmena(item.colmena.id));
+            }
+
+            // Única llamada al servidor con la lista completa
             const res = await WSProduccionAlimentacion.registrarAlimentacion(payload);
+            
             if (res.status === 1) {
                 setModalInfo({
                     titulo: "¡Registro Exitoso!",
-                    mensaje: "La alimentación ha sido registrada correctamente.",
+                    mensaje: res.mensaje || "Los datos de alimentación se guardaron correctamente.",
                     tipo: "success"
                 });
             } else {
                 setModalInfo({
-                    titulo: "Error",
+                    titulo: "Atención",
                     mensaje: res.mensaje || "No se pudo guardar el registro.",
                     tipo: "error"
                 });

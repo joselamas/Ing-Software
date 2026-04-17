@@ -183,7 +183,15 @@ const RegistrarProduccion = ({ setViewState, usr }) => {
                 </section>
             </div>
             
-            <ModalMSN isOpen={isModalOpen} onClose={setIsModalOpen} {...modalInfo} goView={setViewState} view="MiPerfil" />
+            <ModalMSN 
+                isOpen={isModalOpen} 
+                onClose={setIsModalOpen} 
+                title={modalInfo.titulo || (modalInfo.tipo === 'success' ? 'Éxito' : 'Error')} 
+                message={modalInfo.mensaje || 'Procesando solicitud...'} 
+                type={modalInfo.tipo} 
+                goView={setViewState} 
+                view="MiPerfil" 
+            />
         </div>
     );
 };

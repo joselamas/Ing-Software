@@ -93,9 +93,17 @@ export const useRegistrarProduccion = (usr, setViewState) => {
 
             const res = await WSProduccion.registrarProduccion(payload);
             if (res.status === 1) {
-                setModalInfo({ titulo: "¡Cosecha Registrada!", mensaje: res.mensaje, tipo: "success" });
+                setModalInfo({ 
+                    titulo: "¡Cosecha Registrada!", 
+                    mensaje: res.mensaje || "La producción ha sido guardada con éxito.", 
+                    tipo: "success" 
+                });
             } else {
-                setModalInfo({ titulo: "Error", mensaje: res.mensaje, tipo: "error" });
+                setModalInfo({ 
+                    titulo: "Error", 
+                    mensaje: res.mensaje || "No se pudo guardar el registro de producción.", 
+                    tipo: "error" 
+                });
             }
             setIsModalOpen(true);
         } catch (err) {

@@ -10,7 +10,11 @@ export async function registrarProduccion(datos) {
 
         const data = await response.json();
         if (response.ok) {
-            return { status: 1, mensaje: "Producción registrada exitosamente", data: data };
+            return { 
+                status: data.status ?? 1, 
+                mensaje: data.mensaje || "Producción registrada exitosamente", 
+                data: data 
+            };
         } else {
             return { status: 0, mensaje: data.mensaje || "Error al registrar la producción" };
         }
@@ -22,6 +26,7 @@ export async function registrarProduccion(datos) {
 
 
 export async function registrarAlimentacion(datos) {
+    console.log("Datos enviados a WS_produccion.registrarAlimentacion:", datos);
     try {
         const response = await fetch(url + "insertarAlimentacion", {
             method: 'POST',
@@ -30,13 +35,16 @@ export async function registrarAlimentacion(datos) {
         });
         const data = await response.json();
         if (response.ok) {
-            return { status: 1, mensaje: "Alimentacion registrada exitosamente", data: data };
+            // Retornamos directamente la respuesta del backend que ya trae { status, mensaje }
+            return data; 
         } else {
-            return { status: 0, mensaje: data.mensaje || "Error al registrar la alimentacion" };
+            return { 
+                status: 0, 
+                mensaje: typeof data === 'string' ? data : (data.mensaje || "Error al registrar la alimentación") 
+            };
         }
     } catch (err) {
         console.error("Error de conexión:", err.message);
         return { status: -1, mensaje: "Error de conexión con el servidor" };
     }
 }
-

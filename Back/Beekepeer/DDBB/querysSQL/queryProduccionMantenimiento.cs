@@ -19,7 +19,7 @@
                                         @Descripcion_flora, 
                                         @Cantidad_kg, 
                                         @Precio_aprox_kg,
-                                        DEFAULT GETDATE());
+                                        GETDATE());
                                     SELECT SCOPE_IDENTITY();";
         public const string InsertarAlimentacion = @"
                                     INSERT INTO control_alimentacion (
@@ -40,7 +40,7 @@
                                         @Cantidad, 
                                         @Precio_total_insumo, 
                                         @Observaciones,
-                                        DEFAULT GETDATE()) ; 
+                                        GETDATE()) ; 
                                     SELECT SCOPE_IDENTITY();";
 
     }

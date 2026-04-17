@@ -260,7 +260,14 @@ const AlimentarColmena = ({ colmena, setViewState, usr }) => {
                 </section>
             </div>
             
-            <ModalMSN isOpen={isModalOpen} onClose={setIsModalOpen} {...modalInfo} goView={setViewState} view="VerMisColmenas" />
+            <ModalMSN 
+            isOpen={isModalOpen} 
+            onClose={setIsModalOpen}
+            title={modalInfo.titulo}
+            message={modalInfo.mensaje}
+            type={modalInfo.tipo}
+            goView={setViewState} 
+            view="" />
         </div>
     );
 };

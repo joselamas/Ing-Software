@@ -18,7 +18,6 @@ namespace Beekepeer.Controllers
             _sql = new ProduccionMantenimientoConsutas(connectionString);
         }
 
-        // 3. INSERTAR NUEVO USUARIO
         [HttpPost]
         [Route("insertarProduccion")]
         public IActionResult insertarProduccion([FromBody] Produccion data)
@@ -33,20 +32,72 @@ namespace Beekepeer.Controllers
             return Ok(new { status = 1, mensaje = "Produccion registrado con éxito." });
         }
 
-        // 3. INSERTAR NUEVO USUARIO
+
         [HttpPost]
         [Route("insertarAlimentacion")]
-        public IActionResult insertarAlimentacion([FromBody] Alimentacion data)
+        public IActionResult insertarAlimentacion([FromBody] List<Alimentacion> data)
         {
-            if (data.precio_total_insumo == null ||  data.precio_total_insumo < 0)
-                return BadRequest("Datos de usuario no válidos.");
+            if (data == null || !data.Any())
+                return BadRequest(new { status = 0, mensaje = "La lista de datos está vacía." });
 
-            int exito = _sql.InsertarAlimentacion( data );
+            int total = data.Count;
+            int exitos = 0;
+            List<string> errores = new List<string>();
 
-            if (exito == 0)
-                return StatusCode(500, new { status = 0, mensaje = "Error al registrar. El acrónimo o correo ya existen." });
-            return Ok(new { status = 1, mensaje = "Usuario registrado con éxito." });
+            foreach (var item in data)
+            {
+                // 1. Validación individual
+                if (item.precio_total_insumo == null || item.precio_total_insumo < 0)
+                {
+                    errores.Add($"[{item.tipo_suministro}]: Precio no válido");
+                    continue;
+                }
+
+                try
+                {
+                    // 2. Intento de inserción
+                    int resultado = _sql.InsertarAlimentacion(item);
+
+                    if (resultado > 0)
+                        exitos++;
+                    else
+                        errores.Add($"[{item.tipo_suministro}]: Error en base de datos");
+                }
+                catch (Exception ex)
+                {
+                    errores.Add($"[{item.tipo_suministro}]: {ex.Message}");
+                }
+            }
+
+            // --- CONSTRUCCIÓN DE LA RESPUESTA UNIFICADA ---
+
+            if (exitos == total)
+            {
+                // Caso Ideal: Todo salió bien
+                return Ok(new
+                {
+                    status = 1,
+                    mensaje = $"Se registraron los {total} insumos con éxito."
+                });
+            }
+            else if (exitos > 0)
+            {
+                // Caso Mixto: Algunos fallaron (Mantenemos status 1 porque hubo progreso, o 0 si prefieres ser estricto)
+                return Ok(new
+                {
+                    status = 1,
+                    mensaje = $"Registro parcial: {exitos} exitosos de {total}. Errores: {string.Join(" | ", errores)}"
+                });
+            }
+            else
+            {
+                // Caso Fallido: Nada se insertó
+                return StatusCode(500, new
+                {
+                    status = 0,
+                    mensaje = $"Error total al registrar. Detalles: {string.Join(" | ", errores)}"
+                });
+            }
         }
-
     }
 }
