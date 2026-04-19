@@ -24,11 +24,11 @@ const getApiaryIcon = (apiario) => {
     let color = '#000000'; // Negro por defecto (0 colmenas)
 
     if (total > 0) {
-        if (porcentaje < 10) color = '#d32f2f'; // Rojo (< 10%)
-        else if (porcentaje < 45) color = '#f57c00'; // Naranja (Rango del 30%)
-        else if (porcentaje < 75) color = '#fbc02d'; // Amarillo (Rango del 60%)
-        else if (porcentaje < 100) color = '#388e3c'; // Verde (Sobre el 80%)
-        else color = '#1b5e20'; // Verde Oscuro (100% o más)
+        if (porcentaje <= 10) color = '#ff0000'; // Crítico
+        else if (porcentaje <= 45) color = '#ff8000'; // Bajo
+        else if (porcentaje <= 75) color = '#fbd269'; // Medio
+        else if (porcentaje <= 95) color = '#00ff0d'; // Óptimo
+        else color = '#00ddff'; // Verde Oscuro (100% o más)
     }
 
     const svgHtml = `
@@ -46,18 +46,13 @@ const getApiaryIcon = (apiario) => {
 };
 
 export default function ListarApiarios({ usr, setViewState, setSelectedApiario }) {
-    const { apiarios, loading, error } = useListarApiarios(usr, setViewState);
-    const [searchTerm, setSearchTerm] = useState('');
+    const { apiarios, loading, error, filters, handleFilterChange, limpiarFiltros } = useListarApiarios(usr, setViewState);
+    const [showFilters, setShowFilters] = useState(false);
     const centroDefecto = [8.5891, -71.1450]; // Mérida
 
-    const apiariosFiltrados = useMemo(() => {
-        const filter = searchTerm.trim().toLowerCase();
-        return filter.length === 0
-            ? apiarios
-            : apiarios.filter(apiario => apiario.nombre_referencia?.toLowerCase().includes(filter));
-    }, [apiarios, searchTerm]);
-
     if (loading) return <div className="loading-apiarios">Consultando base de datos apícola...</div>;
+
+    const toggleFilters = () => setShowFilters(!showFilters);
 
     return (
         <div className="gestion-container">
@@ -67,32 +62,73 @@ export default function ListarApiarios({ usr, setViewState, setSelectedApiario }
                   <p>Mostramos la Geolocalización de tus apiarios, para facilitar el manejo</p>
 
                 </div>
-                <button className="perfil-btn" onClick={() => setViewState('CrearApiaro')}>
-                        + Nuevo Apiario
-                </button>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <button className={`filter-toggle-btn ${showFilters ? 'active' : ''}`} onClick={toggleFilters}>
+                        {showFilters ? '✖ Cerrar Filtros' : '🔍 Filtros'}
+                    </button>
+                    <button className="perfil-btn" onClick={() => setViewState('CrearApiaro')}>
+                            + Nuevo Apiario
+                    </button>
+                </div>
             </header>
 
+            {/* SECCIÓN DE FILTROS DESPLEGABLE */}
+            {showFilters && (
+                <section className="filters-area">
+                    <div className="filters-grid">
+                        <div className="filter-group">
+                            <label>Nombre</label>
+                            <input type="text" name="nombre" value={filters.nombre} onChange={handleFilterChange} placeholder="Buscar por nombre..." />
+                        </div>
+                        <div className="filter-group">
+                            <label>Capacidad Mín.</label>
+                            <input type="number" name="capacidadMin" value={filters.capacidadMin} onChange={handleFilterChange} placeholder="Ej: 10" />
+                        </div>
+                        <div className="filter-group">
+                            <label>Altitud Máx.</label>
+                            <input type="number" name="altitudMax" value={filters.altitudMax} onChange={handleFilterChange} placeholder="msnm" />
+                        </div>
+                        <div className="filter-group">
+                            <label>Ocupación</label>
+                            <select name="ocupacionRange" value={filters.ocupacionRange} onChange={handleFilterChange}>
+                                <option value="">Todas</option>
+                                <option value="vacio">Vacío (0%)</option>
+                                <option value="critico">Crítico (≤ 10%)</option>
+                                <option value="baja">Baja (10-45%)</option>
+                                <option value="medio">Media (45-75%)</option>
+                                <option value="optimo">Óptimo (75-95%)</option>
+                                <option value="lleno">Lleno (> 95%)</option>
+                            </select>
+                        </div>
+                        <div className="filter-actions-container">
+                            <button className="clear-filters-btn" onClick={limpiarFiltros}>
+                                Limpiar Filtros
+                            </button>
+                            <button className="close-filters-btn" onClick={() => setShowFilters(false)}>
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            )}
 
             {error && <div className="error-banner">{error}</div>}
 
             <div className="main-content-layout">
               <section className="list-side-panel">
-                 <div className="search-bar">
-                        <input
-                            type="text"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            placeholder="Buscar apiario por nombre..."
-                            aria-label="Buscar apiario"
-                        />
-                    </div>
+                <div className="list-stats-header">
+                    <span>Resultados: <strong>{apiarios.length}</strong></span>
+                </div>
+
                 {/* LISTADO TÉCNICO */}
                 <div className="cards-panel">
-                    {apiariosFiltrados.length > 0 ? (
-                        apiariosFiltrados.map((apiario) => (
+                    {apiarios.length > 0 ? (
+                        apiarios.map((apiario) => (
                             <div key={apiario.id} className="apiario-card-mini">
                                 <div className="card-info">
-                                    <h3>{apiario.nombre_referencia}</h3>
+                                    <h3 title={apiario.nombre_referencia}>
+                                        {apiario.nombre_referencia.length > 20 ? apiario.nombre_referencia.substring(0, 20) + '...' : apiario.nombre_referencia}
+                                    </h3>
                                     <p><span>Altitud:</span> {apiario.msnm} MSNM</p>
                                 </div>
                                    <div className="card-info">
@@ -112,9 +148,9 @@ export default function ListarApiarios({ usr, setViewState, setSelectedApiario }
                         ))
                     ) : (
                         <div className="no-data">
-                            {searchTerm.trim().length > 0
-                                ? 'No se encontró ningún apiario con ese nombre.'
-                                : 'No hay apiarios registrados para este usuario.'}
+                            {apiarios.length === 0 
+                                ? 'No se encontraron apiarios con los filtros aplicados.'
+                                : 'Cargando listado...'}
                         </div>
                     )}
                 </div>
@@ -131,6 +167,13 @@ export default function ListarApiarios({ usr, setViewState, setSelectedApiario }
                                 && apiario.posicion.length === 2
                                 && Number.isFinite(apiario.posicion[0])
                                 && Number.isFinite(apiario.posicion[1]);
+
+                            // Calculamos el resumen de estados para este apiario
+                            const resumenEstados = apiario.colmenas?.reduce((acc, col) => {
+                                const est = col.estado || 'Indefinido';
+                                acc[est] = (acc[est] || 0) + 1;
+                                return acc;
+                            }, {});
 
                             return tienePosicionValida ? (
                                 <React.Fragment key={apiario.id}>
@@ -156,12 +199,14 @@ export default function ListarApiarios({ usr, setViewState, setSelectedApiario }
                                             <strong>{apiario.nombre_referencia}</strong><br/>
                                             {apiario.msnm} MSNM<br/>
                                             <hr />
-                                            <strong>Colmenas ({apiario.colmenas?.length || 0}):</strong>
-                                            <ul style={{ margin: '5px 0 0 15px', padding: 0, fontSize: '0.85rem' }}>
-                                                {apiario.colmenas?.map(col => (
-                                                    <li key={col.id}>{col.id_colmena_usuario || 'S/N'}</li>
+                                            <div style={{ fontSize: '0.85rem', lineHeight: '1.4' }}>
+                                                {resumenEstados && Object.entries(resumenEstados).map(([estado, cantidad]) => (
+                                                    <div key={estado}>{cantidad} {estado.toLowerCase()}</div>
                                                 ))}
-                                            </ul>
+                                                <div style={{ borderTop: '1px solid #eee', marginTop: '5px', paddingTop: '2px' }}>
+                                                    <strong>{apiario.colmenas?.length || 0} total</strong>
+                                                </div>
+                                            </div>
                                         </Popup>
                                     </Marker>
                                 </React.Fragment>
@@ -172,15 +217,15 @@ export default function ListarApiarios({ usr, setViewState, setSelectedApiario }
                     {/* Leyenda de colores de capacidad */}
                     <div className="map-legend">
                         <h4>Ocupación</h4>
-                        <div className="legend-item"><span className="dot" style={{backgroundColor: '#000000'}}></span> Vacío (0)</div>
-                        <div className="legend-item"><span className="dot" style={{backgroundColor: '#d32f2f'}}></span> Crítico (&lt;10%)</div>
-                        <div className="legend-item"><span className="dot" style={{backgroundColor: '#f57c00'}}></span> Bajo (10-45%)</div>
-                        <div className="legend-item"><span className="dot" style={{backgroundColor: '#fbc02d'}}></span> Medio (45-75%)</div>
-                        <div className="legend-item"><span className="dot" style={{backgroundColor: '#388e3c'}}></span> Óptimo (75-99%)</div>
-                        <div className="legend-item"><span className="dot" style={{backgroundColor: '#1b5e20'}}></span> Lleno (100%+)</div>
+                        <div className="legend-item"><span className="dot" style={{backgroundColor: '#000000'}}></span> Vacío (0%)</div>
+                        <div className="legend-item"><span className="dot" style={{backgroundColor: '#ff0000'}}></span> Crítico (≤ 10%)</div>
+                        <div className="legend-item"><span className="dot" style={{backgroundColor: '#ff8000'}}></span> Bajo (10-45%)</div>
+                        <div className="legend-item"><span className="dot" style={{backgroundColor: '#fbd269'}}></span> Medio (45-75%)</div>
+                        <div className="legend-item"><span className="dot" style={{backgroundColor: '#00ff0d'}}></span> Óptimo (75-95%)</div>
+                        <div className="legend-item"><span className="dot" style={{backgroundColor: '#00ddff'}}></span> Lleno (&gt; 95%)</div>
                     </div>
                 </div>
             </div>
         </div>
     );
-}
+}  

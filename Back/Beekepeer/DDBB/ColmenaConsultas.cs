@@ -1,10 +1,6 @@
 ﻿using Beekepeer.Model;
 using System.Data.SqlClient;
-using Beekepeer.DTOs;
 using Beekepeer.DDBB.querysSQL;
-using System;
-using System.Collections.Generic;
-using static Beekepeer.DDBB.querysSQL.queryColmena;
 using Beekepeer.Model.ws;
 
 namespace Beekepeer.DDBB
@@ -149,7 +145,7 @@ namespace Beekepeer.DDBB
 
 
         // 3. ACTUALIZACIÓN DINÁMICA
-        public bool ActualizarColmena(int id, string? usuarioAcronimo, DateTime? fechaInicio, bool? esEnjambre, int? idColmenaMadre, bool? activo, int? apiarioId)
+        public bool ActualizarColmena(int id, string? usuarioAcronimo, DateTime? fechaInicio, bool? esEnjambre, int? idColmenaMadre, bool? activo, int? apiarioId, string? tipoColmena, DateTime? fechaInicioReina, string? estado, string? idColmenaUsuario)
         {
             using (SqlConnection connection = new SqlConnection(_sqlurl))
             {
@@ -161,6 +157,10 @@ namespace Beekepeer.DDBB
                 cmd.Parameters.AddWithValue("@IdColmenaMadre", (object)idColmenaMadre ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@Activo", (object)activo ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@ApiarioId", (object)apiarioId ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@TipoColmena", (object?)tipoColmena ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@FechaInicioReina", (object)fechaInicioReina ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Estado", (object)estado ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@IdColmenaUsuario", (object)idColmenaUsuario ?? DBNull.Value);
 
                 connection.Open();
                 return cmd.ExecuteNonQuery() > 0;

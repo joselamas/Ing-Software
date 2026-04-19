@@ -1,8 +1,6 @@
 import React from 'react';
 import { useAlimentarColmena } from './hooks/useAlimentarColmena';
 import './css/alimentarColmena.css';
-import '../usuario/css/modificarUsuario.css';
-import '../apiarios/css/detalleApiario.css';
 import apitherapy from '../imagenes/apitherapy.png';
 import ModalMSN from '../componentes/modalMSN';
 
@@ -55,6 +53,7 @@ const AlimentarColmena = ({ colmena, setViewState, usr }) => {
 
                     <div className="detalle-card info-card feeding-selector-card">
                         {/* SECCIÓN DE COSTOS UNITARIOS */}
+                        <h3 >Costos</h3>
                         <div className="costs-container">
                             <div className="input-group">
                                 <label>Azúcar ($/kg)</label>
@@ -88,7 +87,7 @@ const AlimentarColmena = ({ colmena, setViewState, usr }) => {
                         <div className="tab-content" style={{marginTop: '20px'}}>
                             {activeTab === 'individual' ? (
                                 <div className="input-group">
-                                    <label htmlFor="colmena_search">Identificador de Colmena</label>
+                                    <h3 htmlFor="colmena_search">Identificador de Colmena</h3>
                                     <input
                                         type="text"
                                         id="colmena_search"
@@ -191,7 +190,7 @@ const AlimentarColmena = ({ colmena, setViewState, usr }) => {
 
                             <div className="feeding-section">
                                 <input type="checkbox" id="jarabe" name="jarabe_activo" checked={formData.jarabe_activo} onChange={handleChange} />
-                                <label htmlFor="jarabe">Jarabe de Azúcar</label>
+                                <label htmlFor="jarabe" style={{display:'block'}}>Jarabe de Azúcar</label>
                                 {formData.jarabe_activo && (
                                     <div className="row-inputs">
                                         <input type="number" step="0.1" name="jarabe_cantidad" placeholder="Litros" onChange={handleChange} required />
@@ -261,7 +260,14 @@ const AlimentarColmena = ({ colmena, setViewState, usr }) => {
                 </section>
             </div>
             
-            <ModalMSN isOpen={isModalOpen} onClose={setIsModalOpen} {...modalInfo} goView={setViewState} view="VerMisColmenas" />
+            <ModalMSN 
+            isOpen={isModalOpen} 
+            onClose={setIsModalOpen}
+            title={modalInfo.titulo}
+            message={modalInfo.mensaje}
+            type={modalInfo.tipo}
+            goView={setViewState} 
+            view="" />
         </div>
     );
 };

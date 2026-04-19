@@ -1,97 +1,38 @@
-/* Contenedor de fondo (oscurece la pantalla) */
-.modal-overlay {
+/* --- Estilos para Modales MSN (Neobrutalismo) --- */
+.modal-msn-overlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: var(--overlay-dark); /* Fondo semi-transparente */
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--overlay-dark);
     display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 1000;
-    backdrop-filter: blur(4px); /* Efecto de desenfoque sutil */
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(4px);
 }
 
-/* Caja del Modal */
-.modal-content {
-    background-color: var(--white);
-    padding: 2rem;
-    border-radius: 0px; /* Estilo cuadrado neobrutalista */
+.modal-msn-content {
+    background-color: var(--bg-cream);
     border: 4px solid var(--dark-brown);
-    box-shadow: 8px 8px 0px var(--dark-brown); /* Sombra sólida característica */
+    padding: 40px;
+    max-width: 500px;
     width: 90%;
-    max-width: 400px;
     text-align: center;
-    position: relative;
-    animation: modalShow 0.3s ease-out;
+    box-shadow: 12px 12px 0px var(--dark-brown);
+    animation: modalPop 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Variantes de color según el tipo */
-.modal-success {
-    border-color: var(--success-dark);
-    box-shadow: 8px 8px 0px var(--success-dark);
+@keyframes modalPop {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }
 
-.modal-error {
-    border-color: var(--danger-dark);
-    box-shadow: 8px 8px 0px var(--danger-dark);
-}
-
-/* Encabezado e Icono */
-.modal-header h2 {
-    margin-top: 10px;
-    font-size: 1.5rem;
+.modal-msn-title {
+    font-size: 1.8rem;
+    font-weight: 900;
+    margin-bottom: 15px;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var( --dark-brown);
-}
-
-.modal-icon {
-    font-size: 3rem;
-    display: block;
-    margin-bottom: 10px;
-}
-
-/* Cuerpo del mensaje */
-.modal-body p {
-    color: var(--text-dark);
-    font-size: 1.1rem;
-    margin: 20px 0;
-    line-height: 1.5;
-}
-
-/* Botón de acción */
-.modal-button {
-    background-color: var(--dark-brown);
-    color: var(--white);
-    border: none;
-    padding: 12px 30px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: transform 0.1s;
-}
-
-.modal-button:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 4px 4px 0px var(--dark-gray);
-}
-
-.modal-button:active {
-    transform: translate(0, 0);
-    box-shadow: none;
-}
-
-/* Animación de entrada */
-@keyframes modalShow {
-    from {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+    color: var(--dark-brown);
 }

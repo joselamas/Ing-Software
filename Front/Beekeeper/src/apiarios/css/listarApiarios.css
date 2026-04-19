@@ -45,7 +45,7 @@ padding: 30px;
 .list-side-panel{
   display: grid;
   z-index: 99;
-  min-width: 400px;
+  min-width: 500px;
 }
 
 .map-side-panel {
@@ -101,28 +101,6 @@ padding: 30px;
     border: 1px solid rgba(0,0,0,0.2);
     display: inline-block;
 }
-
-.search-bar {
-    margin: 30px 0 16px;
-}
-
-.search-bar input {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1px solid var(--soft-border);
-    border-radius: 10px;
-    background: var(--light-cream);
-    color: var(--dark-brown);
-    font-size: 1rem;
-    transition: border-color 0.2s ease;
-}
-
-.search-bar input:focus {
-    outline: none;
-    border-color: var(--primary-yellow);
-    box-shadow: 0 0 0 4px rgba(255, 179, 0, 0.12);
-}
-
 .apiario-card-mini {
     background: var(--white);
     padding: 15px;
@@ -132,4 +110,116 @@ padding: 30px;
     align-items: center;
     border-left: 6px solid var(--primary-yellow);
     box-shadow: 0 2px 8px var(--shadow-soft);
+}
+
+/* Estilos para el Botón de Filtro y Área de Filtros Neobrutalista */
+.filter-toggle-btn {
+    background: var(--primary-yellow);
+    border: 3px solid var(--dark-brown);
+    padding: 10px 25px;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px var(--dark-brown);
+    transition: all 0.1s;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-toggle-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px var(--dark-brown);
+}
+
+.filter-toggle-btn.active {
+    background: var(--black);
+    color: var(--white);
+}
+
+.filters-area {
+    background: #fffcf0; /* Fondo crema muy claro para resaltar */
+    border: 3px solid var(--dark-brown);
+    box-shadow: 10px 10px 0px var(--dark-brown);
+    padding: 25px;
+    margin-bottom: 35px;
+    border-radius: 0px; /* Estilo cuadrado neobrutalista */
+    animation: slideDown 0.3s ease-out;
+    position: relative;
+    z-index: 100;
+}
+
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    align-items: flex-end;
+}
+
+.filter-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: var(--dark-brown);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.filter-group input, 
+.filter-group select {
+    width: 100%;
+    padding: 12px;
+    border: 3px solid var(--dark-brown);
+    background: var(--white);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.9rem;
+    outline: none;
+    transition: transform 0.1s;
+}
+
+.filter-group input:focus {
+    transform: scale(1.02);
+}
+
+.filter-actions-container {
+    display: flex;
+    gap: 15px;
+    grid-column: 1 / -1; /* Ocupa todo el ancho en la parte inferior */
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.clear-filters-btn, .close-filters-btn {
+    padding: 12px 30px;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 3px solid var(--dark-brown);
+    box-shadow: 4px 4px 0px var(--dark-brown);
+    transition: all 0.1s;
+}
+
+.clear-filters-btn {
+    background-color: var(--white);
+    color: var(--dark-brown);
+    min-width: 200px; /* Ampliado como pediste */
+}
+
+.close-filters-btn {
+    background: var(--black);
+    color: var(--white);
+}
+
+.clear-filters-btn:hover, .close-filters-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px var(--dark-brown);
+}
+
+
+.list-stats-header{
+color: var(--primary-yellow);
+
 }

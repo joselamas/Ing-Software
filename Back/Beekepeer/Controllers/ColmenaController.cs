@@ -131,18 +131,37 @@ namespace Beekepeer.Controllers
         [Route("actualizar")]
         public IActionResult ActualizarColmena([FromBody] ColmenaRequest datos)
         {
-            bool exito = _sql.ActualizarColmena(             
-               // datos.acronimo_usuario
-            );
+            try
+            {
+                // Llamamos al método de actualización dinámica pasándole todos los datos
+                bool exito = _sql.ActualizarColmena(
+                    id: datos.id,
+                    usuarioAcronimo: datos.usuario_acronimo,
+                    fechaInicio: datos.fecha_inicio,
+                    esEnjambre: datos.es_enjambre,
+                    idColmenaMadre: datos.id_colmena_madre,
+                    activo: datos.activo,
+                    apiarioId: datos.apiario_id,
+                    tipoColmena: datos.tipo_colmena,
+                    fechaInicioReina: datos.fecha_inicio_reina,
+                    estado: datos.estado,
+                    idColmenaUsuario: datos.id_colmena_usuario
+                );
 
-            if (exito)
-            {
-                // Retornamos el formato que el Hook espera para mostrar el éxito
-                return Ok(new { status = 1, mensaje = "¡Apiario actualizado con éxito!", data = datos });
+                if (exito)
+                {
+                    return Ok(new { status = 1, mensaje = "¡Colmena actualizada con éxito!", data = datos });
+                }
+                else
+                {
+                    // Ocurre si el ID de la colmena no existe en la base de datos
+                    return NotFound(new { status = 0, mensaje = "No se encontró la colmena a actualizar." });
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return NotFound(new { status = 0, mensaje = "No se encontró el Apiario Comuniquese con Soporte." });
+                Console.WriteLine($"Error SQL al actualizar colmena: {ex.Message}");
+                return StatusCode(500, new { status = 0, mensaje = "Error interno del servidor: " + ex.Message });
             }
         }
 

@@ -123,9 +123,17 @@ export async function actualizarColmena(colmena) {
 
         const data = await response.json();
 
-        if (response.ok) {
+        if (response.ok) 
+        {
             return { status: 1, mensaje: "Colmena actualizada", data: data };
-        } else {
+        } 
+        else 
+        {
+            // Si .NET rechaza el modelo (Error 400), imprimimos qué campo falló
+            if (response.status === 400 && data.errors) 
+            {
+                console.error("Errores de validación de .NET:", data.errors);
+            }
             return { status: 0, mensaje: data.mensaje || "Error al actualizar" };
         }
     } catch (err) {
@@ -134,24 +142,7 @@ export async function actualizarColmena(colmena) {
     }
 }
 
-export async function registrarAlimentacion(datos) {
-    try {
-        const response = await fetch(url + "registrarAlimentacion", {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(datos)
-        });
 
-        const data = await response.json();
-        if (response.ok) {
-            return { status: 1, mensaje: "Alimentación registrada", data: data };
-        } else {
-            return { status: 0, mensaje: data.mensaje || "Error al registrar" };
-        }
-    } catch (err) {
-        return { status: -1, mensaje: "Error de conexión con el servidor" };
-    }
-}
 export async function desactivarColmena(colmenaId) {
     const urlConParams = `${url}desactivate/${colmenaId}`;
     try {
