@@ -32,6 +32,12 @@ export default function Login(props) {
             <div className="login-container">
                 <div className="left-panel">
                     <div className="pattern-overlay"></div>
+                    {/* IMPLEMENTACIÓN DE LA NUEVA IMAGEN */}
+                    <img 
+                        src="/login.png" 
+                        alt="Security Logo" 
+                        className="lock-logo-overlay" 
+                    />
                 </div>
 
                 <div className="right-panel">
@@ -40,7 +46,6 @@ export default function Login(props) {
                         <p className="sub-title">Accede a tu cuenta de apicultor</p>
                         <br />
 
-                        {/* Cambiamos aceptarLog por manejarLoginEspecial */}
                         <form className="login-form" onSubmit={manejarLoginEspecial}>
                             <div className="input-group">
                                 <label htmlFor="identificador">Correo o Acrónimo</label>
