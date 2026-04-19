@@ -97,8 +97,10 @@ export const useModificarColmena = (colmenaInicial, setViewState, usr, selectedA
         try {
             const payload = {
                 ...formData,
+                usuario_acronimo: usr.acronimo,
+                fecha_inicio: formData.fecha_inicio ? formData.fecha_inicio : null,
                 id_colmena_madre: formData.es_enjambre ? null : (parseInt(formData.id_colmena_madre) || null),
-                fecha_inicio_reina: formData.es_enjambre ? null : formData.fecha_inicio_reina,
+                fecha_inicio_reina: formData.es_enjambre ? null : (formData.fecha_inicio_reina ? formData.fecha_inicio_reina : null),
                 apiario_id: parseInt(formData.apiario_id)
             };
 

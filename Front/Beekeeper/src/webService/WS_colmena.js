@@ -123,9 +123,17 @@ export async function actualizarColmena(colmena) {
 
         const data = await response.json();
 
-        if (response.ok) {
+        if (response.ok) 
+        {
             return { status: 1, mensaje: "Colmena actualizada", data: data };
-        } else {
+        } 
+        else 
+        {
+            // Si .NET rechaza el modelo (Error 400), imprimimos qué campo falló
+            if (response.status === 400 && data.errors) 
+            {
+                console.error("Errores de validación de .NET:", data.errors);
+            }
             return { status: 0, mensaje: data.mensaje || "Error al actualizar" };
         }
     } catch (err) {
