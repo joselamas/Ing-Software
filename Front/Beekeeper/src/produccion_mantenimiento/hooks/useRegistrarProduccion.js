@@ -47,7 +47,7 @@ export const useRegistrarProduccion = (usr, setViewState) => {
         return todasLasColmenas.filter(item => {
             const matchApiario = String(formData.apiario_id) === String(item.apiario_id);
             const estado = item.colmena?.estado?.toLowerCase() || "";
-            const matchEstado = estado.includes("produccion") || estado.includes("producción");
+            const matchEstado = estado.includes("Productiva") || estado.includes("productiva");
             return matchApiario && matchEstado;
         });
     }, [activeTab, formData.apiario_id, todasLasColmenas]);
@@ -126,20 +126,39 @@ export const useRegistrarProduccion = (usr, setViewState) => {
                 };
 
                 if (cantMiel > 0) {
-                    productos.push({
-                        ...base,
-                        tipo_producto: "Miel",
-                        cantidad_kg: cantMiel,
-                        precio_aprox_kg: precioMiel
-                    });
+                    if (activeTab !== 'bloque' || !formData.apiario_id)
+                        productos.push({
+                            ...base,
+                            tipo_producto: "Miel",
+                            cantidad_kg: cantMiel,
+                            precio_aprox_kg: precioMiel
+                        });
+                        else {
+                             productos.push({
+                            ...base,
+                            tipo_producto: "Miel",
+                            cantidad_kg: cantMiel/colmenasFiltradas.length,
+                            precio_aprox_kg: precioMiel
+                        });
+                        }
+
                 }
                 if (cantPolen > 0) {
-                    productos.push({
-                        ...base,
-                        tipo_producto: "Polen",
-                        cantidad_kg: cantPolen,
-                        precio_aprox_kg: precioPolen
-                    });
+                    if (activeTab !== 'bloque' || !formData.apiario_id)
+                        productos.push({
+                            ...base,
+                            tipo_producto: "Polen",
+                            cantidad_kg: cantPolen,
+                            precio_aprox_kg: precioPolen
+                        });
+                    else {
+                        productos.push({
+                            ...base,
+                            tipo_producto: "Polen",
+                            cantidad_kg: cantPolen/colmenasFiltradas.length,
+                            precio_aprox_kg: precioPolen
+                        });
+                    }
                 }
                 return productos;
             };

@@ -50,3 +50,43 @@ export async function registrarAlimentacion(datos) {
         return { status: -1, mensaje: "Error de conexión con el servidor" };
     }
 }
+
+export async function obtenerProduccion(acronimo) {
+    try {
+        const response = await fetch(`${url}listarProduccion?acronimo=${encodeURIComponent(acronimo)}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        });
+        const data = await response.json();
+        if (response.ok) {
+            // Ajuste para manejar si el backend retorna el array directamente o envuelto en un objeto
+            const listaValida = Array.isArray(data) ? data : (data.data || []);
+            return { status: 1, data: listaValida };
+        } else {
+            return { status: 0, mensaje: data.mensaje || "Error al obtener cosechas" };
+        }
+    } catch (err) {
+        console.error("Error de conexión:", err.message);
+        return { status: -1, mensaje: "Error de conexión con el servidor" };
+    }
+}
+
+export async function obtenerAlimentacion(acronimo) {
+    try {
+        const response = await fetch(`${url}listarAlimentacion?acronimo=${encodeURIComponent(acronimo)}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        });
+        const data = await response.json();
+        if (response.ok) {
+            // Ajuste para manejar si el backend retorna el array directamente o envuelto en un objeto
+            const listaValida = Array.isArray(data) ? data : (data.data || []);
+            return { status: 1, data: listaValida };
+        } else {
+            return { status: 0, mensaje: data.mensaje || "Error al obtener alimentación" };
+        }
+    } catch (err) {
+        console.error("Error de conexión:", err.message);
+        return { status: -1, mensaje: "Error de conexión con el servidor" };
+    }
+}
