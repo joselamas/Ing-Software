@@ -222,7 +222,6 @@
     background: var(--light-cream);
     border-radius: 16px;
     border: 1px solid var(--soft-border);
-    overflow: hidden;
 }
 
 /* ESTO VA DEBAJO: La parte superior de la tarjeta */
