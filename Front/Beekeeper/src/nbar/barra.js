@@ -74,17 +74,12 @@ export default function BarraNavegacion(props){
                                 <div onClick={() => handleNavigation("CrearApiaro")}>Crear Nuevo Apiario</div>
                             </div>
                         </li>
-                        
-                        <li className="dropdown">
-                            <button className="dropbtn active" onClick={() => toggleDropdown("perfil")}>
-                                Perfil {openDropdown === "perfil" ? '▲' : '▼'}
-                            </button>
-                            <div className={`dropdown-content active ${openDropdown === "perfil" ? "show" : ""}`}>
-                                <div onClick={() => handleNavigation("MiPerfil")}>Mi Perfil</div>
-                                <div onClick={() => handleNavigation("ActualizarDatos")}>Actualizar Perfil</div>
-                            </div>
-                        </li>
 
+                        {/* Opciones de perfil solo para móviles (dentro del menú hamburguesa) */}
+                        <li className="mobile-only-profile">
+                            <div onClick={() => handleNavigation("MiPerfil")}>Mi Perfil</div>
+                            <div onClick={() => handleNavigation("ActualizarDatos")}>Actualizar Perfil</div>
+                        </li>
                         {/* NUEVO: Botón de Cerrar Sesión (Solo visible en móviles) */}
                         <li className="mobile-only-logout">
                             <button className="dropbtn btn-logout" onClick={() => closeSesion()}>
@@ -93,14 +88,18 @@ export default function BarraNavegacion(props){
                         </li>
                     </ul>
 
-                    {/* El panel de usuario tradicional (Se oculta en móviles) */}
-                    <div className="nav-user">
-                        <div className="user-avatar">{props.usr?.nombre?.[0]}{props.usr?.apellido?.[0]}</div>
-                        <div className="user-info">
-                            <p className="user-name">{props.usr?.nombre + " " + props.usr?.apellido|| 'Usuario'}</p>
-                            <a href="#" className="logout-link" onClick={() => closeSesion()}>
-                                Cerrar Sesión
-                            </a>
+                    {/* Panel de usuario como Dropdown (Solo visible en computadoras) */}
+                    <div className="nav-user dropdown">
+                        <div className="user-avatar-info" onClick={() => toggleDropdown("userMenu")}>
+                            <div className="user-avatar">{props.usr?.nombre?.[0]}{props.usr?.apellido?.[0]}</div>
+                            <div className="user-info">
+                                <p className="user-name">{(props.usr?.nombre || "Usuario") + " " + (props.usr?.apellido || "")} {openDropdown === "userMenu" ? '▲' : '▼'}</p>
+                            </div>
+                        </div>
+                        <div className={`dropdown-content user-dropdown-right ${openDropdown === "userMenu" ? "show" : ""}`}>
+                            <div onClick={() => handleNavigation("MiPerfil")}>Mi Perfil</div>
+                            <div onClick={() => handleNavigation("ActualizarDatos")}>Actualizar Perfil</div>
+                            <div onClick={() => closeSesion()} className="logout-item">Cerrar Sesión</div>
                         </div>
                     </div>
                 </div>
