@@ -78,13 +78,17 @@ const VerAlimentacion = ({ usr, setViewState }) => {
                         <tbody>
                             {dataPaginada.map((item, idx) => (
                                 <tr key={idx}>
-                                    <td>{item.fecha?.split('T')[0]}</td>
+                                    <td>{item.alimentacion?.fecha?.split('T')[0]}</td>
                                     <td><strong>{item.id_colmena_usuario}</strong></td>
-                                    <td>{item.nombre_apiario}</td>
-                                    <td><span className="status-pill mantenimiento">{item.tipo_suministro}</span></td>
-                                    <td>{item.detalle_mezcla}</td>
-                                    <td>{item.cantidad}</td>
-                                    <td>${item.precio_total_insumo}</td>
+                                    <td>{item.nombre_referencia_Apiario}</td>
+                                    <td><span className="status-pill mantenimiento">{item.alimentacion?.tipo_suministro}</span></td>
+                                    <td>
+                                        {item.alimentacion?.tipo_suministro === 'Jarabe' 
+                                            ? item.alimentacion?.detalle_mezcla 
+                                            : 'N/A'}
+                                    </td>
+                                    <td>{item.alimentacion?.cantidad}</td>
+                                    <td>${item.alimentacion?.precio_total_insumo}</td>
                                 </tr>
                             ))}
                         </tbody>

@@ -61,7 +61,6 @@ namespace Beekepeer.DDBB
                         {
                             // Mapeo de campos directos de ProduccionWS
                             id_colmena_usuario = reader["id_colmena_usuario"].ToString(),
-                            idColmena = Convert.ToInt32(reader["idColmena"]),
                             nombre_referencia_Apiario = reader["nombre_referencia"].ToString(),
 
                             // Instanciamos el objeto interno Produccion y mapeamos sus campos
@@ -71,8 +70,8 @@ namespace Beekepeer.DDBB
                                 tipo_producto = reader["tipo_producto"].ToString(),
                                 tipo_origen = reader["tipo_origen"].ToString(),
                                 cantidad_kg = (float)Convert.ToDecimal(reader["cantidad_kg"]),
-                                precio_aprox_kg = (float)Convert.ToDecimal(reader["precio_aprox_kg"])
-                                // Agrega aquí otros campos de 'Produccion' si existen en el SELECT
+                                precio_aprox_kg = (float)Convert.ToDecimal(reader["precio_aprox_kg"]),
+                                colmena_id = Convert.ToInt32(reader["idColmena"]),
                             }
                         };
 
@@ -108,6 +107,51 @@ namespace Beekepeer.DDBB
                 return Convert.ToInt32(result);
             }
         }
+
+        public List<AlimentacionWS> getListAlimentacion(string acronimo)
+        {
+            List<AlimentacionWS> lista = new List<AlimentacionWS>();
+
+            using (SqlConnection connection = new SqlConnection(_sqlurl))
+            {
+                // Asegúrate de que queryProduccionMantenimiento.GetListProduccion contenga el SQL que pusiste arriba
+                SqlCommand cmd = new SqlCommand(queryProduccionMantenimiento.GetListAlimentacion, connection);
+                cmd.Parameters.AddWithValue("@Acronimo", acronimo);
+
+                connection.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var item = new AlimentacionWS
+                        {
+                            // Mapeo de campos directos de ProduccionWS
+                            id_colmena_usuario = reader["id_colmena_usuario"].ToString(),
+                            nombre_referencia_Apiario = reader["nombre_referencia"].ToString(),
+
+                            // Instanciamos el objeto interno Produccion y mapeamos sus campos
+                            alimentacion = new Alimentacion
+                            {
+                                fecha = Convert.ToDateTime(reader["fecha"]),
+                                tipo_suministro = reader["tipo_suministro"].ToString(),
+                                detalle_mezcla = reader["detalle_mezcla"].ToString(),
+                                cantidad = (float)Convert.ToDecimal(reader["cantidad"]),
+                                precio_total_insumo = (float)Convert.ToDecimal(reader["precio_total_insumo"]),
+                                colmena_id = Convert.ToInt32(reader["idColmena"]),
+                                observaciones = reader["observaciones"].ToString(),
+
+                            }
+                        };
+
+                        lista.Add(item);
+                    }
+                }
+            }
+
+            return lista;
+        }
+
 
     }
 }

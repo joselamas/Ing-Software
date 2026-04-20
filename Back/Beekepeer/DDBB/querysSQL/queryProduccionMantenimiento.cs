@@ -1,4 +1,6 @@
-﻿namespace Beekepeer.DDBB.querysSQL
+﻿using Beekepeer.Model;
+
+namespace Beekepeer.DDBB.querysSQL
 {
     public class queryProduccionMantenimiento
     {
@@ -34,6 +36,7 @@
                                 where P.fecha > R.fecha_entrada AND (R.fecha_salida IS NULL OR P.fecha < R.fecha_salida)
                                 and usuario_acronimo = @Acronimo";
 
+
         public const string InsertarAlimentacion = @"
                                     INSERT INTO control_alimentacion (
                                         colmena_id, 
@@ -56,5 +59,16 @@
                                         GETDATE()) ; 
                                     SELECT SCOPE_IDENTITY();";
 
-    }
+
+
+        public const string GetListAlimentacion = @"
+                            select CT.colmena_id as idColmena, id_colmena_usuario, CT.fecha as fecha, tipo_suministro, detalle_mezcla, precio_total_insumo, cantidad, observaciones,
+                            A.nombre_referencia AS nombre_referencia, A.id as idApiario
+                            from control_alimentacion as CT
+                            inner join colmena as C on C.id = CT.colmena_id
+                            inner join registro_colmena_apiario as R on R.colmena_id = C.id
+                            inner join apiario as A on R.apiario_id = A.id
+                            where CT.fecha > R.fecha_entrada AND (R.fecha_salida IS NULL OR CT.fecha<R.fecha_salida)
+                            and usuario_acronimo = @Acronimo";
+                            }
 }

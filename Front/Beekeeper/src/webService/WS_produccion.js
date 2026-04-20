@@ -73,7 +73,7 @@ export async function obtenerProduccion(acronimo) {
 
 export async function obtenerAlimentacion(acronimo) {
     try {
-        const response = await fetch(`${url}listarAlimentacion/${acronimo}`, {
+        const response = await fetch(`${url}listarAlimentacion?acronimo=${encodeURIComponent(acronimo)}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
         });
