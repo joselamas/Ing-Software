@@ -13,6 +13,8 @@ import ModificarColmena from './colmenas/ModificarColmena.js';
 
 import AlimentarColmena from './produccion_mantenimiento/AlimentarColmena.js';
 import RegistrarProduccion from './produccion_mantenimiento/RegistrarProduccion.js';
+import VerCosechas from './produccion_mantenimiento/VerCosechas.js';
+import VerAlimentacion from './produccion_mantenimiento/VerAlimentacion.js';
 
 import CrearApiario from './apiarios/crearApiario.js';
 import ListarApiarios from './apiarios/listarApiarios.js';
@@ -126,6 +128,20 @@ function App() {
         <RegistrarProduccion 
           setViewState={setViewState} 
           usr={usr}
+        />
+      )}
+
+      {viewState === 'VerCosechas' && (
+        <VerCosechas 
+          usr={usr}
+          setViewState={setViewState}
+        />
+      )}
+
+      {viewState === 'VerAlimentacion' && (
+        <VerAlimentacion 
+          usr={usr}
+          setViewState={setViewState}
         />
       )}
     </div>

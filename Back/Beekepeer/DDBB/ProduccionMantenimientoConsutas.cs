@@ -1,5 +1,6 @@
 ﻿using Beekepeer.DDBB.querysSQL;
 using Beekepeer.Model;
+using Beekepeer.Model.ws;
 using System.Data.SqlClient;
 
 namespace Beekepeer.DDBB
@@ -40,6 +41,48 @@ namespace Beekepeer.DDBB
             }
         }
 
+        public List<ProduccionWS> getListProduccion(string acronimo)
+        {
+            List<ProduccionWS> lista = new List<ProduccionWS>();
+
+            using (SqlConnection connection = new SqlConnection(_sqlurl))
+            {
+                // Asegúrate de que queryProduccionMantenimiento.GetListProduccion contenga el SQL que pusiste arriba
+                SqlCommand cmd = new SqlCommand(queryProduccionMantenimiento.GetListProduccion, connection);
+                cmd.Parameters.AddWithValue("@Acronimo", acronimo);
+
+                connection.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var item = new ProduccionWS
+                        {
+                            // Mapeo de campos directos de ProduccionWS
+                            id_colmena_usuario = reader["id_colmena_usuario"].ToString(),
+                            idColmena = Convert.ToInt32(reader["idColmena"]),
+                            nombre_referencia_Apiario = reader["nombre_referencia"].ToString(),
+
+                            // Instanciamos el objeto interno Produccion y mapeamos sus campos
+                            produccion = new Produccion
+                            {
+                                fecha = Convert.ToDateTime(reader["fecha"]),
+                                tipo_producto = reader["tipo_producto"].ToString(),
+                                tipo_origen = reader["tipo_origen"].ToString(),
+                                cantidad_kg = (float)Convert.ToDecimal(reader["cantidad_kg"]),
+                                precio_aprox_kg = (float)Convert.ToDecimal(reader["precio_aprox_kg"])
+                                // Agrega aquí otros campos de 'Produccion' si existen en el SELECT
+                            }
+                        };
+
+                        lista.Add(item);
+                    }
+                }
+            }
+
+            return lista;
+        }
 
 
         public int InsertarAlimentacion(Alimentacion data)

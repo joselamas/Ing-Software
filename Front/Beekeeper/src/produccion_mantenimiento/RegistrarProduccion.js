@@ -22,8 +22,8 @@ const RegistrarProduccion = ({ setViewState, usr }) => {
             <div className="detalle-grid">
                 <section className="detalle-left-panel">
                     <div className="overlay-content">
-                        <div className="bee-icon">
-                            <img src={apitherapy} alt="Logo" className="bee-logo-small" />
+                        <div >
+                            <img src={apitherapy} width={'200px'} alt="Logo" className="bee-logo-small" />
                         </div>
                         <h2>Planificación</h2>
                         <p>Selecciona el apiario o colmena para registrar la cosecha.</p>

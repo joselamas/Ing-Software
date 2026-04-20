@@ -1,0 +1,22 @@
+/* Estilos compartidos para las tablas de historial */
+.header-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.active-filter {
+    background-color: var(--dark-brown) !important;
+    color: var(--white) !important;
+}
+
+.results-count, .items-per-page label {
+    color: var(--white);
+    font-weight: 900;
+}
+
+.page-info {
+    background-color: var(--dark-brown);
+    color: var(--white);
+    padding: 8px 15px;
+}
