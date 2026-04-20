@@ -217,13 +217,51 @@
 
 .colmena-card {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    padding: 18px 20px;
+    flex-direction: column; /* <--- CAMBIO CLAVE: de horizontal a vertical */
+    padding: 0;             /* Quitamos el padding de aquí para dárselo a las sub-secciones */
     background: var(--light-cream);
     border-radius: 16px;
     border: 1px solid var(--soft-border);
+    overflow: hidden;
+}
+
+/* ESTO VA DEBAJO: La parte superior de la tarjeta */
+.colmena-card-visible {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 20px;
+    width: 100%;
+}
+
+/* ESTO VA DEBAJO: El botón de la flecha */
+.dropdown-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+    color: var(--dark-brown);
+}
+
+.dropdown-toggle.open {
+    transform: rotate(180deg);
+}
+
+/* ESTO VA DEBAJO: El panel que se muestra al abrir */
+.colmena-card-hidden {
+    background: rgba(46, 26, 18, 0.05);
+    padding: 15px 20px;
+    border-top: 1px dashed var(--soft-border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.colmena-card-hidden p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--dark-brown);
 }
 
 .colmenas-card {

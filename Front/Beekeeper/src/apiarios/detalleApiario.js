@@ -26,6 +26,16 @@ export default function DetalleApiario({ apiario, setViewState }) {
         return fechaDate < limite;
     };
 
+    //LOGICA EXPANSION DE COLMENAS AL VER UN APIARIO 
+    const [expandedHives, setExpandedHives] = useState({});
+
+    const toggleHiveExpansion = (id) => {  
+        setExpandedHives(prev => ({
+            ...prev,
+            [id]: !prev[id] 
+        }));
+    };
+
     const totalColmenas = apiario?.colmenas?.length || 0;
 
     if (!apiario) {
@@ -117,22 +127,49 @@ export default function DetalleApiario({ apiario, setViewState }) {
                             <span>{totalColmenas} colmenas registradas</span>
                         </div>
                         <div className="colmenas-list">
-                            {apiario.colmenas?.map(colmena => (
+                            {apiario.colmenas?.map(colmena => {
+                                const isExpanded = expandedHives[colmena.id]; // <--- NUEVO
+        
+                                return (
                                 <article key={colmena.id} className={`colmena-card ${esReinaVencida(colmena) ? 'vencida-border' : ''}`}>
-                                    <div>
-                                        <h3>{colmena.id_colmena_usuario}</h3>
-                                        <p>Tipo: {colmena.tipo_colmena}</p>
+                
+                                    {/* PARTE VISIBLE (Lo que ya tenías pero con el botón nuevo) */}
+                                    <div className="colmena-card-visible">
+                                        <div>
+                                            <h3>{colmena.id_colmena_usuario}</h3>
+                                            <p>Tipo: {colmena.tipo_colmena}</p>
+                                        </div>
+                                        <div className="colmena-meta">
+                                            <span className={esReinaVencida(colmena) ? 'text-vencida' : ''}>
+                                                {esReinaVencida(colmena) ? '⚠️ REEMPLAZO REINA' : colmena.estado}
+                                            </span>
+                                            <span>Inicio: {colmena.fecha_inicio?.split('T')[0]}</span>
+                                            <span>Reina: {colmena.fecha_inicio_reina?.split('T')[0] || 'N/A'}</span>
+                                        </div>
+
+                                        {/* BOTÓN NUEVO */}
+                                        <button className={`dropdown-toggle ${isExpanded ? 'open' : ''}`} onClick={() => toggleHiveExpansion(colmena.id)}>
+                                            ▼
+                                        </button>
                                     </div>
-                                    <div className="colmena-meta">
-                                        <span>Estado: {colmena.estado}</span>
-                                        <span className={esReinaVencida(colmena) ? 'text-vencida' : ''}>
-                                            {esReinaVencida(colmena) ? '⚠️ REEMPLAZO REINA' : colmena.estado}
-                                        </span>
-                                        <span>Inicio: {colmena.fecha_inicio?.split('T')[0]}</span>
-                                        <span>Reina: {colmena.fecha_inicio_reina?.split('T')[0] || 'N/A'}</span>
+
+                                    {/* PARTE OCULTA (Lo nuevo que se imprime si haces click) */}
+                                    {isExpanded && (
+                                    <div className="colmena-card-hidden">
+                                        <p><strong>Enajmbre:</strong> {colmena.es_enjambre ? 'Sí' : 'No'}</p>
+                                        <p><strong>ID Madre:</strong> {colmena.id_colmena_madre || 'No es una division'}</p>
+                                        <p><strong>Activo:</strong> {colmena.activo ? 'Sí' : 'No'}</p>
+                                        <p><strong>Flora Correspondiente:</strong> {apiario.tipo_flora}</p>
+                                        <p><strong>Tipo Colmena:</strong> {colmena.tipo_colmena}</p>
+                                        <p><strong>Estado</strong> {colmena.estado}</p>
+                                        <p><strong>Inicio:</strong> {colmena.fecha_inicio}</p>
+                                        <p><strong>Inicio Reina:</strong> {colmena.fecha_inicio_reina}</p>
+
                                     </div>
+                                    )}
                                 </article>
-                            ))}
+                            );
+                            })}
                         </div>
                     </div>
                 </section>
