@@ -88,7 +88,7 @@ const VerAlimentacion = ({ usr, setViewState }) => {
                                     <td>
                                         {item.alimentacion?.tipo_suministro === 'Jarabe' 
                                             ? item.alimentacion?.detalle_mezcla 
-                                            : 'N/A'}
+                                            : ' '}
                                     </td>
                                     <td>{item.alimentacion?.cantidad}</td>
                                     <td>${item.alimentacion?.precio_total_insumo}</td>

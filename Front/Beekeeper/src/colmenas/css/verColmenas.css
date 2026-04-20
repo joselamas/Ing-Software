@@ -7,7 +7,7 @@
 
 .filters-section {
     background-color: var(--white);
-    border: var(--border-width) solid var(--dark-brown);
+    border: var(--border-width, 2px) solid var(--dark-brown, #2e1a12);
     box-shadow: 6px 6px 0px var(--dark-brown);
     padding: 20px;
     margin-bottom: 30px;
@@ -81,8 +81,8 @@
 
 .table-wrapper {
     overflow-x: auto;
-    background: white;
-    border: var(--border-width) solid var(--dark-brown);
+    background: #ffffff;
+    border: var(--border-width, 2px) solid var(--dark-brown, #2e1a12);
     box-shadow: 8px 8px 0px var(--dark-brown);
 }
 
@@ -227,7 +227,7 @@
 
 .page-btn {
     background-color: var(--primary-yellow);
-    border: var(--border-width) solid var(--dark-brown);
+    border: var(--border-width, 2px) solid var(--dark-brown, #2e1a12);
     padding: 10px 20px;
     font-weight: 800;
     text-transform: uppercase;

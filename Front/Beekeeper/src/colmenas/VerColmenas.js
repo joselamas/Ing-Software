@@ -219,7 +219,12 @@ const VerColmenas = (props) => {
                                     <td>{c.colmena.fecha_inicio_reina?.split('T')[0] || "N/A"}</td>
                                     <td>
                                         <span className={`status-pill 
-                                            ${c.colmena.estado ? c.colmena.estado.toLowerCase().replace(/\s+/g, "-") : 'desconocido'} 
+                                            ${c.colmena.estado 
+                                                ? c.colmena.estado.toLowerCase()
+                                                    .normalize("NFD")
+                                                    .replace(/[\u0300-\u036f]/g, "")
+                                                    .replace(/\s+/g, "-") 
+                                                : 'desconocido'} 
                                             ${esReinaVencida(c.colmena) ? 'vencida' : ''}`}
                                         >
                                             {esReinaVencida(c.colmena) ? 'VENCIDA' : (c.colmena.estado || 'N/A')}
