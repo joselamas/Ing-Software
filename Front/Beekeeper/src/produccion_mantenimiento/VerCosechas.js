@@ -4,7 +4,7 @@ import './css/verRegistros.css';
 
 const VerCosechas = ({ usr, setViewState }) => {
     const {
-        loading, filters, handleFilterChange, setFilters,
+        loading, filters, handleFilterChange, setFilters, clearFilters,
         dataPaginada, totalResults, currentPage, setCurrentPage, totalPages, itemsPerPage, setItemsPerPage
     } = useVerCosechas(usr);
 
@@ -54,6 +54,9 @@ const VerCosechas = ({ usr, setViewState }) => {
                             <label>Hasta</label>
                             <input type="date" name="fechaHasta" value={filters.fechaHasta} onChange={handleFilterChange} />
                         </div>
+                    </div>
+                    <div className="filter-footer">
+                        <button className="secondary-btn btn-clear-filters" onClick={clearFilters}>Limpiar Filtros</button>
                     </div>
                 </div>
             )}

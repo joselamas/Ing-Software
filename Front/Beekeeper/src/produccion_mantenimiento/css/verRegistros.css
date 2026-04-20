@@ -20,3 +20,16 @@
     color: var(--white);
     padding: 8px 15px;
 }
+
+.filter-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+}
+
+.btn-clear-filters {
+    background-color: var(--black) !important;
+    color: var(--white) !important;
+    width: 180px;
+    font-size: 0.85rem;
+}

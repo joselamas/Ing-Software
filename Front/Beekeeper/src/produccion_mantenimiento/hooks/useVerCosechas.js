@@ -64,8 +64,12 @@ export const useVerCosechas = (usr) => {
         setFilters(prev => ({ ...prev, [name]: value }));
     };
 
+    const clearFilters = () => {
+        setFilters({ apiario: '', colmena: '', fechaDesde: '', fechaHasta: '', tipo: '' });
+    };
+
     return {
-        loading, filters, handleFilterChange, setFilters,
+        loading, filters, handleFilterChange, setFilters, clearFilters,
         dataPaginada, totalResults: dataFiltrada.length, currentPage, setCurrentPage, totalPages, itemsPerPage, setItemsPerPage
     };
 };
