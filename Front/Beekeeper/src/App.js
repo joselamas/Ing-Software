@@ -15,6 +15,7 @@ import AlimentarColmena from './produccion_mantenimiento/AlimentarColmena.js';
 import RegistrarProduccion from './produccion_mantenimiento/RegistrarProduccion.js';
 import VerCosechas from './produccion_mantenimiento/VerCosechas.js';
 import VerAlimentacion from './produccion_mantenimiento/VerAlimentacion.js';
+import Estadisticas from './estadisticas/Estadisticas.js';
 
 import CrearApiario from './apiarios/crearApiario.js';
 import ListarApiarios from './apiarios/listarApiarios.js';
@@ -140,6 +141,13 @@ function App() {
 
       {viewState === 'VerAlimentacion' && (
         <VerAlimentacion 
+          usr={usr}
+          setViewState={setViewState}
+        />
+      )}
+
+      {viewState === 'Estadisticas' && (
+        <Estadisticas 
           usr={usr}
           setViewState={setViewState}
         />

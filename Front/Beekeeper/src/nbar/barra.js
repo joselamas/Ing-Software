@@ -75,6 +75,12 @@ export default function BarraNavegacion(props){
                             </div>
                         </li>
 
+                        <li>
+                            <button className="dropbtn active" onClick={() => handleNavigation("Estadisticas")}>
+                                Análisis & ROI
+                            </button>
+                        </li>
+
                         {/* Opciones de perfil solo para móviles (dentro del menú hamburguesa) */}
                         <li className="mobile-only-profile">
                             <div onClick={() => handleNavigation("MiPerfil")}>Mi Perfil</div>

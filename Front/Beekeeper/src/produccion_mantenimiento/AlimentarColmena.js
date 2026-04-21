@@ -45,7 +45,7 @@ const AlimentarColmena = ({ colmena, setViewState, usr }) => {
                 <section className="detalle-left-panel">
                     <div className="overlay-content">
                         <div>
-                            <img src={apitherapy} alt="Logo" style={{width: '80px'}} />
+                            <img src={apitherapy} alt="Logo" style={{width: '200px'}} />
                         </div>
                         <h2>Planificación</h2>
                         <p>Selecciona el objetivo de la alimentación.</p>

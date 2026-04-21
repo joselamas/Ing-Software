@@ -1,0 +1,154 @@
+.stats-grid-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+/* Tarjetas de KPI (ROI, Totales) */
+.stat-card {
+    background: var(--white);
+    border: 3px solid var(--dark-brown);
+    box-shadow: 8px 8px 0px var(--dark-brown);
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-align: left;
+}
+
+.stat-card.highlight {
+    background-color: var(--primary-yellow);
+}
+
+.stat-card label {
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    color: var(--dark-brown);
+    letter-spacing: 1px;
+}
+
+.stat-card h2 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin: 0;
+    color: var(--dark-brown);
+}
+
+.stat-card .roi-badge {
+    background: var(--black);
+    color: var(--white);
+    padding: 5px 12px;
+    width: fit-content;
+    font-size: 0.9rem;
+    font-weight: 800;
+    margin-top: 5px;
+    border-radius: 4px;
+}
+
+/* Diseño de Producción Dividida */
+.production-split-container {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.prod-box {
+    flex: 1;
+    padding: 15px 10px;
+    border: 3px solid var(--dark-brown);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 4px 4px 0px var(--dark-brown);
+    transition: transform 0.1s;
+}
+
+.prod-box.honey { background-color: #fbbf24; } /* Ámbar Miel */
+.prod-box.pollen { background-color: #fcd34d; } /* Oro Polen (o podrías usar #34d399 para un toque verde) */
+
+.prod-box .prod-value {
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.prod-box .prod-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-top: 5px;
+}
+
+/* Ranking de Colmenas */
+.elite-ranking-container {
+    margin-top: 40px;
+    background: var(--white);
+    border: 3px solid var(--dark-brown);
+    box-shadow: 10px 10px 0px var(--black);
+    padding: 30px;
+}
+
+.elite-ranking-container h3 {
+    text-transform: uppercase;
+    font-weight: 900;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--dark-brown);
+}
+
+/* Gráficas Prototipo (Barras con CSS) */
+.chart-placeholder {
+    height: 180px;
+    display: flex;
+    align-items: flex-end;
+    gap: 15px;
+    padding-top: 30px;
+    border-bottom: 3px solid var(--dark-brown);
+    margin-top: 10px;
+}
+
+.bar {
+    flex: 1;
+    background: var(--primary-yellow);
+    border: 3px solid var(--dark-brown);
+    position: relative;
+    min-width: 30px;
+    transition: transform 0.2s ease;
+    cursor: help;
+}
+
+.bar:hover {
+    background-color: var(--dark-brown);
+    transform: scaleX(1.05);
+}
+
+.bar::after {
+    content: attr(data-label);
+    position: absolute;
+    top: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    font-weight: 900;
+    color: var(--dark-brown);
+}
+
+.bar::before {
+    content: attr(data-month);
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: var(--dark-brown);
+}
+
+.status-pill.excelente { background-color: #4ade80; color: #064e3b; }
+.status-pill.buena { background-color: #fde047; color: #713f12; }
