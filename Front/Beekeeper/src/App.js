@@ -8,6 +8,7 @@ import ModificarUsuario from './usuario/modificarUsuario.js'
 import MiPerfil from './usuario/miPerfil.js';
 
 import VerColmenas from './colmenas/VerColmenas.js';
+import DetalleColmena from './colmenas/DetalleColmena.js';
 import RegistrarColmena from './colmenas/RegistrarColmena.js';
 import ModificarColmena from './colmenas/ModificarColmena.js';
 
@@ -46,11 +47,11 @@ function App() {
           setUsr={setUsr}
           setViewState = {setViewState}
          />}
-     {viewState  === 'CrearUsuario' &&  
+     {viewState   === 'CrearUsuario' &&  
         <CrearUsuario
           setViewState = {setViewState}
         />}
-     {viewState  === 'ActualizarDatos' && <ModificarUsuario
+     {viewState   === 'ActualizarDatos' && <ModificarUsuario
         setViewState = {setViewState}
         usr={usr}
         setUsr={setUsr}
@@ -70,6 +71,13 @@ function App() {
           setSelectedColmena={setSelectedColmena}
           usr={usr} 
           setSelectedApiarioID= {setSelectedApiarioID}
+        />
+      )}
+
+      {viewState === 'DetalleColmena' && selectedColmena && (
+        <DetalleColmena 
+          colmena={selectedColmena} 
+          setViewState={setViewState} 
         />
       )}
 
