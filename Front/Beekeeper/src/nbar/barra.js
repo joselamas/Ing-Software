@@ -75,10 +75,16 @@ export default function BarraNavegacion(props){
                             </div>
                         </li>
 
-                        <li>
-                            <button className="dropbtn active" onClick={() => handleNavigation("Estadisticas")}>
-                                Análisis & ROI
+                        <li className="dropdown">
+                            <button className="dropbtn active" onClick={() => toggleDropdown("analisis")}>
+                                Estadísticas {openDropdown === "analisis" ? '▲' : '▼'}
                             </button>
+                            <div className={`dropdown-content active ${openDropdown === "analisis" ? "show" : ""}`}>
+                                <div onClick={() => handleNavigation("Estadisticas")}>Dashboard Global & ROI</div>
+                                <div onClick={() => handleNavigation("AnalisisApiarios")}>Rendimiento por Apiario</div>
+                                <div onClick={() => handleNavigation("EficienciaApiarios")}>Eficiencia por Colmena</div>
+                                <div onClick={() => handleNavigation("RendimientoAltura")}>Rendimiento por Altura</div>
+                            </div>
                         </li>
 
                         {/* Opciones de perfil solo para móviles (dentro del menú hamburguesa) */}

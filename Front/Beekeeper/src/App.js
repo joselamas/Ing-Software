@@ -16,6 +16,9 @@ import RegistrarProduccion from './produccion_mantenimiento/RegistrarProduccion.
 import VerCosechas from './produccion_mantenimiento/VerCosechas.js';
 import VerAlimentacion from './produccion_mantenimiento/VerAlimentacion.js';
 import Estadisticas from './estadisticas/Estadisticas.js';
+import AnalisisApiarios from './estadisticas/AnalisisApiarios.js';
+import EficienciaApiarios from './estadisticas/EficienciaApiarios.js';
+import RendimientoAltura from './estadisticas/RendimientoAltura.js';
 
 import CrearApiario from './apiarios/crearApiario.js';
 import ListarApiarios from './apiarios/listarApiarios.js';
@@ -150,6 +153,24 @@ function App() {
         <Estadisticas 
           usr={usr}
           setViewState={setViewState}
+        />
+      )}
+
+      {viewState === 'AnalisisApiarios' && (
+        <AnalisisApiarios 
+          usr={usr}
+        />
+      )}
+
+      {viewState === 'EficienciaApiarios' && (
+        <EficienciaApiarios 
+          usr={usr}
+        />
+      )}
+
+      {viewState === 'RendimientoAltura' && (
+        <RendimientoAltura 
+          usr={usr}
         />
       )}
     </div>
