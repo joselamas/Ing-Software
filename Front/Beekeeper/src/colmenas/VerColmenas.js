@@ -22,7 +22,6 @@ const VerColmenas = (props) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
 
-    // Reiniciar a la página 1 cuando cambian los filtros o la lista base para evitar confusiones
     useEffect(() => {
         setCurrentPage(1);
     }, [filters, colmenas, itemsPerPage]);
@@ -30,7 +29,6 @@ const VerColmenas = (props) => {
     const handleOpenConfirm = (colmena) => {
         setHiveToDeactivate(colmena);
         setIsModalOpen(true);
-        // Configuramos el modal en modo confirmación
         modalInfo.titulo = "¿Confirmar Baja?";
         modalInfo.mensaje = `¿Estás seguro de que deseas dar de baja la colmena ${colmena.colmena.id_colmena_usuario}?`;
         modalInfo.tipo = "confirm";
@@ -39,11 +37,9 @@ const VerColmenas = (props) => {
     const handleActionConfirm = () => {
         if (hiveToDeactivate) {
             desactivarColmena(hiveToDeactivate.colmena.id);
-            // El hook desactivarColmena se encargará de cambiar el modal a éxito/error
         }
     };
 
-    // Función para determinar si la reina tiene más de 2 años (vencida)
     const esReinaVencida = (col) => {
         const fechaRef = col.fecha_inicio_reina || col.fecha_inicio;
         if (!fechaRef || fechaRef === "N/A") return false;
@@ -231,11 +227,32 @@ const VerColmenas = (props) => {
                                         </span>
                                     </td>
                                     <td>
+                                        <button 
+                                            className="icon-btn detail" 
+                                            onClick={() => {
+                                                props.setSelectedColmena(c);
+                                                props.setViewState("DetalleColmena");
+                                            }} 
+                                            title="Ver Detalles"
+                                            /* Estilo corregido para que el botón sea blanco y el ojo rojizo */
+                                            style={{ 
+                                                color: 'transparent',
+                                                textShadow: '0 0 0 #8B4513',
+                                                fontSize: '1.2rem',
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                            }}
+                                        >
+                                            👁️
+                                        </button>
+
                                         <button className="icon-btn edit" onClick={() => {
                                             props.setSelectedColmena(c);
                                             props.setSelectedApiarioID(c.apiario_id);
                                             props.setViewState("ModificarColmena");
                                         }}>✎</button>
+
                                         <button className="icon-btn delete" onClick={() => handleOpenConfirm(c)}>
                                             ✖
                                         </button>

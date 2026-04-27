@@ -35,15 +35,18 @@ padding: 30px;
 }
 
 .cards-panel {
-    flex: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 10px;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 10px;
+  justify-content: flex-start; /* Añade esto para asegurar el inicio */
 }
-.list-side-panel{
-  display: grid;
+.list-side-panel {
+  display: flex;             /* Cambiado de grid a flex */
+  flex-direction: column;    /* Alineación vertical */
+  justify-content: flex-start; /* Fuerza a que los elementos empiecen arriba */
   z-index: 99;
   min-width: 500px;
 }
