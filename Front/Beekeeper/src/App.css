@@ -181,8 +181,9 @@ h1, .title {
 }
 
 .perfil-header h1 span {
-    font-weight: 400;
-    color: var(--dark-brown);
+    font-weight: 900;
+    color: #f59e0b;
+    text-decoration: underline;
 }
 
 .perfil-btn {
@@ -201,4 +202,35 @@ h1, .title {
 .perfil-btn:hover {
     transform: translate(-2px, -2px);
     box-shadow: 6px 6px 0px var(--dark-brown);
+}
+
+.stat-card p {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--dark-brown);
+    line-height: 1.4;
+    margin-top: 10px;
+}
+
+.perfil-header p {
+    color: var(--dark-brown);
+    font-weight: 800;
+    font-size: 1.1rem;
+    max-width: 650px;
+    margin-top: 5px;
+}
+
+.gestion-container {
+    padding-left: 100px; 
+    background-size: 200px;
+    min-height: calc(100vh - 80px);
+    transition: padding 0.3s ease;
+    overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+    .gestion-container {
+        padding-left: 20px;
+        background-image: none;
+    }
 }

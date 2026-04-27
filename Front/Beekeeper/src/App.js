@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import BarraNavegacion from './nbar/barra.js'
 
 import Login from './usuario/login.js'
+import Home from './componentes/Home.js';
 import CrearUsuario from './usuario/crearUsuario.js'
 import ModificarUsuario from './usuario/modificarUsuario.js'
 import MiPerfil from './usuario/miPerfil.js';
@@ -36,6 +37,7 @@ function App() {
 
     const [selectedColmena, setSelectedColmena] = useState(null);
 
+    console.log("Estado actual:", { viewState, usr, selectedApiario, selectedColmena });
 
   return (
     <div className="App">
@@ -53,6 +55,11 @@ function App() {
         <CrearUsuario
           setViewState = {setViewState}
         />}
+
+      {viewState === 'Home' && usr && (
+        <Home />
+      )}
+
      {viewState  === 'ActualizarDatos' && <ModificarUsuario
         setViewState = {setViewState}
         usr={usr}

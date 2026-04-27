@@ -30,7 +30,7 @@ export default function BarraNavegacion(props){
         return (
             <nav className="navbar-horizontal">
                 <div className="nav-container">
-                    <div className="nav-logo">
+                    <div className="nav-logo" onClick={() => handleNavigation("Home")}>
                         <div className="logo-icon">⬢</div>
                         <span>BEEKEEPER</span>
                     </div>
