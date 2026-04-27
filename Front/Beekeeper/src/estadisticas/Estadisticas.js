@@ -52,10 +52,10 @@ const Estadisticas = ({ usr }) => {
 
             <div className="stats-grid-dashboard">
                 <div className="stat-card highlight">
-                    <label>Retorno de Inversión (ROI)</label>
+                    <label style={{fontSize:'2rem'}}>Retorno de Inversión (ROI)</label>
                     <h2>{stats.roi.porcentaje}%</h2>
                     <div className="roi-badge">Neto: {formatMoneda(stats.roi.beneficio)}</div>
-                    <p style={{fontSize: '0.75rem', marginTop: '10px', color: 'var(--dark-brown)'}}>
+                    <p style={{fontSize: '1.3rem', marginTop: '10px', color: 'var(--dark-brown)'}}>
                         Basado en {formatMoneda(stats.roi.ingresos)} ingresos vs {formatMoneda(stats.roi.egresos)} egresos.
                     </p>
                 </div>
@@ -120,7 +120,6 @@ const Estadisticas = ({ usr }) => {
                             <th>Altitud</th>
                             <th>Fecha Inicio</th>
                             <th>Total Cosecha (Kg)</th>
-                            <th>Estado Salud</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -132,11 +131,6 @@ const Estadisticas = ({ usr }) => {
                                 <td>{hive.msnm} <small>msnm</small></td>
                                 <td>{hive.fechaInicio ? hive.fechaInicio.split('T')[0] : 'N/A'}</td>
                                 <td>{hive.produccion} Kg</td>
-                                <td>
-                                    <span className={`status-pill ${hive.salud.toLowerCase() === 'excelente' ? 'excelente' : 'buena'}`}>
-                                        {hive.salud}
-                                    </span>
-                                </td>
                             </tr>
                         ))}
                     </tbody>
