@@ -18,12 +18,32 @@ const AlimentarColmena = ({ colmena, setViewState, usr }) => {
         apiarios,
         todasLasColmenas,
         searchTermColmena,
+        setSearchTermColmena,
         manejarCambioColmena,
         colmenasFiltradas
     } = useAlimentarColmena(colmena, setViewState, usr);
 
-    // Buscamos el objeto completo de la colmena seleccionada para mostrar detalles
-    const itemEnEdicion = todasLasColmenas.find(c => c.colmena.id === formData.colmena_id);
+    const colmenaSeleccionada = todasLasColmenas.find(c => String(c.colmena.id) === String(formData.colmena_id));
+
+    const handleHiveFocus = (e) => {
+        if (!formData.colmena_id) {
+            const input = e.target;
+            const currentValue = input.value;
+            input.value = '';
+            window.setTimeout(() => {
+                input.value = currentValue;
+            }, 0);
+        }
+    };
+
+    const handleIndividualTab = () => {
+        setActiveTab('individual');
+        setSearchTermColmena('');
+        handleChange({ target: { name: 'colmena_id', value: '' } });
+    };
+
+    // Buscamos el objeto completo de la colmena seleccionada para mostrar detalles (mantener para compatibilidad)
+    const itemEnEdicion = todasLasColmenas.find(c => c.colmena.id === Number(formData.colmena_id));
     const colmenaEnEdicion = itemEnEdicion?.colmena;
 
     // Lógica para habilitar el botón de guardado
@@ -32,7 +52,7 @@ const AlimentarColmena = ({ colmena, setViewState, usr }) => {
         : (!!formData.apiario_id && colmenasFiltradas.length > 0);
 
     return (
-        <div className="detalle-container" style={{marginTop: '80px'}}>
+        <div className="detalle-container">
              <div className="detalle-header">
                 <button className="back-btn" onClick={() => setViewState('VerMisColmenas')}>
                     ← Volver
@@ -45,7 +65,7 @@ const AlimentarColmena = ({ colmena, setViewState, usr }) => {
                 <section className="detalle-left-panel">
                     <div className="overlay-content">
                         <div>
-                            <img src={apitherapy} alt="Logo" style={{width: '200px'}} />
+                            <img src={apitherapy} alt="Logo" className="logo-image" />
                         </div>
                         <h2>Planificación</h2>
                         <p>Selecciona el objetivo de la alimentación.</p>
@@ -72,7 +92,7 @@ const AlimentarColmena = ({ colmena, setViewState, usr }) => {
                         <div className="tabs-container">
                             <button 
                                 className={`tab-btn ${activeTab === 'individual' ? 'active' : ''}`}
-                                onClick={() => setActiveTab('individual')}
+                                onClick={handleIndividualTab}
                             >
                                 Individual
                             </button>
@@ -84,42 +104,48 @@ const AlimentarColmena = ({ colmena, setViewState, usr }) => {
                             </button>
                         </div>
 
-                        <div className="tab-content" style={{marginTop: '20px'}}>
+                        <div className="tab-content">
                             {activeTab === 'individual' ? (
                                 <div className="input-group">
                                     <h3 htmlFor="colmena_search">Identificador de Colmena</h3>
                                     <input
                                         type="text"
                                         id="colmena_search"
-                                        list="hives_list"
-                                        placeholder="Ej: ME-22..."
+                                        name="colmena_id"
+                                        list="hives_list_prod"
                                         value={searchTermColmena}
                                         onChange={manejarCambioColmena}
+                                        onFocus={handleHiveFocus}
+                                        onClick={handleHiveFocus}
+                                        placeholder="Ej: COL-001 o ME-22..."
                                         autoComplete="off"
                                     />
-                                    <datalist id="hives_list">
-                                        {todasLasColmenas.map(c => (
-                                            <option key={c.colmena.id} value={c.colmena.id_colmena_usuario}>
-                                                {c.nombre_apiario || 'Sin apiario'}
+                                    <datalist id="hives_list_prod">
+                                        {todasLasColmenas.map(hive => (
+                                            <option
+                                                key={hive.colmena.id}
+                                                value={hive.colmena.id_colmena_usuario}
+                                            >
+                                                {hive.nombre_apiario ? hive.nombre_apiario : 'Sin apiario'}
                                             </option>
                                         ))}
                                     </datalist>
 
                                     {/* Sección de detalles de la colmena seleccionada individualmente */}
-                                    {colmenaEnEdicion && (
-                                        <div className="matched-hives-preview animate-fade-in">
-                                            <label>Detalles de la Colmena:</label>
-                                            <div className="info-row" style={{marginTop: '10px'}}>
-                                                <span>Tipo:</span>
-                                                <strong>{colmenaEnEdicion.tipo_colmena}</strong>
+                                    {colmenaSeleccionada && (
+                                        <div className="matched-hives-preview animate-fade-in detalle-left-panel">
+                                            <label className="hive-details-label">Detalles de la Colmena:</label>
+                                            <div className="info-row">
+                                                <span className="info-span">Tipo:</span>
+                                                <strong className="info-strong">{colmenaSeleccionada.colmena.tipo_colmena}</strong>
                                             </div>
                                             <div className="info-row">
-                                                <span>Estado Actual:</span>
-                                                <strong>{colmenaEnEdicion.estado}</strong>
+                                                <span className="info-span">Estado Actual:</span>
+                                                <strong className="info-strong">{colmenaSeleccionada.colmena.estado}</strong>
                                             </div>
                                             <div className="info-row">
-                                                <span>Ubicación:</span>
-                                                <strong>{itemEnEdicion?.nombre_apiario || 'Sin asignar'}</strong>
+                                                <span className="info-span">Ubicación:</span>
+                                                <strong className="info-strong">{colmenaSeleccionada.nombre_apiario || 'Sin asignar'}</strong>
                                             </div>
                                         </div>
                                     )}
@@ -179,8 +205,8 @@ const AlimentarColmena = ({ colmena, setViewState, usr }) => {
 
                 {/* PANEL DERECHO: FORMULARIO DE ALIMENTOS */}
                 <section className="detalle-right-panel">
-                    <div className="detalle-card info-card" style={{background: 'white'}}>
-                        <h1 className="main-title" style={{marginBottom: '30px'}}>REGISTRAR <span>ALIMENTOS</span></h1>
+                    <div className="detalle-card info-card">
+                        <h1 className="main-title">REGISTRAR <span>ALIMENTOS</span></h1>
 
                         <form onSubmit={enviarAlimentacion} className="login-form">
                             <div className="input-group">
@@ -189,57 +215,83 @@ const AlimentarColmena = ({ colmena, setViewState, usr }) => {
                             </div>
 
                             <div className="feeding-section">
-                                <input type="checkbox" id="jarabe" name="jarabe_activo" checked={formData.jarabe_activo} onChange={handleChange} />
-                                <label htmlFor="jarabe" style={{display:'block'}}>Jarabe de Azúcar</label>
-                                {formData.jarabe_activo && (
-                                    <div className="row-inputs">
-                                        <input type="number" step="0.1" name="jarabe_cantidad" placeholder="Litros" onChange={handleChange} required />
-                                        <select name="jarabe_concentracion" onChange={handleChange}>
-                                            <option value="1:1">1:1</option>
-                                            <option value="2:1">2:1</option>
-                                        </select>
+                                <div className="feeding-header">
+                                    <label>Jarabe de Azúcar</label>
+                                    <button 
+                                        type="button" 
+                                        className={`toggle-btn ${formData.jarabe_activo ? 'active' : 'inactive'}`}
+                                        onClick={() => handleChange({ target: { name: 'jarabe_activo', type: 'checkbox', checked: !formData.jarabe_activo } })}
+                                    >
+                                        {formData.jarabe_activo ? 'Desactivar' : 'Activar'}
+                                    </button>
+                                </div>
+                                <div className={`form-collapse-container ${formData.jarabe_activo ? 'expanded' : 'collapsed'}`}>
+                                    <div className="form-collapse-content">
+                                        <div className="row-inputs">
+                                            <input type="number" step="0.1" name="jarabe_cantidad" placeholder="Litros" value={formData.jarabe_cantidad || ''} onChange={handleChange} required={formData.jarabe_activo} />
+                                            <select name="jarabe_concentracion" value={formData.jarabe_concentracion || '1:1'} onChange={handleChange}>
+                                                <option value="1:1">1:1</option>
+                                                <option value="2:1">2:1</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                )}
+                                </div>
                             </div>
 
                             <div className="feeding-section">
-                                <div className="input-group checkbox-group">
-                                    <input type="checkbox" id="torta" name="torta_activo" checked={formData.torta_activo} onChange={handleChange} />
-                                    <label htmlFor="torta">Torta Proteica</label>
+                                <div className="feeding-header">
+                                    <label>Torta Proteica</label>
+                                    <button 
+                                        type="button" 
+                                        className={`toggle-btn ${formData.torta_activo ? 'active' : 'inactive'}`}
+                                        onClick={() => handleChange({ target: { name: 'torta_activo', type: 'checkbox', checked: !formData.torta_activo } })}
+                                    >
+                                        {formData.torta_activo ? 'Desactivar' : 'Activar'}
+                                    </button>
                                 </div>
-                                {formData.torta_activo && (
-                                    <div className="animate-fade-in input-group" style={{marginTop: '15px'}}>
-                                        <label>Cantidad en Gramos</label>
-                                        <input 
-                                            type="number" 
-                                            name="torta_cantidad" 
-                                            placeholder="Ej: 200" 
-                                            value={formData.torta_cantidad} 
-                                            onChange={handleChange} 
-                                            required 
-                                        />
+                                <div className={`form-collapse-container ${formData.torta_activo ? 'expanded' : 'collapsed'}`}>
+                                    <div className="form-collapse-content">
+                                        <div className="input-group form-collapse-input-group">
+                                            <label>Cantidad en Gramos</label>
+                                            <input 
+                                                type="number" 
+                                                name="torta_cantidad" 
+                                                placeholder="Ej: 200" 
+                                                value={formData.torta_cantidad} 
+                                                onChange={handleChange} 
+                                                required={formData.torta_activo} 
+                                            />
+                                        </div>
                                     </div>
-                                )}
+                                </div>
                             </div>
 
                             <div className="feeding-section">
-                                <div className="input-group checkbox-group">
-                                    <input type="checkbox" id="polen" name="polen_activo" checked={formData.polen_activo} onChange={handleChange} />
-                                    <label htmlFor="polen">Suplemento de Polen</label>
+                                <div className="feeding-header">
+                                    <label>Suplemento de Polen</label>
+                                    <button 
+                                        type="button" 
+                                        className={`toggle-btn ${formData.polen_activo ? 'active' : 'inactive'}`}
+                                        onClick={() => handleChange({ target: { name: 'polen_activo', type: 'checkbox', checked: !formData.polen_activo } })}
+                                    >
+                                        {formData.polen_activo ? 'Desactivar' : 'Activar'}
+                                    </button>
                                 </div>
-                                {formData.polen_activo && (
-                                    <div className="animate-fade-in input-group" style={{marginTop: '15px'}}>
-                                        <label>Cantidad en Gramos</label>
-                                        <input 
-                                            type="number" 
-                                            name="polen_cantidad" 
-                                            placeholder="Ej: 100" 
-                                            value={formData.polen_cantidad} 
-                                            onChange={handleChange} 
-                                            required 
-                                        />
+                                <div className={`form-collapse-container ${formData.polen_activo ? 'expanded' : 'collapsed'}`}>
+                                    <div className="form-collapse-content">
+                                        <div className="input-group form-collapse-input-group">
+                                            <label>Cantidad en Gramos</label>
+                                            <input 
+                                                type="number" 
+                                                name="polen_cantidad" 
+                                                placeholder="Ej: 100" 
+                                                value={formData.polen_cantidad} 
+                                                onChange={handleChange} 
+                                                required={formData.polen_activo} 
+                                            />
+                                        </div>
                                     </div>
-                                )}
+                                </div>
                             </div>
 
                             <div className="input-group">
@@ -251,7 +303,6 @@ const AlimentarColmena = ({ colmena, setViewState, usr }) => {
                                 type="submit" 
                                 className={`primary-btn ${!hayColmenasSeleccionadas && !loading ? 'btn-waiting' : ''}`} 
                                 disabled={loading || !hayColmenasSeleccionadas} 
-                                style={{width: '100%', marginTop: '20px'}}
                             >
                                 {loading ? 'GUARDANDO...' : hayColmenasSeleccionadas ? 'GUARDAR REGISTRO' : 'SELECCIONA COLMENAS'}
                             </button>

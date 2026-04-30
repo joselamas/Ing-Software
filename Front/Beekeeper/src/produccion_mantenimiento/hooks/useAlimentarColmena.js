@@ -172,6 +172,26 @@ export const useAlimentarColmena = (colmenaInicial, setViewState, usr) => {
                     mensaje: res.mensaje || "Los datos de alimentación se guardaron correctamente.",
                     tipo: "success"
                 });
+                
+                setFormData({
+                    colmena_id: '',
+                    apiario_id: '',
+                    filtro_tipo: '',
+                    filtro_estado: '',
+                    fecha: new Date().toISOString().split('T')[0],
+                    jarabe_activo: false,
+                    jarabe_cantidad: '',
+                    jarabe_concentracion: '1:1',
+                    torta_activo: false,
+                    torta_cantidad: '',
+                    polen_activo: false,
+                    polen_cantidad: '',
+                    notas: '',
+                    costo_azucar: '',
+                    costo_polen: '',
+                    costo_torta: ''
+                });
+                setSearchTermColmena('');
             } else {
                 setModalInfo({
                     titulo: "Atención",
@@ -205,6 +225,7 @@ export const useAlimentarColmena = (colmenaInicial, setViewState, usr) => {
         apiarios,
         todasLasColmenas,
         searchTermColmena,
+        setSearchTermColmena,
         manejarCambioColmena,
         colmenasFiltradas
     };

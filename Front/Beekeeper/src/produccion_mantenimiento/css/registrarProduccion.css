@@ -5,6 +5,10 @@
     align-items: start;
 }
 
+.bee-logo-small {
+    width: 200px;
+}
+
 /* --- Identidad Neobrutalista (Bordes y Sombras Agrupados) --- */
 .tab-btn,
 .tab-content,
@@ -137,6 +141,10 @@
 
 .input-width-auto {
     width: auto;
+}
+
+.label-no-margin {
+    margin: 0;
 }
 
 .btn-submit-full {
