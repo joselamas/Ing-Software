@@ -47,7 +47,7 @@ export const useRegistrarProduccion = (usr, setViewState) => {
         return todasLasColmenas.filter(item => {
             const matchApiario = String(formData.apiario_id) === String(item.apiario_id);
             const estado = item.colmena?.estado?.toLowerCase() || "";
-            const matchEstado = estado.includes("Productiva") || estado.includes("productiva");
+            const matchEstado = estado.includes("Productiva") || estado.includes("productiva") || estado.includes("Produccion") || estado.includes("produccion");
             return matchApiario && matchEstado;
         });
     }, [activeTab, formData.apiario_id, todasLasColmenas]);

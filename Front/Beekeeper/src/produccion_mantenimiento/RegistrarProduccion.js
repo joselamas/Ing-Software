@@ -10,6 +10,8 @@ const RegistrarProduccion = ({ setViewState, usr }) => {
         activeTab, setActiveTab, apiarios, todasLasColmenas, searchTermColmena, manejarCambioColmena, colmenasFiltradas, countProductivas, isFormValid
     } = useRegistrarProduccion(usr, setViewState);
 
+    const colmenaSeleccionada = todasLasColmenas.find(item => String(item.colmena.id) === String(formData.colmena_id));
+
     return (
         <div className="detalle-container detalle-container-margin">
              <div className="detalle-header">
@@ -22,8 +24,8 @@ const RegistrarProduccion = ({ setViewState, usr }) => {
             <div className="detalle-grid">
                 <section className="detalle-left-panel">
                     <div className="overlay-content">
-                        <div >
-                            <img src={apitherapy} width={'200px'} alt="Logo" className="bee-logo-small" />
+                        <div>
+                            <img src={apitherapy} alt="Logo" className="bee-logo-small" />
                         </div>
                         <h2>Planificación</h2>
                         <p>Selecciona el apiario o colmena para registrar la cosecha.</p>
@@ -58,6 +60,24 @@ const RegistrarProduccion = ({ setViewState, usr }) => {
                                             <option key={c.colmena.id} value={c.colmena.id_colmena_usuario}>{c.nombre_apiario || 'Sin apiario'}</option>
                                         ))}
                                     </datalist>
+
+                                    {colmenaSeleccionada && (
+                                        <div className="detalle-left-panel matched-hives-preview animate-fade-in">
+                                            <label>Detalles de la Colmena</label>
+                                            <div className="info-row">
+                                                <span className="info-span">Tipo:</span>
+                                                <strong className="info-strong">{colmenaSeleccionada.colmena.tipo_colmena}</strong>
+                                            </div>
+                                            <div className="info-row">
+                                                <span className="info-span">Estado Actual:</span>
+                                                <strong className="info-strong">{colmenaSeleccionada.colmena.estado}</strong>
+                                            </div>
+                                            <div className="info-row">
+                                                <span className="info-span">Ubicación:</span>
+                                                <strong className="info-strong">{colmenaSeleccionada.nombre_apiario || 'Sin asignar'}</strong>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             ) : (
                                 <div className="block-filters">
@@ -69,7 +89,7 @@ const RegistrarProduccion = ({ setViewState, usr }) => {
                                         </select>
                                     </div>
                                     {formData.apiario_id && (
-                                        <div className="matched-hives-preview animate-fade-in">
+                                        <div className="matched-hives-preview animate-fade-in detalle-left-panel">
                                             <label>Colmenas productivas detectadas ({colmenasFiltradas.length})</label>
                                             <div className="hives-tag-container">
                                                 {colmenasFiltradas.map(c => <span key={c.colmena.id} className="hive-tag">{c.colmena.id_colmena_usuario}</span>)}
@@ -135,7 +155,7 @@ const RegistrarProduccion = ({ setViewState, usr }) => {
                                         onChange={handleChange} 
                                         className="input-width-auto"
                                     />
-                                    <label htmlFor="es_monofloral" style={{ margin: 0 }}>¿Es cosecha Monofloral?</label>
+                                    <label htmlFor="es_monofloral" className="label-no-margin">¿Es cosecha Monofloral?</label>
                                 </div>
                                 
                                 <div className="input-group">
