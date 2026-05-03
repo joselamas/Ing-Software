@@ -101,5 +101,33 @@
                 Anio DESC, 
                 Mes DESC, 
                 Apiario;";
-}
+
+
+        public const string ObtenerConsumoAlimento = @"SELECT 
+                            a.nombre_referencia AS Apiario,
+                            CASE 
+                                WHEN ca.tipo_suministro IN ('Jarabe', 'Líquido') THEN 'Liquido'
+                                WHEN ca.tipo_suministro IN ('Torta Proteica', 'Polen', 'Sólido') THEN 'Solido'
+                                ELSE 'Otro'
+                            END AS CategoriaAlimento,
+                            FORMAT(ca.fecha, 'yyyy-MM') AS Periodo,
+                            SUM(ca.cantidad) AS Total_Suministrado
+                        FROM apiario a
+                        JOIN registro_colmena_apiario rca ON a.id = rca.apiario_id
+                        JOIN colmena c ON rca.colmena_id = c.id
+                        JOIN control_alimentacion ca ON c.id = ca.colmena_id
+                        WHERE a.acronimo_usuario = @acronimo 
+                          AND rca.fecha_salida IS NULL 
+                          AND a.activo = 1
+                        GROUP BY 
+                            a.nombre_referencia,
+                            CASE 
+                                WHEN ca.tipo_suministro IN ('Jarabe', 'Líquido') THEN 'Liquido'
+                                WHEN ca.tipo_suministro IN ('Torta Proteica', 'Polen', 'Sólido') THEN 'Solido'
+                                ELSE 'Otro'
+                            END,
+                            FORMAT(ca.fecha, 'yyyy-MM')
+                        ORDER BY Periodo DESC, Apiario";
+
+    }
 }

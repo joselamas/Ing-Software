@@ -64,5 +64,22 @@ namespace Beekepeer.Controllers
                 return StatusCode(500, new { mensaje = ex.Message });
             }
         }
+
+        [HttpGet]
+        [Route("alimentacion")]
+        public IActionResult ConsumoAlimentoApiarios([FromQuery] string acronimo)
+        {
+            if (string.IsNullOrEmpty(acronimo)) return BadRequest("El acrónimo es requerido.");
+
+            try
+            {
+                var resultado = _sql.ConsumoAlimentoApiarios(acronimo);
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = ex.Message });
+            }
+        }
     }
 }

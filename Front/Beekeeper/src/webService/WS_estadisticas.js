@@ -92,3 +92,24 @@ export async function getProduccionApiarios(usuarioAcronimo) {
         };
     }
 }
+
+/**
+ * Obtiene el historial de alimentación (jarabe y torta) de los apiarios
+ */
+export async function getAlimentacionApiarios(usuarioAcronimo) {
+    try {
+        const response = await fetch(`${url}alimentacion?acronimo=${usuarioAcronimo}`);
+        const data = await response.json();
+
+        if (response.ok) {
+            return { status: 1, data: data };
+        }
+        return { status: 0, mensaje: "No se pudo obtener la alimentación" };
+    } catch (err) {
+        console.error("Error en getAlimentacionApiarios:", err.message);
+        return {
+            status: -1,
+            mensaje: "Error de conexión con el servicio de alimentación"
+        };
+    }
+}

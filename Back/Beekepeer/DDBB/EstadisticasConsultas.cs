@@ -228,5 +228,72 @@ namespace Beekepeer.DDBB
             public string Periodo { get; set; }
             public double TotalKg { get; set; }
         }
+
+        private class AlimentoPlano
+        {
+            public string Apiario { get; set; }
+            public string Categoria { get; set; }
+            public string Periodo { get; set; }
+            public double Cantidad { get; set; }
+        }
+
+
+        public List<ApiaryResponse> ConsumoAlimentoApiarios(string acronimo)
+        {
+            var resultadosPlanos = new List<AlimentoPlano>();
+
+            using (SqlConnection conn = new SqlConnection(_sqlurl))
+            {
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand(queryEstadisticas.ObtenerConsumoAlimento, conn))
+                {
+                    cmd.Parameters.AddWithValue("@acronimo", acronimo);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            resultadosPlanos.Add(new AlimentoPlano
+                            {
+                                Apiario = reader["Apiario"].ToString(),
+                                Categoria = reader["CategoriaAlimento"].ToString(),
+                                Periodo = reader["Periodo"].ToString(),
+                                Cantidad = reader["Total_Suministrado"] != DBNull.Value
+                                           ? Convert.ToDouble(reader["Total_Suministrado"])
+                                           : 0.0
+                            });
+                        }
+                    }
+                }
+            }
+
+            // Transformación para agrupar por Apiario y consolidar Líquido/Sólido por Mes
+            return resultadosPlanos
+                .GroupBy(r => r.Apiario)
+                .Select(apiarioGroup => new ApiaryResponse
+                {
+                    Nombre = apiarioGroup.Key,
+                    Historico = apiarioGroup
+                        .GroupBy(h => h.Periodo)
+                        .Select(monthGroup => new HistoryRecord
+                        {
+                            Mes = monthGroup.Key,
+                            // 'Jarabe' mapea a lo que el front espera para líquido
+                            Jarabe = monthGroup
+                                .Where(m => m.Categoria == "Liquido")
+                                .Select(m => m.Cantidad)
+                                .DefaultIfEmpty(0.0)
+                                .First(),
+                            // 'Torta' mapea a lo que el front espera para sólido
+                            Torta = monthGroup
+                                .Where(m => m.Categoria == "Solido")
+                                .Select(m => m.Cantidad)
+                                .DefaultIfEmpty(0.0)
+                                .First()
+                        })
+                        .OrderBy(h => h.Mes)
+                        .ToList()
+                })
+                .ToList();
+        }
     }
 }
