@@ -129,5 +129,22 @@
                             FORMAT(ca.fecha, 'yyyy-MM')
                         ORDER BY Periodo DESC, Apiario";
 
+
+        public const string ObtenerProduccionPorAltura = @"SELECT 
+    -- Agrupamos en bloques de 500 metros
+                    CAST((FLOOR((a.msnm) / 501) * 500) + 1 AS VARCHAR) + 'm - ' + 
+                    CAST((FLOOR((a.msnm) / 501) + 1) * 500 AS VARCHAR) + 'm' AS Rango,
+                    pc.tipo_producto AS Producto,
+                    SUM(pc.cantidad_kg) AS Total_Kg
+                FROM apiario a
+                JOIN registro_colmena_apiario rca ON a.id = rca.apiario_id
+                JOIN colmena c ON rca.colmena_id = c.id
+                JOIN produccion_cosecha pc ON c.id = pc.colmena_id
+                WHERE a.acronimo_usuario = @acronimo 
+                  AND a.activo = 1
+                GROUP BY 
+                    FLOOR((a.msnm) / 501),
+                    pc.tipo_producto
+                ORDER BY FLOOR((a.msnm) / 501) ASC;";
     }
 }

@@ -3,17 +3,18 @@ import { getRendimientoPorAltura } from '../../webService/WS_estadisticas';
 
 export const useRendimientoAltura = (usr) => {
     const [loading, setLoading] = useState(true);
-    const [status, setStats] = useState({ dataAltura: [] });
+    const [stats, setStats] = useState({ dataAltura: [] });
 
     useEffect(() => {
         const fetchStats = async () => {
+            if (!usr?.acronimo) return;
             setLoading(true);
             const response = await getRendimientoPorAltura(usr.acronimo);
             if (response.status === 1) {
                 const processedData = response.data.map(d => ({
                     ...d,
-                    miel: Number(d.miel.toFixed(2)),
-                    polen: Number(d.polen.toFixed(2))
+                    miel: Number((d.miel || 0).toFixed(2)),
+                    polen: Number((d.polen || 0).toFixed(2))
                 }));
                 setStats({ dataAltura: processedData });
             }
@@ -23,5 +24,5 @@ export const useRendimientoAltura = (usr) => {
         if (usr) fetchStats();
     }, [usr]);
 
-    return { status, loading };
+    return { stats, loading };
 };

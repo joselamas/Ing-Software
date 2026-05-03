@@ -295,5 +295,44 @@ namespace Beekepeer.DDBB
                 })
                 .ToList();
         }
+
+
+
+        public List<AltitudeProductionDto> ProduccionPorAltitud(string acronimo)
+        {
+            var resultadosPlanos = new List<dynamic>();
+
+            using (SqlConnection conn = new SqlConnection(_sqlurl))
+            {
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand(queryEstadisticas.ObtenerProduccionPorAltura, conn))
+                {
+                    cmd.Parameters.AddWithValue("@acronimo", acronimo);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            resultadosPlanos.Add(new
+                            {
+                                Rango = reader["Rango"].ToString(),
+                                Producto = reader["Producto"].ToString(),
+                                Total = reader["Total_Kg"] != DBNull.Value ? Convert.ToDouble(reader["Total_Kg"]) : 0.0
+                            });
+                        }
+                    }
+                }
+            }
+
+            // Agrupamos por Rango para consolidar Miel y Polen en un solo objeto
+            return resultadosPlanos
+                .GroupBy(r => r.Rango)
+                .Select(g => new AltitudeProductionDto
+                {
+                    Rango = g.Key,
+                    Miel = g.Where(x => x.Producto == "Miel").Sum(x => (double)x.Total),
+                    Polen = g.Where(x => x.Producto == "Polen").Sum(x => (double)x.Total)
+                })
+                .ToList();
+        }
     }
 }

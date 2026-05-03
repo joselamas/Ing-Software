@@ -81,5 +81,22 @@ namespace Beekepeer.Controllers
                 return StatusCode(500, new { mensaje = ex.Message });
             }
         }
+
+        [HttpGet]
+        [Route("rendimiento-altura")]
+        public IActionResult RendimientoAltura([FromQuery] string acronimo)
+        {
+            if (string.IsNullOrEmpty(acronimo)) return BadRequest("El acrónimo es requerido.");
+
+            try
+            {
+                var resultado = _sql.ProduccionPorAltitud(acronimo);
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = ex.Message });
+            }
+        }
     }
 }
