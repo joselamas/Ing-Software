@@ -100,15 +100,16 @@ const EficienciaApiarios = ({ usr }) => {
     }
 
     return (
-        <div className="gestion-container eficiencia-container">
+        <div className="gestion-container">
             <header className="perfil-header">
                 <h1>Eficiencia por <span>Apiario</span></h1>
                 <p>Producción promedio de miel por colmena activa (Kg/Colmena).</p>
             </header>
             
-            <div className="check-group-grid">
+            <div className="apiario-check-group animate-fade-in">
+                <span className="filter-label">Mostrar Apiarios:</span>
                 {stats?.apiariosEficiencia?.map((api, i) => (
-                    <label key={api.nombre} className="eficiencia-check-item">
+                    <label key={api.nombre} className="apiario-check-item">
                         <input 
                             type="checkbox" 
                             className="hidden"
@@ -116,15 +117,21 @@ const EficienciaApiarios = ({ usr }) => {
                             onChange={() => handleToggle(api.nombre)}
                         />
                         <div 
-                            className="custom-box"
+                            className={`custom-checkbox ${selectedApiarios.includes(api.nombre) ? 'active' : ''}`}
                             style={{ 
-                                backgroundColor: selectedApiarios.includes(api.nombre) ? APIARIO_COLORS[i % APIARIO_COLORS.length] : 'white',
+                                backgroundColor: selectedApiarios.includes(api.nombre) ? APIARIO_COLORS[i % APIARIO_COLORS.length] : 'transparent',
                                 borderColor: APIARIO_COLORS[i % APIARIO_COLORS.length] 
                             }}
                         >
-                            {selectedApiarios.includes(api.nombre) && "✓"}
+                            {selectedApiarios.includes(api.nombre) && (
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 20 20" fill="white">
+                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                            )}
                         </div>
-                        <span>{api.nombre}</span>
+                        <span className={`text-sm font-medium ${selectedApiarios.includes(api.nombre) ? 'text-gray-800' : 'text-gray-400'}`}>
+                            {api.nombre}
+                        </span>
                     </label>
                 ))}
             </div>
