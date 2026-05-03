@@ -4,8 +4,14 @@ import { useEficienciaApiarios } from './hooks/useEficienciaApiarios';
 import './css/eficienciaApiarios.css';
 
 const EficienciaApiarios = ({ usr }) => {
-    const { stats, loading, getColorByIndex } = useEficienciaApiarios(usr);
+    const { stats, loading } = useEficienciaApiarios(usr);
     const [selectedApiarios, setSelectedApiarios] = useState([]);
+
+    // Paleta de colores dinámica para soportar cualquier cantidad de apiarios
+    const APIARIO_COLORS = [
+        "#f59e0b", "#3b82f6", "#10b981", "#8b5cf6", "#ef4444", 
+        "#ec4899", "#06b6d4", "#84cc16", "#f97316", "#6366f1"
+    ]; 
 
     // 1. Sincronizamos la selección inicial de forma segura
     useEffect(() => {
@@ -21,32 +27,35 @@ const EficienciaApiarios = ({ usr }) => {
     };
 
     // 2. Transformación de datos con protección total
-    const { mielData, polenData, colors: activeColors } = useMemo(() => {
-        if (!stats?.apiariosEficiencia || stats.apiariosEficiencia.length === 0 || selectedApiarios.length === 0) {
-            return { mielData: null, polenData: null, colors: [] };
+    const { mielData, polenData } = useMemo(() => {
+        if (!stats?.apiariosEficiencia?.length || selectedApiarios.length === 0) {
+            return { mielData: null, polenData: null };
         }
 
         const filtrados = stats.apiariosEficiencia.filter(a => selectedApiarios.includes(a.nombre));
         
-        // SACAR MESES DE FORMA SEGURA: Usamos el primer apiario del filtro
-        const primerApiario = filtrados[0];
-        const etiquetasMeses = primerApiario?.historico?.map(h => h.mes) || [];
+        // Extraemos todas las etiquetas de meses únicas de todos los apiarios y las ordenamos
+        const etiquetasMeses = Array.from(new Set(
+            stats.apiariosEficiencia.flatMap(api => api.historico.map(h => h.mes))
+        )).sort();
         
         const header = ["Mes", ...filtrados.map(a => a.nombre)];
         
-        const mielRows = etiquetasMeses.map((mes, idx) => {
+        const mielRows = etiquetasMeses.map((mes) => {
             const fila = [mes];
             filtrados.forEach(apiario => {
-                const punto = apiario.historico[idx];
+                // Buscamos el registro específico para este mes en el apiario para alinear los puntos
+                const punto = apiario.historico.find(h => h.mes === mes);
                 fila.push(punto ? Number(punto.eficiencia) : 0);
             });
             return fila;
         });
 
-        const polenRows = etiquetasMeses.map((mes, idx) => {
+        const polenRows = etiquetasMeses.map((mes) => {
             const fila = [mes];
             filtrados.forEach(apiario => {
-                const punto = apiario.historico[idx];
+                // Buscamos el registro específico para este mes en el apiario para alinear los puntos
+                const punto = apiario.historico.find(h => h.mes === mes);
                 fila.push(punto ? Number(punto.polen) : 0);
             });
             return fila;
@@ -54,10 +63,17 @@ const EficienciaApiarios = ({ usr }) => {
 
         return { 
             mielData: [header, ...mielRows], 
-            polenData: [header, ...polenRows],
-            colors: filtrados.map(a => getColorByIndex(a.id)) 
+            polenData: [header, ...polenRows]
         };
-    }, [stats, selectedApiarios, getColorByIndex]);
+    }, [stats, selectedApiarios]);
+
+    // Calculamos los colores activos para mantener la correspondencia Apiario -> Color
+    const activeColors = useMemo(() => {
+        if (!stats?.apiariosEficiencia) return [];
+        return stats.apiariosEficiencia
+            .map((a, i) => selectedApiarios.includes(a.nombre) ? APIARIO_COLORS[i % APIARIO_COLORS.length] : null)
+            .filter(c => c !== null);
+    }, [selectedApiarios, stats]);
 
     // 3. Generador de opciones para mantener coherencia visual
     const getChartOptions = (tituloY) => ({
@@ -91,8 +107,8 @@ const EficienciaApiarios = ({ usr }) => {
             </header>
             
             <div className="check-group-grid">
-                {stats?.apiariosEficiencia?.map((api) => (
-                    <label key={api.id} className="eficiencia-check-item">
+                {stats?.apiariosEficiencia?.map((api, i) => (
+                    <label key={api.nombre} className="eficiencia-check-item">
                         <input 
                             type="checkbox" 
                             className="hidden"
@@ -102,8 +118,8 @@ const EficienciaApiarios = ({ usr }) => {
                         <div 
                             className="custom-box"
                             style={{ 
-                                backgroundColor: selectedApiarios.includes(api.nombre) ? getColorByIndex(api.id) : 'white',
-                                borderColor: getColorByIndex(api.id)
+                                backgroundColor: selectedApiarios.includes(api.nombre) ? APIARIO_COLORS[i % APIARIO_COLORS.length] : 'white',
+                                borderColor: APIARIO_COLORS[i % APIARIO_COLORS.length] 
                             }}
                         >
                             {selectedApiarios.includes(api.nombre) && "✓"}

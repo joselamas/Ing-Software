@@ -1,6 +1,7 @@
 ﻿using Beekepeer.DDBB;
 using Beekepeer.Model;
 using Beekepeer.Model.ws;
+using Beekepeer.Model.ws.stadistica;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Beekepeer.Controllers

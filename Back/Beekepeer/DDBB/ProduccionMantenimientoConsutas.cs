@@ -1,6 +1,7 @@
 ﻿using Beekepeer.DDBB.querysSQL;
 using Beekepeer.Model;
 using Beekepeer.Model.ws;
+using Beekepeer.Model.ws.stadistica;
 using System.Data.SqlClient;
 
 namespace Beekepeer.DDBB

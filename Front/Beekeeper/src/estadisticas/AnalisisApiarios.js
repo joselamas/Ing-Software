@@ -6,8 +6,11 @@ import './css/analisisApiarios.css';
 const AnalisisApiarios = ({ usr }) => {
     const { stats, loading } = useAnalisisApiarios(usr);
 
-    // Colores fijos por apiario (Pedregosa, Mesa, Montaña, Mirador)
-    const APIARIO_COLORS = ["#f59e0b", "#3b82f6", "#10b981", "#8b5cf6"]; 
+    // Paleta de colores dinámica para soportar cualquier cantidad de apiarios
+    const APIARIO_COLORS = [
+        "#f59e0b", "#3b82f6", "#10b981", "#8b5cf6", "#ef4444", 
+        "#ec4899", "#06b6d4", "#84cc16", "#f97316", "#6366f1"
+    ]; 
 
     // Estado para los apiarios seleccionados
     const [selectedNames, setSelectedNames] = useState([]);
@@ -35,13 +38,20 @@ const AnalisisApiarios = ({ usr }) => {
 
         // Filtramos solo los apiarios que están en el estado de seleccionados
         const apiariosFiltrados = stats.apiariosResumen.filter(a => selectedNames.includes(a.nombre));
-        const etiquetasMeses = stats.apiariosResumen[0].historico.map(h => h.mes);
+        
+        // Extraemos todas las etiquetas de meses únicas de todos los apiarios y las ordenamos
+        const etiquetasMeses = Array.from(new Set(
+            stats.apiariosResumen.flatMap(api => api.historico.map(h => h.mes))
+        )).sort();
+
         const header = ["Mes", ...apiariosFiltrados.map(a => a.nombre)];
-        const rows = etiquetasMeses.map((mes, idx) => {
+        
+        const rows = etiquetasMeses.map((mes) => {
             const fila = [mes];
             apiariosFiltrados.forEach(apiario => {
-                const valor = apiario.historico[idx] ? apiario.historico[idx][key] : 0;
-                fila.push(Number(valor));
+                // Buscamos el registro específico para este mes en el apiario para alinear los puntos
+                const registro = apiario.historico.find(h => h.mes === mes);
+                fila.push(registro ? Number(registro[key]) : 0);
             });
             return fila;
         });
@@ -58,7 +68,7 @@ const AnalisisApiarios = ({ usr }) => {
     const activeColors = useMemo(() => {
         if (!stats?.apiariosResumen) return APIARIO_COLORS;
         return stats.apiariosResumen
-            .map((a, i) => selectedNames.includes(a.nombre) ? APIARIO_COLORS[i] : null)
+            .map((a, i) => selectedNames.includes(a.nombre) ? APIARIO_COLORS[i % APIARIO_COLORS.length] : null)
             .filter(c => c !== null);
     }, [selectedNames, stats]);
 
@@ -95,8 +105,8 @@ const AnalisisApiarios = ({ usr }) => {
                         <div 
                             className={`custom-checkbox ${selectedNames.includes(api.nombre) ? 'active' : ''}`}
                         style={{ 
-                            backgroundColor: selectedNames.includes(api.nombre) ? APIARIO_COLORS[i] : 'transparent',
-                            borderColor: APIARIO_COLORS[i] 
+                            backgroundColor: selectedNames.includes(api.nombre) ? APIARIO_COLORS[i % APIARIO_COLORS.length] : 'transparent',
+                            borderColor: APIARIO_COLORS[i % APIARIO_COLORS.length] 
                         }}>
                             {selectedNames.includes(api.nombre) && (
                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 20 20" fill="white">
