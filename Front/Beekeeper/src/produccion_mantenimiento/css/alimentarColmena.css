@@ -239,7 +239,7 @@
 }
 
 .hive-details-label {
-    color: var(--cream-white, #F5F5DC);
+    color: var(--cream-white, #F5F5DC) !important;
 }
 
 .info-row {
@@ -271,3 +271,4 @@
     width: 100%;
     margin-top: 20px;
 }
+
