@@ -61,7 +61,7 @@ function App() {
         />}
 
       {viewState === 'Home' && usr && (
-        <Home />
+        <Home setViewState={setViewState} />
       )}
 
      {viewState  === 'ActualizarDatos' && <ModificarUsuario
