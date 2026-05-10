@@ -21,6 +21,7 @@ import Estadisticas from './estadisticas/Estadisticas.js';
 import AnalisisApiarios from './estadisticas/AnalisisApiarios.js';
 import EficienciaApiarios from './estadisticas/EficienciaApiarios.js';
 import RendimientoAltura from './estadisticas/RendimientoAltura.js';
+import ReporteCompleto from './estadisticas/ReporteCompleto.js';
 
 import CrearApiario from './apiarios/crearApiario.js';
 import ListarApiarios from './apiarios/listarApiarios.js';
@@ -185,6 +186,12 @@ function App() {
 
       {viewState === 'RendimientoAltura' && (
         <RendimientoAltura 
+          usr={usr}
+        />
+      )}
+
+      {viewState === 'ReporteCompleto' && (
+        <ReporteCompleto 
           usr={usr}
         />
       )}

@@ -84,6 +84,7 @@ export default function BarraNavegacion(props){
                                 <div onClick={() => handleNavigation("AnalisisApiarios")}>Rendimiento por Apiario</div>
                                 <div onClick={() => handleNavigation("EficienciaApiarios")}>Eficiencia por Colmena</div>
                                 <div onClick={() => handleNavigation("RendimientoAltura")}>Rendimiento por Altura</div>
+                                <div onClick={() => handleNavigation("ReporteCompleto")} style={{fontWeight: '900', color: '#b45309', borderTop: '2px solid var(--dark-brown)', marginTop: '5px', paddingTop: '5px'}}>📥 Descargar Métricas</div>
                             </div>
                         </li>
 

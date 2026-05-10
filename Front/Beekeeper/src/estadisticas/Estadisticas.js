@@ -1,15 +1,19 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Chart } from "react-google-charts";
 import { useEstadisticas } from './hooks/useEstadisticas';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import './css/estadisticas.css';
 import '../colmenas/css/verColmenas.css'; // Importamos estilos de paginación compartidos
 
 const Estadisticas = ({ usr }) => {
     const { stats, loading, formatMoneda } = useEstadisticas(usr);
+    const reportRef = useRef();
 
     // Estados para paginación
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [isExporting, setIsExporting] = useState(false);
 
     // Formatear datos para Google Charts
     const chartData = useMemo(() => {
@@ -39,15 +43,124 @@ const Estadisticas = ({ usr }) => {
 
     const totalPages = stats ? Math.ceil(stats.rankingElite.length / itemsPerPage) : 0;
 
+    const handleDownloadPDF = async () => {
+        setIsExporting(true);
+        const scrollX = window.scrollX;
+        const scrollY = window.scrollY;
+        window.scrollTo(0, 0);
+
+        const element = reportRef.current;
+        try {
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: "#fdfaf5",
+                windowHeight: 5000, // Alto virtual suficiente para capturar las 50 filas expandidas
+                onclone: (clonedDoc) => {
+                    // 1. Eliminar patrón de panal y forzar fondo limpio
+                    const styleTag = clonedDoc.createElement('style');
+                    styleTag.innerHTML = `
+                        .gestion-container::before { display: none !important; }
+                        .gestion-container { 
+                            background: #fdfaf5 !important; 
+                            background-image: none !important;
+                        }
+                    `;
+                    clonedDoc.head.appendChild(styleTag);
+
+                    // Limpieza profunda de estilos para evitar el error "unsupported color function"
+                    const elements = clonedDoc.querySelectorAll('*');
+                    elements.forEach(el => {
+                        const style = window.getComputedStyle(el);
+                        const props = ['color', 'backgroundColor', 'borderColor', 'fill', 'stroke'];
+                        
+                        props.forEach(prop => {
+                            const value = style[prop];
+                            // Si el valor contiene 'color(' es una función moderna que html2canvas no soporta
+                            if (value && value.includes('color(')) {
+                                // Forzamos un color sólido básico para que la librería no se rompa
+                                el.style[prop] = (prop === 'backgroundColor' || prop === 'fill') ? 'transparent' : '#2e1a12';
+                            }
+                        });
+                    });
+
+                    const container = clonedDoc.querySelector('.gestion-container');
+                    if (container) {
+                        container.style.backgroundColor = "#fdfaf5";
+                        container.style.height = 'auto';
+                        container.style.minHeight = 'auto';
+                        container.style.overflow = 'visible';
+                    }
+
+                    // 2. Forzar que la tabla muestre TODO el ranking en el PDF
+                    const tableBody = clonedDoc.querySelector('.neobrutalist-table tbody');
+                    if (tableBody && stats?.rankingElite) {
+                        tableBody.innerHTML = ''; // Limpiar filas paginadas
+                        stats.rankingElite.forEach((hive, idx) => {
+                            const tr = clonedDoc.createElement('tr');
+                            tr.innerHTML = `
+                                <td><strong>#${idx + 1}</strong></td>
+                                <td>${hive.id_colmena}</td>
+                                <td>${hive.apiario}</td>
+                                <td>${hive.msnm} <small>msnm</small></td>
+                                <td>${hive.fechaInicio ? hive.fechaInicio.split('T')[0] : 'N/A'}</td>
+                                <td>${hive.produccion} Kg</td>
+                            `;
+                            tableBody.appendChild(tr);
+                        });
+                    }
+                }
+            });
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+            const pageHeight = pdf.internal.pageSize.getHeight();
+
+            let heightLeft = pdfHeight;
+            let position = 0;
+
+            // Primera página
+            pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+            heightLeft -= pageHeight;
+
+            // Generar páginas adicionales automáticamente si el contenido es largo
+            while (heightLeft > 0) {
+                position = heightLeft - pdfHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+                heightLeft -= pageHeight;
+            }
+
+            pdf.save(`Analisis_Rendimiento_${usr?.acronimo || 'Beekeeper'}.pdf`);
+        } catch (error) {
+            console.error("Error al generar PDF:", error);
+        }
+
+        window.scrollTo(scrollX, scrollY);
+        setIsExporting(false);
+    };
+
     if (loading) return <div className="loading-state">Calculando rendimientos...</div>;
 
     return (
-        <div className="gestion-container">
+        <div className="gestion-container" ref={reportRef}>
             <header className="perfil-header">
                 <div>
                     <h1>Análisis de <span>Rendimiento</span></h1>
                     <p>Monitoreo de productividad, costos y Retorno de Inversión (ROI).</p>
                 </div>
+                <button 
+                    onClick={handleDownloadPDF} 
+                    className="page-btn" 
+                    style={{ alignSelf: 'center' }}
+                    disabled={isExporting}
+                    data-html2canvas-ignore
+                >
+                    {isExporting ? 'Procesando...' : 'Exportar Reporte'}
+                </button>
             </header>
 
             <div className="stats-grid-dashboard">
@@ -137,7 +250,7 @@ const Estadisticas = ({ usr }) => {
                 </table>
             </section>
 
-            <div className="table-footer">
+            <div className="table-footer" data-html2canvas-ignore>
                 <div className="items-per-page">
                     <label style={{color: 'var(--dark-brown)'}}>Ver:</label>
                     <select 
