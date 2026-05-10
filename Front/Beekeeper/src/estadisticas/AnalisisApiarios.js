@@ -1,10 +1,14 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { Chart } from "react-google-charts";
 import { useAnalisisApiarios } from './hooks/useAnalisisApiarios';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import './css/analisisApiarios.css';
 
 const AnalisisApiarios = ({ usr }) => {
     const { stats, loading } = useAnalisisApiarios(usr);
+    const reportRef = useRef();
+    const [isExporting, setIsExporting] = useState(false);
 
     // Paleta de colores dinámica para soportar cualquier cantidad de apiarios
     const APIARIO_COLORS = [
@@ -59,6 +63,69 @@ const AnalisisApiarios = ({ usr }) => {
         return [header, ...rows];
     };
 
+    const handleDownloadPDF = async () => {
+        setIsExporting(true);
+        // Guardar posición de scroll actual
+        const scrollX = window.scrollX;
+        const scrollY = window.scrollY;
+        window.scrollTo(0, 0);
+
+        const element = reportRef.current;
+        try {
+            const canvas = await html2canvas(element, {
+                scale: 2, 
+                useCORS: true,
+                logging: false,
+                backgroundColor: "#ffffff",
+                onclone: (clonedDoc) => {
+                    // Eliminar patrón de panal y forzar fondo blanco para el PDF
+                    const styleTag = clonedDoc.createElement('style');
+                    styleTag.innerHTML = `
+                        .gestion-container::before { display: none !important; }
+                        .gestion-container { 
+                            background: #ffffff !important; 
+                            background-image: none !important;
+                        }
+                    `;
+                    clonedDoc.head.appendChild(styleTag);
+
+                    // Limpieza profunda de estilos para evitar el error "unsupported color function"
+                    const elements = clonedDoc.querySelectorAll('*');
+                    elements.forEach(el => {
+                        const style = window.getComputedStyle(el);
+                        // Propiedades que suelen causar el error
+                        const props = ['color', 'backgroundColor', 'borderColor', 'fill', 'stroke'];
+                        
+                        props.forEach(prop => {
+                            const value = style[prop];
+                            // Si el valor contiene 'color(' es una función moderna que html2canvas no soporta
+                            if (value && value.includes('color(')) {
+                                // Forzamos un color sólido básico para que la librería no se rompa
+                                el.style[prop] = (prop === 'backgroundColor' || prop === 'fill') ? 'transparent' : '#000000';
+                            }
+                        });
+                    });
+                    
+                    const container = clonedDoc.querySelector('.gestion-container');
+                    if (container) container.style.backgroundColor = "#ffffff";
+                }
+            });
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+            
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save(`Monitoreo_Apiarios_${usr?.acronimo || 'Reporte'}.pdf`);
+        } catch (error) {
+            console.error("Error al generar PDF:", error);
+        }
+        
+        // Restaurar scroll
+        window.scrollTo(scrollX, scrollY);
+        setIsExporting(false);
+    };
+
     const mielData = useMemo(() => prepararDatos('miel'), [stats, selectedNames]);
     const polenData = useMemo(() => prepararDatos('polen'), [stats, selectedNames]);
     const liquidoData = useMemo(() => prepararDatos('liquido'), [stats, selectedNames]);
@@ -85,10 +152,21 @@ const AnalisisApiarios = ({ usr }) => {
     if (loading) return <div className="loading-state">Sincronizando análisis de producción...</div>;
 
     return (
-        <div className="gestion-container">
+        <div className="gestion-container" ref={reportRef}>
             <header className="perfil-header">
-                <h1>Monitoreo de <span>Apiarios</span></h1>
-                <p>Seguimiento detallado de producción y suministro de alimento por zona.</p>
+                <div>
+                    <h1>Monitoreo de <span>Apiarios</span></h1>
+                    <p>Seguimiento detallado de producción y suministro de alimento por zona.</p>
+                </div>
+                <button 
+                    onClick={handleDownloadPDF} 
+                    className="page-btn" 
+                    style={{ alignSelf: 'center' }}
+                    disabled={isExporting}
+                    data-html2canvas-ignore
+                >
+                    {isExporting ? 'Generando...' : 'Descargar PDF'}
+                </button>
             </header>
             
             {/* Panel de Filtros (Check Group) */}

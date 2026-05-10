@@ -1,11 +1,15 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Chart } from "react-google-charts";
 import { useEficienciaApiarios } from './hooks/useEficienciaApiarios';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import './css/eficienciaApiarios.css';
 
 const EficienciaApiarios = ({ usr }) => {
     const { stats, loading } = useEficienciaApiarios(usr);
+    const reportRef = useRef();
     const [selectedApiarios, setSelectedApiarios] = useState([]);
+    const [isExporting, setIsExporting] = useState(false);
 
     // Paleta de colores dinámica para soportar cualquier cantidad de apiarios
     const APIARIO_COLORS = [
@@ -95,15 +99,87 @@ const EficienciaApiarios = ({ usr }) => {
         chartArea: { width: "85%", height: "70%" },
     });
 
+    const handleDownloadPDF = async () => {
+        setIsExporting(true);
+        const scrollX = window.scrollX;
+        const scrollY = window.scrollY;
+        window.scrollTo(0, 0);
+
+        const element = reportRef.current;
+        try {
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: "#fdfaf5",
+                onclone: (clonedDoc) => {
+                    const styleTag = clonedDoc.createElement('style');
+                    styleTag.innerHTML = `
+                        .gestion-container::before { display: none !important; }
+                        .gestion-container { background: #fdfaf5 !important; background-image: none !important; }
+                    `;
+                    clonedDoc.head.appendChild(styleTag);
+
+                    clonedDoc.querySelectorAll('*').forEach(el => {
+                        const style = window.getComputedStyle(el);
+                        ['color', 'backgroundColor', 'borderColor', 'fill', 'stroke'].forEach(prop => {
+                            const value = style[prop];
+                            if (value && value.includes('color(')) {
+                                el.style[prop] = (prop === 'backgroundColor' || prop === 'fill') ? 'transparent' : '#2e1a12';
+                            }
+                        });
+                    });
+                }
+            });
+
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+            const pageHeight = pdf.internal.pageSize.getHeight();
+
+            let heightLeft = pdfHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft > 0) {
+                position = heightLeft - pdfHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+                heightLeft -= pageHeight;
+            }
+
+            pdf.save(`Eficiencia_Apiarios_${usr?.acronimo || 'Beekeeper'}.pdf`);
+        } catch (error) {
+            console.error("Error al generar PDF:", error);
+        }
+        window.scrollTo(scrollX, scrollY);
+        setIsExporting(false);
+    };
+
     if (loading) {
         return <div className="loading-state">Sincronizando rendimiento de apiarios...</div>;
     }
 
     return (
-        <div className="gestion-container">
+        <div className="gestion-container" ref={reportRef}>
             <header className="perfil-header">
-                <h1>Eficiencia por <span>Apiario</span></h1>
-                <p>Producción promedio de miel por colmena activa (Kg/Colmena).</p>
+                <div>
+                    <h1>Eficiencia por <span>Apiario</span></h1>
+                    <p>Producción promedio de miel por colmena activa (Kg/Colmena).</p>
+                </div>
+                <button 
+                    onClick={handleDownloadPDF} 
+                    className="page-btn" 
+                    style={{ alignSelf: 'center' }}
+                    disabled={isExporting}
+                    data-html2canvas-ignore
+                >
+                    {isExporting ? 'Generando...' : 'Descargar PDF'}
+                </button>
             </header>
             
             <div className="apiario-check-group animate-fade-in">

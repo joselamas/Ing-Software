@@ -21,6 +21,7 @@ import Estadisticas from './estadisticas/Estadisticas.js';
 import AnalisisApiarios from './estadisticas/AnalisisApiarios.js';
 import EficienciaApiarios from './estadisticas/EficienciaApiarios.js';
 import RendimientoAltura from './estadisticas/RendimientoAltura.js';
+import ReporteCompleto from './estadisticas/ReporteCompleto.js';
 
 import CrearApiario from './apiarios/crearApiario.js';
 import ListarApiarios from './apiarios/listarApiarios.js';
@@ -37,6 +38,7 @@ function App() {
     const [selectedApiarioID, setSelectedApiarioID] = useState(null);
 
     const [selectedColmena, setSelectedColmena] = useState(null);
+    const [triggerReportDownload, setTriggerReportDownload] = useState(false);
 
     console.log("Estado actual:", { viewState, usr, selectedApiario, selectedColmena });
 
@@ -46,6 +48,7 @@ function App() {
         setViewState = {setViewState}
         setUsr={setUsr}
         usr = {usr}
+        onDownloadReport={() => setTriggerReportDownload(true)}
       />}
       { viewState === 'Login' &&
         <Login
@@ -187,6 +190,27 @@ function App() {
         <RendimientoAltura 
           usr={usr}
         />
+      )}
+
+      {/* Vista normal por si el usuario decide entrar manualmente al reporte */}
+      {viewState === 'ReporteCompleto' && <ReporteCompleto usr={usr} />}
+
+      {/* COMPONENTE DE DESCARGA SILENCIOSA (Background) */}
+      {/* Se renderiza fuera de la vista del usuario para procesar los datos y el PDF sin navegar */}
+      {triggerReportDownload && (
+        <div style={{ 
+            position: 'fixed', 
+            left: '-10000px', 
+            top: 0, 
+            width: '1200px', 
+            zIndex: -1 
+        }}>
+          <ReporteCompleto 
+            usr={usr} 
+            onDownloadTriggered={triggerReportDownload} 
+            onDownloadComplete={() => setTriggerReportDownload(false)} 
+          />
+        </div>
       )}
     </div>
   );

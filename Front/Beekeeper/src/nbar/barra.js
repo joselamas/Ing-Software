@@ -12,6 +12,16 @@ export default function BarraNavegacion(props){
     }
 
     const handleNavigation = (view) => {
+        // If the view is "ReporteCompleto", trigger the download function
+        // instead of changing the main application view.
+        if (view === "ReporteCompleto") {
+            if (props.onDownloadReport) {
+                props.onDownloadReport();
+            }
+            setIsMenuOpen(false); // Close the main menu on mobile
+            setOpenDropdown("");  // Close any open submenu
+            return; // Prevent further navigation logic
+        }
         props.setViewState(view);
         setIsMenuOpen(false); // Cierra el menú principal en móvil
         setOpenDropdown("");  // Cierra cualquier submenú abierto
@@ -84,6 +94,7 @@ export default function BarraNavegacion(props){
                                 <div onClick={() => handleNavigation("AnalisisApiarios")}>Rendimiento por Apiario</div>
                                 <div onClick={() => handleNavigation("EficienciaApiarios")}>Eficiencia por Colmena</div>
                                 <div onClick={() => handleNavigation("RendimientoAltura")}>Rendimiento por Altura</div>
+                                <div onClick={() => handleNavigation("ReporteCompleto")} style={{fontWeight: '900', color: '#b45309', borderTop: '2px solid var(--dark-brown)', marginTop: '5px', paddingTop: '5px'}}>📥 Descargar Métricas</div>
                             </div>
                         </li>
 
