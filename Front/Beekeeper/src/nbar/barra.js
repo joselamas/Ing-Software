@@ -12,6 +12,16 @@ export default function BarraNavegacion(props){
     }
 
     const handleNavigation = (view) => {
+        // If the view is "ReporteCompleto", trigger the download function
+        // instead of changing the main application view.
+        if (view === "ReporteCompleto") {
+            if (props.onDownloadReport) {
+                props.onDownloadReport();
+            }
+            setIsMenuOpen(false); // Close the main menu on mobile
+            setOpenDropdown("");  // Close any open submenu
+            return; // Prevent further navigation logic
+        }
         props.setViewState(view);
         setIsMenuOpen(false); // Cierra el menú principal en móvil
         setOpenDropdown("");  // Cierra cualquier submenú abierto

@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState, useEffect, useCallback } from 'react';
 import { Chart } from "react-google-charts";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -15,8 +15,10 @@ import './css/analisisApiarios.css';
 import './css/eficienciaApiarios.css';
 import './css/rendimientoAltura.css';
 
-const ReporteCompleto = ({ usr }) => {
+const ReporteCompleto = ({ usr, onDownloadTriggered, onDownloadComplete }) => {
     const reportRef = useRef();
+    const parte1Ref = useRef();
+    const parte2Ref = useRef();
     const [isGenerating, setIsGenerating] = useState(false);
 
     const { stats: globalStats, loading: load1, formatMoneda } = useEstadisticas(usr);
@@ -42,7 +44,8 @@ const ReporteCompleto = ({ usr }) => {
         return limpio.substring(limpio.length - 2);
     };
 
-    const generarPDF = async () => {
+    const generarPDF = useCallback(async () => {
+        if (isGenerating) return;
         setIsGenerating(true);
         const scrollX = window.scrollX;
         const scrollY = window.scrollY;
@@ -87,8 +90,10 @@ const ReporteCompleto = ({ usr }) => {
             };
 
             // Función auxiliar para procesar un bloque y manejar su paginación interna si es muy largo
-            const agregarBloqueAlPDF = async (elementId, esPrimerBloque) => {
-                const element = document.getElementById(elementId);
+            const agregarBloqueAlPDF = async (element, esPrimerBloque) => {
+                if (!element) {
+                    throw new Error("Elemento de reporte no encontrado en el DOM");
+                }
                 const canvas = await html2canvas(element, opcionesCanvas);
                 const imgData = canvas.toDataURL('image/png');
                 const imgHeight = (canvas.height * pdfWidth) / canvas.width;
@@ -114,10 +119,10 @@ const ReporteCompleto = ({ usr }) => {
             };
 
             // 1. Capturamos e imprimimos Secciones 1 y 2
-            await agregarBloqueAlPDF('pdf-parte-1', true);
+            await agregarBloqueAlPDF(parte1Ref.current, true);
             
             // 2. Capturamos e imprimimos Secciones 3 y 4 (Comenzará obligatoriamente en página nueva)
-            await agregarBloqueAlPDF('pdf-parte-2', false);
+            await agregarBloqueAlPDF(parte2Ref.current, false);
 
             pdf.save(`Reporte_Maestro_Beekeeper_${usr?.acronimo || 'General'}.pdf`);
         } catch (error) {
@@ -127,21 +132,38 @@ const ReporteCompleto = ({ usr }) => {
             window.scrollTo(scrollX, scrollY);
             setIsGenerating(false);
         }
-    };
+    }, [isGenerating, usr, globalStats, apiarioStats, eficienciaStats, alturaStats, formatMoneda]);
 
-    if (isLoading) return <div className="loading-state">Consolidando Reporte Maestro...</div>;
+    // Effect to trigger PDF generation when onDownloadTriggered is true
+    useEffect(() => {
+        if (onDownloadTriggered && !isLoading && !isGenerating) {
+            console.log("ReporteCompleto: Iniciando proceso de descarga...");
+            
+            // Pequeño delay para asegurar que los gráficos se dibujen tras el cambio de estado
+            const timer = setTimeout(() => {
+                generarPDF().then(() => {
+                    console.log("ReporteCompleto: PDF generado con éxito.");
+                    if (onDownloadComplete) onDownloadComplete();
+                });
+            }, 1500); 
+
+            return () => clearTimeout(timer);
+        }
+    }, [onDownloadTriggered, isLoading, isGenerating, onDownloadComplete, generarPDF]);
 
     return (
-        <div className="gestion-container" ref={reportRef} style={{ padding: '40px', backgroundColor: '#fdfaf5' }}>
+        <div className="gestion-container" ref={reportRef} style={{ padding: '40px', backgroundColor: '#fdfaf5', minWidth: '1100px' }}>
             
+            {isLoading && <div className="loading-state">Consolidando Reporte Maestro...</div>}
+
             {/* BLOQUE 1: Quedará en las primeras páginas */}
-            <div id="pdf-parte-1">
+            <div id="pdf-parte-1" ref={parte1Ref} style={{ display: isLoading ? 'none' : 'block' }}>
                 <header className="perfil-header" style={{ borderBottom: '4px solid var(--dark-brown)', paddingBottom: '20px', marginBottom: '30px' }}>
                     <div>
                         <h1>Reporte <span>Maestro Integral</span></h1>
                         <p>Análisis consolidado del programa de monitoreo apícola.</p>
                     </div>
-                    <button onClick={generarPDF} className="perfil-btn" disabled={isGenerating}>
+                    <button onClick={generarPDF} className="perfil-btn" disabled={isGenerating} data-html2canvas-ignore>
                         {isGenerating ? 'Generando PDF...' : 'Descargar Reporte'}
                     </button>
                 </header>
@@ -220,7 +242,7 @@ const ReporteCompleto = ({ usr }) => {
             </div>
 
             {/* BLOQUE 2: Forzado a una página nueva en el PDF */}
-            <div id="pdf-parte-2">
+            <div id="pdf-parte-2" ref={parte2Ref} style={{ display: isLoading ? 'none' : 'block' }}>
                 <section className="report-section" style={{ marginTop: '20px' }}>
                     <h2 className="filter-label">3. Eficiencia y Factores Geográficos</h2>
                     <div className="stats-grid-dashboard">
