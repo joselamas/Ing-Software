@@ -80,7 +80,7 @@ export default function BarraNavegacion(props){
                                 Estadísticas {openDropdown === "analisis" ? '▲' : '▼'}
                             </button>
                             <div className={`dropdown-content active ${openDropdown === "analisis" ? "show" : ""}`}>
-                                <div onClick={() => handleNavigation("Estadisticas")}>Dashboard Global & ROI</div>
+                                <div onClick={() => handleNavigation("Estadisticas")}>Porcentaje de Colmenas por Apiario</div>
                                 <div onClick={() => handleNavigation("AnalisisApiarios")}>Rendimiento por Apiario</div>
                                 <div onClick={() => handleNavigation("EficienciaApiarios")}>Eficiencia por Colmena</div>
                                 <div onClick={() => handleNavigation("RendimientoAltura")}>Rendimiento por Altura</div>

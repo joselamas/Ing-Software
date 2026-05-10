@@ -2,9 +2,9 @@ import React from 'react';
 import './css/DetalleColmena.css';
 
 const DetalleColmena = ({ colmena, setViewState }) => {
-    // Si por alguna razón no hay colmena seleccionada, volvemos
+    // Validación de seguridad para evitar errores si no hay datos
     if (!colmena) {
-        setViewState("VerColmenas");
+        setViewState("VerMisColmenas");
         return null;
     }
 
@@ -17,7 +17,7 @@ const DetalleColmena = ({ colmena, setViewState }) => {
                     <h1>Detalles <span>Colmena</span></h1>
                     <p>ID: <strong>{info.id_colmena_usuario}</strong> | Apiario: {nombre_apiario || "Sin asignar"}</p>
                 </div>
-                <button className="perfil-btn" onClick={() => setViewState("VerColmenas")}>
+                <button className="perfil-btn" onClick={() => setViewState("VerMisColmenas")}>
                     ← Volver
                 </button>
             </header>
@@ -35,16 +35,32 @@ const DetalleColmena = ({ colmena, setViewState }) => {
                 {/* Panel de Producción */}
                 <section className="detalle-card produccion">
                     <h3>Producción Reciente</h3>
-                    <div className="placeholder-text">No hay registros de producción recientes.</div>
+                    {info.produccion && info.produccion.length > 0 ? (
+                        info.produccion.map((prod, index) => (
+                            <div key={index} className="info-item">
+                                <span>{prod.fecha?.split('T')[0]}:</span> {prod.cantidad}kg ({prod.tipo_producto})
+                            </div>
+                        ))
+                    ) : (
+                        <div className="placeholder-text">No hay registros de producción recientes.</div>
+                    )}
                 </section>
 
-                {/* Panel de Alimentación */}
+                {/* Panel de Alimentación - DINÁMICO */}
                 <section className="detalle-card alimentacion">
                     <h3>Alimentación</h3>
-                    <div className="placeholder-text">No hay registros de alimentación.</div>
+                    {info.alimentacion && info.alimentacion.length > 0 ? (
+                        info.alimentacion.map((al, index) => (
+                            <div key={index} className="info-item">
+                                <span>{al.fecha?.split('T')[0]}:</span> {al.alimento} ({al.cantidad})
+                            </div>
+                        ))
+                    ) : (
+                        <div className="placeholder-text">No hay registros de alimentación.</div>
+                    )}
                 </section>
 
-                {/* Historial (Ocupa todo el ancho abajo) */}
+                {/* Historial de Revisiones - DINÁMICO */}
                 <section className="detalle-card historial full-width">
                     <h3>Historial de Revisiones</h3>
                     <table className="neobrutalist-table mini">
@@ -56,9 +72,19 @@ const DetalleColmena = ({ colmena, setViewState }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td colSpan="3" style={{textAlign: 'center'}}>Cargando historial...</td>
-                            </tr>
+                            {info.revisiones && info.revisiones.length > 0 ? (
+                                info.revisiones.map((rev, index) => (
+                                    <tr key={index}>
+                                        <td>{rev.fecha?.split('T')[0]}</td>
+                                        <td>{rev.detalle || "Sin observaciones"}</td>
+                                        <td>{rev.estado_salud}</td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="3" style={{textAlign: 'center'}}>No hay revisiones registradas.</td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </section>
