@@ -33,3 +33,5 @@ _setup/
 # Carpetas de archivos intermedios de compilación de C#
 [Oo]bj/
 obj/
+Back/Beekepeer/2appsettings.Development.json
+Back/Beekepeer/appsettings.Development.json
