@@ -137,12 +137,10 @@ const ReporteCompleto = ({ usr, onDownloadTriggered, onDownloadComplete }) => {
     // Effect to trigger PDF generation when onDownloadTriggered is true
     useEffect(() => {
         if (onDownloadTriggered && !isLoading && !isGenerating) {
-            console.log("ReporteCompleto: Iniciando proceso de descarga...");
             
             // Pequeño delay para asegurar que los gráficos se dibujen tras el cambio de estado
             const timer = setTimeout(() => {
                 generarPDF().then(() => {
-                    console.log("ReporteCompleto: PDF generado con éxito.");
                     if (onDownloadComplete) onDownloadComplete();
                 });
             }, 1500); 

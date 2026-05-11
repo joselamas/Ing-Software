@@ -174,7 +174,6 @@ export const useRegistrarColmena = (usr) => {
             // lo requiere por separado como parámetro de la URL.
             delete payload.apiario_id;
 
-            console.log("Payload a enviar:", payload, "APIARIO ID:", apiarioId);
             const res = await WSColmena.insertarColmena(payload, apiarioId);
             
             // El servicio lanza un Error si la respuesta no es ok, por lo que si llegamos aquí, fue exitoso.

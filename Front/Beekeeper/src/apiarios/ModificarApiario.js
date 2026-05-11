@@ -8,7 +8,6 @@ import ModalMSN from '../componentes/modalMSN';
 const ModificarApiario = ({ apiario, setViewState, usr }) => {
     const { formData, handleChange, manejarEdicion, loading, error, isModalOpen, setIsModalOpen, modalInfo } = useModificarApiario(apiario, setViewState, usr);
 
-    console.log("APIARIO INICIAL:", apiario);
     return (
         <div className="login-container edit-apiario-layout">
             <div className="left-panel">

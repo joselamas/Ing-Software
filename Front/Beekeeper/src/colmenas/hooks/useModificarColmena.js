@@ -104,7 +104,6 @@ export const useModificarColmena = (colmenaInicial, setViewState, usr, selectedA
                 apiario_id: parseInt(formData.apiario_id)
             };
 
-            console.log( "Payload para actualización:", payload);
             const res = await WSColmena.actualizarColmena(payload);
             
             if (res && res.status === 1) {

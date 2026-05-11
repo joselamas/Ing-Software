@@ -50,7 +50,6 @@ export default function ListarApiarios({ usr, setViewState, setSelectedApiario }
     const [showFilters, setShowFilters] = useState(false);
     const centroDefecto = [8.5891, -71.1450]; // Mérida
 
-    console.log(apiarios);
     if (loading) return <div className="loading-apiarios">Consultando base de datos apícola...</div>;
 
     const toggleFilters = () => setShowFilters(!showFilters);

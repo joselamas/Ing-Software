@@ -17,7 +17,6 @@ export const useListarApiarios = (usr, setViewState) => {
     const obtenerApiarios = async () => {
         if (!usr) return;
         setLoading(true);
-        console.log("paso por useListarApiarios con usr:", usr);
         try {
             const res = await WSApiario.ObtenerColmenas(usr.acronimo);
             

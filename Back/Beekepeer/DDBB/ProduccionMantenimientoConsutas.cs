@@ -42,15 +42,18 @@ namespace Beekepeer.DDBB
             }
         }
 
-        public List<ProduccionWS> getListProduccion(string acronimo)
+        public List<ProduccionWS> getListProduccion(string acronimo, int offset, int limit)
         {
             List<ProduccionWS> lista = new List<ProduccionWS>();
 
             using (SqlConnection connection = new SqlConnection(_sqlurl))
             {
-                // Asegúrate de que queryProduccionMantenimiento.GetListProduccion contenga el SQL que pusiste arriba
                 SqlCommand cmd = new SqlCommand(queryProduccionMantenimiento.GetListProduccion, connection);
+
+                // Agregamos los 3 parámetros necesarios
                 cmd.Parameters.AddWithValue("@Acronimo", acronimo);
+                cmd.Parameters.AddWithValue("@Offset", offset);
+                cmd.Parameters.AddWithValue("@Limit", limit);
 
                 connection.Open();
 
@@ -83,8 +86,6 @@ namespace Beekepeer.DDBB
 
             return lista;
         }
-
-
         public int InsertarAlimentacion(Alimentacion data)
         {
             using (SqlConnection connection = new SqlConnection(_sqlurl))
@@ -109,15 +110,16 @@ namespace Beekepeer.DDBB
             }
         }
 
-        public List<AlimentacionWS> getListAlimentacion(string acronimo)
+        public List<AlimentacionWS> getListAlimentacion(string acronimo, int offset, int limit)
         {
             List<AlimentacionWS> lista = new List<AlimentacionWS>();
 
             using (SqlConnection connection = new SqlConnection(_sqlurl))
             {
-                // Asegúrate de que queryProduccionMantenimiento.GetListProduccion contenga el SQL que pusiste arriba
                 SqlCommand cmd = new SqlCommand(queryProduccionMantenimiento.GetListAlimentacion, connection);
                 cmd.Parameters.AddWithValue("@Acronimo", acronimo);
+                cmd.Parameters.AddWithValue("@Offset", offset);
+                cmd.Parameters.AddWithValue("@Limit", limit);
 
                 connection.Open();
 
@@ -127,11 +129,8 @@ namespace Beekepeer.DDBB
                     {
                         var item = new AlimentacionWS
                         {
-                            // Mapeo de campos directos de ProduccionWS
                             id_colmena_usuario = reader["id_colmena_usuario"].ToString(),
                             nombre_referencia_Apiario = reader["nombre_referencia"].ToString(),
-
-                            // Instanciamos el objeto interno Produccion y mapeamos sus campos
                             alimentacion = new Alimentacion
                             {
                                 fecha = Convert.ToDateTime(reader["fecha"]),
@@ -141,18 +140,14 @@ namespace Beekepeer.DDBB
                                 precio_total_insumo = (float)Convert.ToDecimal(reader["precio_total_insumo"]),
                                 colmena_id = Convert.ToInt32(reader["idColmena"]),
                                 observaciones = reader["observaciones"].ToString(),
-
                             }
                         };
-
                         lista.Add(item);
                     }
                 }
             }
-
             return lista;
         }
-
 
     }
 }

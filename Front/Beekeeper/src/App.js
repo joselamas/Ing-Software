@@ -40,7 +40,6 @@ function App() {
     const [selectedColmena, setSelectedColmena] = useState(null);
     const [triggerReportDownload, setTriggerReportDownload] = useState(false);
 
-    console.log("Estado actual:", { viewState, usr, selectedApiario, selectedColmena });
 
   return (
     <div className="App">

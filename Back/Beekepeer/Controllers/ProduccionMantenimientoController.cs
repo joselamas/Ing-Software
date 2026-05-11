@@ -91,23 +91,23 @@ namespace Beekepeer.Controllers
 
         [HttpGet]
         [Route("listarProduccion")]
-        public IActionResult getListProduccion([FromQuery] string acronimo)
+        public IActionResult getListProduccion([FromQuery] string acronimo, [FromQuery] int offset , [FromQuery] int limit)
         {
             // 1. Validación de lista nula o vacía
             if (string.IsNullOrWhiteSpace(acronimo))
             {
-                return BadRequest("El acrónimo del usuario es obligatorio para listar las colmenas.");
+                return BadRequest("El acrónimo del usuario es obligatorio para listar la producción.");
             }
 
             try
             {
-                // 2. Ejecución
-                var resultado = _sql.getListProduccion(acronimo);
+                // 2. Ejecución: Ahora pasamos offset y limit a la capa de datos
+                var resultado = _sql.getListProduccion(acronimo, offset, limit);
 
                 // 3. Validación de contenido
                 if (resultado == null || resultado.Count == 0)
                 {
-                    // Retornamos un 200 con lista vacía, o un 404 si prefieres ser estricto
+                    // Retornamos un 200 con lista vacía para que el frontend sepa que ya no hay más datos (hasMore = false)
                     return Ok(new List<ProduccionWS>());
                 }
 
@@ -115,12 +115,11 @@ namespace Beekepeer.Controllers
             }
             catch (Exception ex)
             {
-                // 4. Log del error (puedes usar console para ahora)
-                Console.WriteLine($"Error al listar colmenas: {ex.Message}");
+                // 4. Log del error 
+                Console.WriteLine($"Error al listar producción: {ex.Message}");
                 return StatusCode(500, "Ocurrió un error interno al procesar la solicitud.");
             }
         }
-
 
         [HttpPost]
         [Route("insertarAlimentacion")]
@@ -192,23 +191,20 @@ namespace Beekepeer.Controllers
 
         [HttpGet]
         [Route("listarAlimentacion")]
-        public IActionResult getListAlimentacion([FromQuery] string acronimo)
+        public IActionResult getListAlimentacion([FromQuery] string acronimo, [FromQuery] int offset = 0, [FromQuery] int limit = 1000)
         {
-            // 1. Validación de lista nula o vacía
             if (string.IsNullOrWhiteSpace(acronimo))
             {
-                return BadRequest("El acrónimo del usuario es obligatorio para listar las colmenas.");
+                return BadRequest("El acrónimo del usuario es obligatorio para listar la alimentación.");
             }
 
             try
             {
-                // 2. Ejecución
-                var resultado = _sql.getListAlimentacion(acronimo);
+                // Pasamos offset y limit a la capa SQL
+                var resultado = _sql.getListAlimentacion(acronimo, offset, limit);
 
-                // 3. Validación de contenido
                 if (resultado == null || resultado.Count == 0)
                 {
-                    // Retornamos un 200 con lista vacía, o un 404 si prefieres ser estricto
                     return Ok(new List<AlimentacionWS>());
                 }
 
@@ -216,12 +212,10 @@ namespace Beekepeer.Controllers
             }
             catch (Exception ex)
             {
-                // 4. Log del error (puedes usar console para ahora)
-                Console.WriteLine($"Error al listar colmenas: {ex.Message}");
+                Console.WriteLine($"Error al listar alimentación: {ex.Message}");
                 return StatusCode(500, "Ocurrió un error interno al procesar la solicitud.");
             }
         }
-
 
 
 

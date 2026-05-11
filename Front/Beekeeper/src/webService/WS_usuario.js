@@ -15,10 +15,7 @@ export async function CrearUsuario(usr) {
             body: _body 
         });
             
-
-        console.log(response)
         if (response.ok) {
-            console.log(response)
             usuario = await response.json();
         } else {
             // Maneja errores 400 (BadRequest) o 500 del servidor
