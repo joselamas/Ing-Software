@@ -1,3 +1,5 @@
+using Beekepeer.DDBB;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -21,6 +23,12 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+//app.UseDefaultFiles(); // Para que busque el index.html automáticamente
+
+//app.UseStaticFiles();  // Para servir los archivos de React
+
 app.MapControllers();
+
+//DbInitializer.Initialize("(localdb)\\MSSQLLocalDB");
 
 app.Run();

@@ -13,6 +13,9 @@
 
   <ItemGroup>
     <Folder Include="Model\Post\" />
+     <None Update="DDBB\InitDB.sql">
+       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     </None>
   </ItemGroup>
 
 </Project>

@@ -17,3 +17,19 @@ Back/Beekepeer/.vs/Beekepeer/FileContentIndex/08739b1e-639d-4796-b15d-a10e242861
 Back/Beekepeer/.vs/Beekepeer/DesignTimeBuild/.dtbcache.v2
 Back/Beekepeer/.vs/Beekepeer/DesignTimeBuild/.dtbcache.v2
 Back/Beekepeer/.vs/Beekepeer/v17/.futdcache.v2
+# Ignorar carpetas de compilación de C#
+[Bb]in/
+[Ob]j/
+publish/
+
+# Ignorar instaladores y ejecutables de Inno Setup
+*.exe
+*.msi
+*.iss
+_setup/
+# Configuraciones locales ocultas de Visual Studio
+.vs/
+
+# Carpetas de archivos intermedios de compilación de C#
+[Oo]bj/
+obj/
