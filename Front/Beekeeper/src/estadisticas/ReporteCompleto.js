@@ -38,11 +38,7 @@ const ReporteCompleto = ({ usr, onDownloadTriggered, onDownloadComplete }) => {
         return str.length >= 4 ? str.slice(-2) : str;
     };
 
-    const limpiarNombre = (nombre) => {
-        if (!nombre) return "";
-        const limpio = nombre.toString().trim();
-        return limpio.substring(limpio.length - 2);
-    };
+    const limpiarNombre = (nombre) => (nombre ? nombre.toString().trim() : "");
 
     const generarPDF = useCallback(async () => {
         if (isGenerating) return;
@@ -151,6 +147,7 @@ const ReporteCompleto = ({ usr, onDownloadTriggered, onDownloadComplete }) => {
         }
     }, [onDownloadTriggered, isLoading, isGenerating, onDownloadComplete, generarPDF]);
 
+    console.log("Renderizando ReporteCompleto con stats:", { globalStats, apiarioStats, eficienciaStats, alturaStats });
     return (
         <div className="gestion-container" ref={reportRef} style={{ padding: '40px', backgroundColor: '#fdfaf5', minWidth: '1100px' }}>
             
@@ -169,10 +166,10 @@ const ReporteCompleto = ({ usr, onDownloadTriggered, onDownloadComplete }) => {
                 </header>
 
                 <section className="report-section">
-                    <h2 className="filter-label">1. Resumen de Negocio y ROI</h2>
+                    <h2 className="filter-label">1. Resumen de Consumo vs Producción</h2>
                     <div className="stats-grid-dashboard">
                         <div className="stat-card highlight">
-                            <label>ROI</label>
+                            <label>Consumo vs Producción</label>
                             <h2 style={{ fontSize: '3.5rem' }}>{globalStats?.roi.porcentaje}%</h2>
                             <div className="roi-badge">Neto: {formatMoneda(globalStats?.roi.beneficio)}</div>
                             <p style={{ fontSize: '0.9rem', marginTop: '10px', color: 'var(--dark-brown)' }}>
@@ -208,7 +205,8 @@ const ReporteCompleto = ({ usr, onDownloadTriggered, onDownloadComplete }) => {
                                     curveType: "function",
                                     colors: ["#f59e0b", "#10b981", "#3b82f6", "#ef4444"],
                                     chartArea: { width: '85%', height: '70%' },
-                                    hAxis: { type: 'string', textStyle: { fontSize: 9 } }
+                                    hAxis: { type: 'string', textStyle: { fontSize: 9 } },
+                                    legend: { position: 'top', textStyle: { fontSize: 10, bold: true } }
                                 }}
                             />
                         </div>
@@ -217,6 +215,9 @@ const ReporteCompleto = ({ usr, onDownloadTriggered, onDownloadComplete }) => {
 
                 <section className="report-section" style={{ marginTop: '40px' }}>
                     <h2 className="filter-label">2. Comportamiento por Apiario</h2>
+                    <p style={{ fontSize: '1rem', color: 'var(--dark-brown)', marginBottom: '15px', fontWeight: '700' }}>
+                        Balance de producción mensual: <span style={{ color: '#b45309' }}>● Miel (Ámbar)</span> y <span style={{ color: '#065f46' }}>● Polen (Verde)</span>.
+                    </p>
                     <div className="charts-grid">
                         {apiarioStats?.apiariosResumen.map(api => (
                             <div key={api.nombre} className="chart-card">
@@ -231,7 +232,7 @@ const ReporteCompleto = ({ usr, onDownloadTriggered, onDownloadComplete }) => {
                                     options={{
                                         colors: ["#f59e0b", "#10b981"],
                                         chartArea: { width: '80%', height: '70%' },
-                                        legend: 'none',
+                                        legend: { position: 'bottom', textStyle: { fontSize: 9, bold: true } },
                                         hAxis: { type: 'string', textStyle: { fontSize: 8 }, showTextEvery: 3 }
                                     }}
                                 />
@@ -243,27 +244,57 @@ const ReporteCompleto = ({ usr, onDownloadTriggered, onDownloadComplete }) => {
 
             {/* BLOQUE 2: Forzado a una página nueva en el PDF */}
             <div id="pdf-parte-2" ref={parte2Ref} style={{ display: isLoading ? 'none' : 'block' }}>
-                <section className="report-section" style={{ marginTop: '20px' }}>
-                    <h2 className="filter-label">3. Eficiencia y Factores Geográficos</h2>
+         <section className="report-section" style={{ marginTop: '20px' }}>
+    <h2 className="filter-label">3. Eficiencia por Apiario</h2>
+    <div className="stats-grid-dashboard">
+        <div className="stat-card wide-card">
+            <label>Promedio de producción (Kg/Colmena)</label>
+            <Chart
+                chartType="BarChart"
+                width="100%" 
+                height="400px" // Aumentamos un poco el alto para dar aire a la leyenda
+                data={[
+                    ["Apiario", "Producción (Kg/Colmena)"],
+                    ...(eficienciaStats?.apiariosEficiencia.map(a => [
+                        limpiarNombre(a.nombre), 
+                        a.historico[a.historico.length - 1]?.eficiencia || 0
+                    ]) || [])
+                ]}
+                options={{ 
+                    colors: ["#8b5cf6"],
+                    // 1. Forzamos la posición de la leyenda
+                    legend: { 
+                        position: 'bottom', 
+                        alignment: 'center',
+                        textStyle: { fontSize: 12 } 
+                    },
+                    // 2. Reducimos el chartArea para dejar espacio a la leyenda y etiquetas
+                    chartArea: { 
+                        width: '70%',  // Dejamos 30% de espacio para la leyenda/ejes
+                        height: '70%', // Dejamos espacio abajo para la leyenda
+                        left: '25%'    // Espacio para los nombres de los apiarios
+                    },
+                    vAxis: { 
+                        textStyle: { fontSize: 11 },
+                        title: "Apiarios"
+                    },
+                    hAxis: {
+                        title: "Kg por Colmena",
+                        minValue: 0
+                    },
+                    // Esto asegura que la leyenda no se recorte al exportar
+                    forceIFrame: false 
+                }}
+            />
+        </div>
+    </div>
+</section>
+
+                <section className="report-section" style={{ marginTop: '40px' }}>
+                    <h2 className="filter-label">4. Factores Geográficos (Altitud)</h2>
                     <div className="stats-grid-dashboard">
-                        <div className="stat-card">
-                            <label>Eficiencia (Kg/Colmena)</label>
-                            <Chart
-                                chartType="BarChart"
-                                width="100%" height="300px"
-                                data={[
-                                    ["Apiario", "Eficiencia"],
-                                    ...eficienciaStats?.apiariosEficiencia.map(a => [limpiarNombre(a.nombre), a.historico[a.historico.length - 1]?.eficiencia || 0])
-                                ]}
-                                options={{ 
-                                    colors: ["#8b5cf6"], 
-                                    chartArea: { width: '50%', left: '25%' },
-                                    vAxis: { textStyle: { fontSize: 11, bold: true } }
-                                }}
-                            />
-                        </div>
                         <div className="stat-card wide-card">
-                            <label>Rendimiento por Altitud (msnm)</label>
+                            <label>Rendimiento Comparativo por Altitud (msnm)</label>
                             <Chart
                                 chartType="ColumnChart"
                                 width="100%" height="300px"
@@ -274,7 +305,8 @@ const ReporteCompleto = ({ usr, onDownloadTriggered, onDownloadComplete }) => {
                                 options={{ 
                                     colors: ["#f59e0b", "#10b981"], 
                                     chartArea: { width: '85%', height: '60%', bottom: '25%' },
-                                    hAxis: { slantedText: true, slantedTextAngle: 45 }
+                                    hAxis: { slantedText: true, slantedTextAngle: 45 },
+                                    legend: { position: 'top', textStyle: { fontSize: 10 } }
                                 }}
                             />
                         </div>
