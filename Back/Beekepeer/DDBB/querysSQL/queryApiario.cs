@@ -4,7 +4,7 @@
     {
         // 1. Obtener todos los apiarios o filtrar por usuario
         public const string ListarApiarios = @"
-            SELECT id, acronimo_usuario, nombre_referencia, coordenadas, msnm, activo 
+            SELECT id, acronimo_usuario, nombre_referencia, coordenadas, msnm, activo, tipo_flora, capacidad_maxima, fecha_creacion, descripcion_acceso 
             FROM apiario 
             WHERE acronimo_usuario = @AcronimoUsuario OR @AcronimoUsuario IS NULL";
 
@@ -14,22 +14,54 @@
             FROM apiario 
             WHERE id = @Id";
 
+
         // 3. Insertar un nuevo apiario
-        public const string InsertarApiario = @"
-            INSERT INTO apiario (acronimo_usuario, nombre_referencia, coordenadas, msnm, activo)
-            VALUES (@AcronimoUsuario, @NombreReferencia, @Coordenadas, @Msnm, @Activo);
-            SELECT SCOPE_IDENTITY();";
+        public const string InsertarApiario = @"IF EXISTS (SELECT 1 FROM apiario WHERE coordenadas = @Coordenadas)
+                                            BEGIN
+                                                SELECT -1; -- Indicador de que la localización ya está ocupada
+                                            END
+                                            ELSE
+                                            BEGIN
+                                                INSERT INTO apiario 
+                                                (
+                                                    acronimo_usuario, 
+                                                    nombre_referencia, 
+                                                    coordenadas, 
+                                                    msnm, 
+                                                    activo, 
+                                                    capacidad_maxima, 
+                                                    tipo_flora, 
+                                                    descripcion_acceso,
+                                                    fecha_creacion -- El campo de fecha
+                                                )
+                                                VALUES 
+                                                (
+                                                    @AcronimoUsuario, 
+                                                    @NombreReferencia, 
+                                                    @Coordenadas, 
+                                                    @Msnm, 
+                                                    @Activo, 
+                                                    @CapacidadMaxima, 
+                                                    @TipoFlora, 
+                                                    @DescripcionAcceso,
+                                                    GETDATE() -- Función del sistema para la fecha actual
+                                                );
+
+                                                SELECT CAST(SCOPE_IDENTITY() AS INT);
+                                            END";
 
         // 4. Actualización dinámica (solo lo que no sea null)
-        public const string ActualizarApiario = @"
-            UPDATE apiario 
-            SET 
-                acronimo_usuario = COALESCE(@AcronimoUsuario, acronimo_usuario),
-                nombre_referencia = COALESCE(@NombreReferencia, nombre_referencia),
-                coordenadas = COALESCE(@Coordenadas, coordenadas),
-                msnm = COALESCE(@Msnm, msnm),
-                activo = COALESCE(@Activo, activo)
-            WHERE id = @Id";
+        public const string ActualizarApiario = @"UPDATE apiario 
+                                            SET 
+                                                acronimo_usuario = COALESCE(@AcronimoUsuario, acronimo_usuario),
+                                                nombre_referencia = COALESCE(@NombreReferencia, nombre_referencia),
+                                                coordenadas = COALESCE(@Coordenadas, coordenadas),
+                                                msnm = COALESCE(@Msnm, msnm),
+                                                activo = COALESCE(@Activo, activo),
+                                                tipo_flora = COALESCE(@Tipo_flora, tipo_flora),
+                                                descripcion_acceso = COALESCE(@Descripcion_acceso, descripcion_acceso),
+                                                capacidad_maxima = COALESCE(@Capacidad_maxima, capacidad_maxima)
+                                            WHERE id = @Id";
 
         // 5. Borrado Lógico (Desactivar)
         public const string DesactivarApiario = @"

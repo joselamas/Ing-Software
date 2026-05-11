@@ -1,5 +1,8 @@
-﻿using Beekepeer.DDBB;
+﻿using System.Text;
+using Beekepeer.DDBB;
 using Beekepeer.Model;
+using Beekepeer.Model.ws;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Beekepeer.Controllers
@@ -24,6 +27,51 @@ namespace Beekepeer.Controllers
             return Ok(_sql.GetTodosLosUsuarios());
         }
 
+        [HttpPost]
+        [Route("login")]
+        public dynamic ValidarLogin([FromBody] LoginRequestWS request)
+        {
+            try
+            {
+                // 1. Buscamos al usuario por su identificador (correo o acrónimo)
+                // Usamos el método que me pasaste
+                Usuario? usuario = _sql.BuscarUsuarioXIdentificador(request.identificador);
+
+                if (usuario == null)
+                {
+                    return new { status = 0, mensaje = "El usuario no existe en Beekeeper." };
+                }
+
+                // 2. Desencriptamos la clave que viene en Base64 desde el Front
+                string claveRecibida = (request.clave);
+
+                // 3. Validamos la clave y si el usuario está activo
+                if (usuario.clave == claveRecibida)
+                {
+                    if (!usuario.activo)
+                    {
+                        return new { status = 0, mensaje = "La cuenta está desactivada. Contacte al administrador." };
+                    }
+
+                    // ÉXITO: Retornamos el objeto usuario (limpio de datos sensibles si prefieres)
+                    usuario.clave = "";
+                    return new
+                    {
+                        status = 1,
+                        mensaje = "Bienvenido al sistema",
+                        usuario
+                    };
+                }
+                else
+                {
+                    return new { status = 0, mensaje = "Contraseña incorrecta." };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new { status = -1, mensaje = "Error interno: " + ex.Message };
+            }
+        }
         // 2. BUSCAR POR ACRÓNIMO
         // Ejemplo: api/Usuario/getByAcronimo/JDOE
         [HttpGet]
@@ -37,7 +85,7 @@ namespace Beekepeer.Controllers
 
         // 3. INSERTAR NUEVO USUARIO
         [HttpPost]
-        [Route("insert")]
+        [Route("insertar")]
         public IActionResult Insertar([FromBody] Usuario nuevo)
         {
             if (nuevo == null || string.IsNullOrEmpty(nuevo.acronimo))
@@ -55,34 +103,54 @@ namespace Beekepeer.Controllers
                 nuevo.activo
             );
 
-            if (!exito) return StatusCode(500, "Error al registrar el usuario. Es posible que el acrónimo ya exista.");
-
-            return Ok("Usuario registrado con éxito.");
+            if (!exito)
+                return StatusCode(500, new { status = 0, mensaje = "Error al registrar. El acrónimo o correo ya existen." });
+            return Ok(new { status = 1, mensaje = "Usuario registrado con éxito." });
         }
 
         // 4. ACTUALIZACIÓN DINÁMICA (PATCH)
-        [HttpPatch]
-        [Route("update/{acronimo}")]
-        public IActionResult Update(string acronimo, [FromBody] Usuario datos)
+        [HttpPost] // Cambiado a POST para coincidir con el fetch del Front
+        [Route("modificarUsuario")] // Ruta exacta usada en el Web Service
+        public IActionResult ModificarUsuario([FromBody] Usuario datos)
         {
-            // El acrónimo viene de la URL para identificar al usuario, 
-            // el resto de datos viene del cuerpo del JSON.
-            bool exito = _sql.ActualizarUsuario(
-                acronimo,
-                datos.permiso != 0 ? datos.permiso : (int?)null,
-                datos.nombre,
-                datos.apellido,
-                datos.correo,
-                datos.clave,
-                datos.telefono,
-                datos.localidad_asociada,
-                datos.activo
-            );
+            try
+            {
+                // Validamos que el acrónimo no sea nulo
+                if (string.IsNullOrEmpty(datos.acronimo))
+                {
+                    return BadRequest(new { status = 0, mensaje = "El acrónimo es obligatorio." });
+                }
 
-            if (!exito) return NotFound("No se pudo actualizar el usuario. Verifique el acrónimo.");
-            return Ok("Datos de usuario actualizados correctamente.");
+                // Llamamos a tu lógica de SQL. 
+                // Nota: Pasamos 'datos.acronimo' como identificador y los campos que vienen del form.
+                bool exito = _sql.ActualizarUsuario(
+                    datos.acronimo,
+                    null, // permiso (no se modifica en el perfil de usuario)
+                    null, // nombre (viniendo del front está disabled)
+                    null, // apellido (viniendo del front está disabled)
+                    null, // correo (viniendo del front está disabled)
+                    datos.clave, // La nueva contraseña
+                    datos.telefono,
+                    datos.localidad_asociada,
+                    null  // activo (no se modifica desde aquí)
+                );
+
+                if (exito)
+                {
+                    // Retornamos el formato que el Hook espera para mostrar el éxito
+                    return Ok(new { status = 1, mensaje = "¡Perfil actualizado con éxito!", data = datos });
+                }
+                else
+                {
+                    return NotFound(new { status = 0, mensaje = "No se encontró el usuario con el acrónimo proporcionado." });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Manejo de errores técnicos
+                return StatusCode(500, new { status = -1, mensaje = "Error interno: " + ex.Message });
+            }
         }
-
         // 5. ELIMINAR (Borrado Físico)
         [HttpDelete]
         [Route("delete/{acronimo}")]

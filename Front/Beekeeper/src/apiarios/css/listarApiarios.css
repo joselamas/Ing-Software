@@ -1,0 +1,228 @@
+.gestion-container {
+padding: 30px;
+    margin-top: 60px;
+    overflow-x: hidden;
+    padding: 40px;
+    background: var(--honey-gradient);
+  }
+
+.gestion-container::before {
+    
+  content: "";
+    /* Cambiamos a fixed para que cubra la pantalla completa siempre */
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100vw;  /* 100% del ancho de la ventana */
+    height: 100vh; /* 100% del alto de la ventana */
+    
+    /* Patrón de panal */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100' viewBox='0 0 56 100'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='%23ffffff22' stroke-width='1'/%3E%3C/svg%3E");
+    
+    /* IMPORTANTE: Asegura que el patrón se repita */
+    background-repeat: repeat;
+    background-size: 56px 100px;
+    
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+
+.main-content-layout {
+    display: flex;
+    gap: 20px;
+    height: 75vh;
+}
+
+.cards-panel {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 10px;
+  justify-content: flex-start; /* Añade esto para asegurar el inicio */
+}
+.list-side-panel {
+  display: flex;             /* Cambiado de grid a flex */
+  flex-direction: column;    /* Alineación vertical */
+  justify-content: flex-start; /* Fuerza a que los elementos empiecen arriba */
+  z-index: 99;
+  min-width: 500px;
+}
+
+.map-side-panel {
+    flex: 2;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 3px solid var(--primary-yellow);
+    margin-top: 30px;
+    box-shadow: 8px 8px 0px var(--dark-brown);
+}
+
+.map-legend {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: white;
+    padding: 12px;
+    border: 2px solid var(--dark-brown);
+    border-radius: 8px;
+    box-shadow: 4px 4px 0px var(--dark-brown);
+    font-family: inherit;
+}
+
+.map-legend h4 {
+    margin: 0 0 8px 0;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: 900;
+    border-bottom: 1px solid var(--soft-border);
+    padding-bottom: 4px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--dark-brown);
+}
+
+.legend-item:last-child {
+    margin-bottom: 0;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.2);
+    display: inline-block;
+}
+.apiario-card-mini {
+    background: var(--white);
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 6px solid var(--primary-yellow);
+    box-shadow: 0 2px 8px var(--shadow-soft);
+}
+
+/* Estilos para el Botón de Filtro y Área de Filtros Neobrutalista */
+.filter-toggle-btn {
+    background: var(--primary-yellow);
+    border: 3px solid var(--dark-brown);
+    padding: 10px 25px;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px var(--dark-brown);
+    transition: all 0.1s;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-toggle-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px var(--dark-brown);
+}
+
+.filter-toggle-btn.active {
+    background: var(--black);
+    color: var(--white);
+}
+
+.filters-area {
+    background: #fffcf0; /* Fondo crema muy claro para resaltar */
+    border: 3px solid var(--dark-brown);
+    box-shadow: 10px 10px 0px var(--dark-brown);
+    padding: 25px;
+    margin-bottom: 35px;
+    border-radius: 0px; /* Estilo cuadrado neobrutalista */
+    animation: slideDown 0.3s ease-out;
+    position: relative;
+    z-index: 100;
+}
+
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    align-items: flex-end;
+}
+
+.filter-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: var(--dark-brown);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.filter-group input, 
+.filter-group select {
+    width: 100%;
+    padding: 12px;
+    border: 3px solid var(--dark-brown);
+    background: var(--white);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.9rem;
+    outline: none;
+    transition: transform 0.1s;
+}
+
+.filter-group input:focus {
+    transform: scale(1.02);
+}
+
+.filter-actions-container {
+    display: flex;
+    gap: 15px;
+    grid-column: 1 / -1; /* Ocupa todo el ancho en la parte inferior */
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.clear-filters-btn, .close-filters-btn {
+    padding: 12px 30px;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 3px solid var(--dark-brown);
+    box-shadow: 4px 4px 0px var(--dark-brown);
+    transition: all 0.1s;
+}
+
+.clear-filters-btn {
+    background-color: var(--white);
+    color: var(--dark-brown);
+    min-width: 200px; /* Ampliado como pediste */
+}
+
+.close-filters-btn {
+    background: var(--black);
+    color: var(--white);
+}
+
+.clear-filters-btn:hover, .close-filters-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px var(--dark-brown);
+}
+
+
+.list-stats-header{
+color: var(--primary-yellow);
+
+}

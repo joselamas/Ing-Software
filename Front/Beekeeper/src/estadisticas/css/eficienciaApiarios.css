@@ -1,0 +1,96 @@
+
+.eficiencia-header {
+    margin-bottom: 30px;
+}
+
+.eficiencia-header h1 {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--dark-brown);
+    text-transform: uppercase;
+}
+
+.eficiencia-header p {
+    color: var(--dark-brown); /* Marrón oscuro para legibilidad */
+    font-weight: 700;
+    max-width: 600px;
+}
+
+.eficiencia-header span {
+    color: #f59e0b;
+}
+
+/* Grupo de Checkboxes Neobrutalistas */
+.check-group-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    padding: 20px;
+    background: white;
+    border: 3px solid var(--dark-brown);
+    box-shadow: 6px 6px 0px var(--dark-brown);
+}
+
+.eficiencia-check-item {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px;
+    border: 2px solid transparent;
+    font-weight: 800;
+    color: var(--dark-brown);
+    transition: all 0.2s;
+}
+
+.eficiencia-check-item:hover {
+    background: #f3f4f6;
+}
+
+.custom-box {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--dark-brown);
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+}
+
+/* Contenedor de Gráfica */
+.eficiencia-chart-card {
+    background: white;
+    padding: 25px;
+    border: 3px solid var(--dark-brown);
+    box-shadow: 10px 10px 0px var(--dark-brown);
+    margin-top: 20px;
+}
+
+.eficiencia-info-box {
+    margin-top: 15px;
+    padding: 20px;
+    background: white;
+    border: 4px solid var(--dark-brown);
+    box-shadow: 6px 6px 0px #f59e0b; /* Sombra amarilla neobrutalista */
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--dark-brown);
+    line-height: 1.6;
+}
+
+.eficiencia-info-box strong {
+    color: #b45309;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .eficiencia-container { padding-left: 20px; background-image: none; }
+}

@@ -1,0 +1,55 @@
+
+
+.altura-info-box {
+    margin-top: 15px;
+    padding: 20px;
+    background: white;
+    border: 4px solid var(--dark-brown);
+    box-shadow: 6px 6px 0px #f59e0b; /* Sombra sólida amarillo ámbar */
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--dark-brown);
+    line-height: 1.6;
+}
+
+.altura-info-box strong {
+    color: #b45309; /* Ámbar oscuro para resaltar */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.altura-chart-wrapper {
+    padding: 15px;
+    background: white;
+}
+
+.stat-card.wide-card {
+    border: 4px solid var(--dark-brown) !important;
+    box-shadow: 10px 10px 0px var(--dark-brown) !important;
+}
+
+/* Aseguramos que el acento del título también sea amarillo */
+.perfil-header h1 span {
+    color: #f59e0b;
+    text-decoration: underline;
+}
+
+.perfil-header p {
+    color: var(--dark-brown); /* Marrón oscuro para legibilidad */
+    font-weight: 700;
+    max-width: 600px;
+}
+
+.loading-state {
+    padding: 100px;
+    text-align: center;
+    font-weight: 900;
+    color: var(--dark-brown);
+    text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+    .gestion-container { padding-left: 20px; background-image: none; }
+}

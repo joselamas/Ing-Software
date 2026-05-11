@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Model\Post\**" />
+    <Content Remove="Model\Post\**" />
+    <EmbeddedResource Remove="Model\Post\**" />
+    <None Remove="Model\Post\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
   </ItemGroup>

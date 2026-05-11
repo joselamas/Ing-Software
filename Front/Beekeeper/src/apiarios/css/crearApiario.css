@@ -1,0 +1,75 @@
+.beekeeping-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+.input-row {
+    display: flex;
+    gap: 15px;
+}
+
+.input-row .input-group {
+    flex: 1;
+}
+
+.centered-row {
+    justify-content: center;
+}
+
+.centered-group {
+    width: 50%;
+    max-width: 260px;
+}
+
+.flora-group,
+.textarea-group {
+    width: 100%;
+    max-width: 100%;
+}
+
+.flora-group textarea,
+.textarea-group textarea {
+    width: 100%;
+    min-height: 140px;
+    resize: vertical;
+}
+
+
+.wide-textarea textarea, .flora-group textarea  {
+    min-height: 100px;
+}
+
+.hex-icon {
+    font-size: 4rem;
+    color: var(--primary-yellow);
+    margin-bottom: 15px;
+}
+
+.alert-box {
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border: 1px solid;
+}
+
+.alert-box.exito {
+    background-color: var(--success-light);
+    color: var(--success-dark);
+    border-color: var(--success-dark);
+}
+
+.alert-box.error {
+    background-color: var(--danger-light);
+    color: var(--danger-dark);
+    border-color: var(--danger-dark);
+}
+
+@media (max-width: 768px) {
+    .input-row {
+        flex-direction: column;
+    }
+}

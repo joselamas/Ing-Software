@@ -1,0 +1,158 @@
+@import '../../styles/variables.css';
+
+/* CENTRADO TOTAL EN PANTALLA */
+.apiario-main-container {
+    display: flex;
+    width: 95%;
+    max-width: 1000px;
+    height: 580px;
+    
+    /* Posicionamiento absoluto para centrar */
+    position: absolute;
+    top: 55%; 
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+    z-index: 100;
+}
+
+/* PANEL IZQUIERDO: Color Miel Vivo (Referencia image_8000ff) */
+.apiario-side-info {
+    flex: 1;
+    background-image: 
+        url('../../imagenes/light-honeycomb.png'), 
+        radial-gradient(circle at center, #8a5d3b 0%, #6f4a2f 50%, #3c2a21 100%);
+    background-blend-mode: overlay;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: white;
+    text-align: center;
+}
+
+.hex-icon-large {
+    font-size: 5rem;
+    color: #f39c12;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 0 15px rgba(243, 156, 18, 0.6));
+}
+
+.apiario-side-info h1 {
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+    font-weight: 800;
+}
+
+/* PANEL DERECHO: Formulario */
+.apiario-side-form {
+    flex: 1.3;
+    background: white;
+    padding: 40px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.form-header-minimalist h3 {
+    font-size: 1.7rem;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+/* INPUTS Y GRUPOS */
+.beekeeping-form-pro {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.input-group-pro {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.input-group-pro label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #34495e;
+    text-transform: uppercase;
+}
+
+.input-group-pro input, .input-group-pro select {
+    padding: 12px;
+    border: 1.5px solid #e1e1e1;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+/* RADIO CARDS (Origen) */
+.radio-cards-container {
+    display: flex;
+    gap: 10px;
+}
+
+.radio-card-item {
+    flex: 1;
+    border: 2px solid #f1f2f6;
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.radio-card-item.active {
+    border-color: #f39c12;
+    background: #fef9e7;
+    color: #d35400;
+}
+
+/* BOTÓN REGISTRAR */
+.btn-confirm-yellow {
+    background: #f39c12;
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 8px;
+    font-weight: 900;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 15px;
+    box-shadow: 0 4px 0 #d35400;
+    transition: background 0.3s;
+}
+
+.btn-confirm-yellow:hover {
+    background: #e67e22;
+}
+
+/* BOTÓN VER COLMENAS */
+.btn-outline-white {
+    background: transparent;
+    border: 2px solid white;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-weight: bold;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-outline-white:hover {
+    background: white;
+    color: #3c2a21;
+}
