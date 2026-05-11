@@ -86,15 +86,47 @@ export default function BarraNavegacion(props){
                         </li>
 
                         <li className="dropdown">
-                            <button className="dropbtn active" onClick={() => toggleDropdown("analisis")}>
-                                Estadísticas {openDropdown === "analisis" ? '▲' : '▼'}
+                            <button 
+                                className="dropbtn active" 
+                                onClick={() => toggleDropdown("analisis")}
+                                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                            >
+                                Métricas 
+                                {openDropdown === "analisis" ? '▲' : '▼'}
+                                {props.isDownloadingReport && (
+                                    <span style={{ 
+                                        backgroundColor: '#f59e0b', 
+                                        color: '#451a03', 
+                                        fontSize: '0.65rem', 
+                                        padding: '3px 10px', 
+                                        borderRadius: '50px',
+                                        fontWeight: '800',
+                                        boxShadow: '0 0 8px rgba(245, 158, 11, 0.6)',
+                                        border: '1px solid #b45309',
+                                        marginLeft: '5px'
+                                    }}>
+                                        ⏳ PROCESANDO PDF...
+                                    </span>
+                                )}
                             </button>
                             <div className={`dropdown-content active ${openDropdown === "analisis" ? "show" : ""}`}>
-                                <div onClick={() => handleNavigation("Estadisticas")}>Porcentaje de Colmenas por Apiario</div>
+                                <div onClick={() => handleNavigation("Estadisticas")}>Relación Consumo / Producción</div>
                                 <div onClick={() => handleNavigation("AnalisisApiarios")}>Rendimiento por Apiario</div>
                                 <div onClick={() => handleNavigation("EficienciaApiarios")}>Eficiencia por Colmena</div>
                                 <div onClick={() => handleNavigation("RendimientoAltura")}>Rendimiento por Altura</div>
-                                <div onClick={() => handleNavigation("ReporteCompleto")} style={{fontWeight: '900', color: '#b45309', borderTop: '2px solid var(--dark-brown)', marginTop: '5px', paddingTop: '5px'}}>📥 Descargar Métricas</div>
+                                <div 
+                                    onClick={() => !props.isDownloadingReport && handleNavigation("ReporteCompleto")} 
+                                    style={{
+                                        fontWeight: '900', 
+                                        color: props.isDownloadingReport ? '#9ca3af' : '#b45309', 
+                                        borderTop: '2px solid var(--dark-brown)', 
+                                        marginTop: '5px', 
+                                        paddingTop: '5px',
+                                        cursor: props.isDownloadingReport ? 'not-allowed' : 'pointer'
+                                    }}
+                                >
+                                    {props.isDownloadingReport ? "⏳ Generando PDF..." : "📥 Descargar Métricas"}
+                                </div>
                             </div>
                         </li>
 

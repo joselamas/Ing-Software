@@ -37,7 +37,7 @@ const AnalisisApiarios = ({ usr }) => {
     // Función ultra-segura para transformar datos
     const prepararDatos = (key) => {
         if (!stats?.apiariosResumen?.length || selectedNames.length === 0) {
-            return [["Mes", "Sin Datos"], ["-", 0]];
+            return null;
         }
 
         // Filtramos solo los apiarios que están en el estado de seleccionados
@@ -170,74 +170,104 @@ const AnalisisApiarios = ({ usr }) => {
             </header>
             
             {/* Panel de Filtros (Check Group) */}
-            <div className="apiario-check-group animate-fade-in">
-                <span className="filter-label">Mostrar Apiarios:</span>
-                {stats?.apiariosResumen.map((api, i) => (
-                    <label key={api.nombre} className="apiario-check-item">
-                        <input 
-                            type="checkbox" 
-                            className="hidden"
-                            checked={selectedNames.includes(api.nombre)}
-                            onChange={() => toggleApiario(api.nombre)}
-                        />
-                        <div 
-                            className={`custom-checkbox ${selectedNames.includes(api.nombre) ? 'active' : ''}`}
-                        style={{ 
-                            backgroundColor: selectedNames.includes(api.nombre) ? APIARIO_COLORS[i % APIARIO_COLORS.length] : 'transparent',
-                            borderColor: APIARIO_COLORS[i % APIARIO_COLORS.length] 
-                        }}>
-                            {selectedNames.includes(api.nombre) && (
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 20 20" fill="white">
-                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                </svg>
-                            )}
-                        </div>
-                        <span className={`text-sm font-medium ${selectedNames.includes(api.nombre) ? 'text-gray-800' : 'text-gray-400'}`}>
-                            {api.nombre}
-                        </span>
-                    </label>
-                ))}
-            </div>
+            {stats?.apiariosResumen?.length > 0 ? (
+                <div className="apiario-check-group animate-fade-in">
+                    <span className="filter-label">Mostrar Apiarios:</span>
+                    {stats.apiariosResumen.map((api, i) => (
+                        <label key={api.nombre} className="apiario-check-item">
+                            <input 
+                                type="checkbox" 
+                                className="hidden"
+                                checked={selectedNames.includes(api.nombre)}
+                                onChange={() => toggleApiario(api.nombre)}
+                            />
+                            <div 
+                                className={`custom-checkbox ${selectedNames.includes(api.nombre) ? 'active' : ''}`}
+                            style={{ 
+                                backgroundColor: selectedNames.includes(api.nombre) ? APIARIO_COLORS[i % APIARIO_COLORS.length] : 'transparent',
+                                borderColor: APIARIO_COLORS[i % APIARIO_COLORS.length] 
+                            }}>
+                                {selectedNames.includes(api.nombre) && (
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 20 20" fill="white">
+                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                    </svg>
+                                )}
+                            </div>
+                            <span className={`text-sm font-medium ${selectedNames.includes(api.nombre) ? 'text-gray-800' : 'text-gray-400'}`}>
+                                {api.nombre}
+                            </span>
+                        </label>
+                    ))}
+                </div>
+            ) : (
+                <div className="no-data-msg" style={{textAlign: 'center', padding: '20px', color: 'var(--dark-brown)'}}>
+                    No se encontraron apiarios registrados para este usuario.
+                </div>
+            )}
             
             <div className="charts-grid">
                 {/* 1. Miel - Comparativa Global */}
                 <div className="chart-card animate-fade-in">
-                    <Chart
-                        chartType="LineChart"
-                        width="100%" height="300px"
-                        data={mielData}
-                        options={opcionesBasicas("Cosecha de Miel (Kg)")}
-                    />
+                    {mielData ? (
+                        <Chart
+                            chartType="LineChart"
+                            width="100%" height="300px"
+                            data={mielData}
+                            options={opcionesBasicas("Cosecha de Miel (Kg)")}
+                        />
+                    ) : (
+                        <div className="no-data-msg" style={{textAlign: 'center', padding: '40px'}}>
+                            {selectedNames.length === 0 ? "Seleccione un apiario" : "No hay datos de cosecha de miel disponibles."}
+                        </div>
+                    )}
                 </div>
 
                 {/* 2. Polen - Por Apiario */}
                 <div className="chart-card animate-fade-in">
-                    <Chart
-                        chartType="LineChart"
-                        width="100%" height="300px"
-                        data={polenData}
-                        options={opcionesBasicas("Cosecha de Polen (Kg)")}
-                    />
+                    {polenData ? (
+                        <Chart
+                            chartType="LineChart"
+                            width="100%" height="300px"
+                            data={polenData}
+                            options={opcionesBasicas("Cosecha de Polen (Kg)")}
+                        />
+                    ) : (
+                        <div className="no-data-msg" style={{textAlign: 'center', padding: '40px'}}>
+                            {selectedNames.length === 0 ? "Seleccione un apiario" : "No hay datos de cosecha de polen disponibles."}
+                        </div>
+                    )}
                 </div>
 
                 {/* 3. Alimentación Líquida */}
                 <div className="chart-card animate-fade-in">
-                    <Chart
-                        chartType="LineChart"
-                        width="100%" height="300px"
-                        data={liquidoData}
-                        options={opcionesBasicas("Jarabe de Azúcar (Litros)")}
-                    />
+                    {liquidoData ? (
+                        <Chart
+                            chartType="LineChart"
+                            width="100%" height="300px"
+                            data={liquidoData}
+                            options={opcionesBasicas("Jarabe de Azúcar (Litros)")}
+                        />
+                    ) : (
+                        <div className="no-data-msg" style={{textAlign: 'center', padding: '40px'}}>
+                            {selectedNames.length === 0 ? "Seleccione un apiario" : "No hay datos de alimentación líquida disponibles."}
+                        </div>
+                    )}
                 </div>
 
                 {/* 4. Alimentación Sólida */}
                 <div className="chart-card animate-fade-in">
-                    <Chart
-                        chartType="LineChart"
-                        width="100%" height="300px"
-                        data={solidoData}
-                        options={opcionesBasicas("Torta Proteica (Kg)")}
-                    />
+                    {solidoData ? (
+                        <Chart
+                            chartType="LineChart"
+                            width="100%" height="300px"
+                            data={solidoData}
+                            options={opcionesBasicas("Torta Proteica (Kg)")}
+                        />
+                    ) : (
+                        <div className="no-data-msg" style={{textAlign: 'center', padding: '40px'}}>
+                            {selectedNames.length === 0 ? "Seleccione un apiario" : "No hay datos de alimentación sólida disponibles."}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

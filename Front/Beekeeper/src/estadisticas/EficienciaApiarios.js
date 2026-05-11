@@ -182,35 +182,41 @@ const EficienciaApiarios = ({ usr }) => {
                 </button>
             </header>
             
-            <div className="apiario-check-group animate-fade-in">
-                <span className="filter-label">Mostrar Apiarios:</span>
-                {stats?.apiariosEficiencia?.map((api, i) => (
-                    <label key={api.nombre} className="apiario-check-item">
-                        <input 
-                            type="checkbox" 
-                            className="hidden"
-                            checked={selectedApiarios.includes(api.nombre)}
-                            onChange={() => handleToggle(api.nombre)}
-                        />
-                        <div 
-                            className={`custom-checkbox ${selectedApiarios.includes(api.nombre) ? 'active' : ''}`}
-                            style={{ 
-                                backgroundColor: selectedApiarios.includes(api.nombre) ? APIARIO_COLORS[i % APIARIO_COLORS.length] : 'transparent',
-                                borderColor: APIARIO_COLORS[i % APIARIO_COLORS.length] 
-                            }}
-                        >
-                            {selectedApiarios.includes(api.nombre) && (
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 20 20" fill="white">
-                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                </svg>
-                            )}
-                        </div>
-                        <span className={`text-sm font-medium ${selectedApiarios.includes(api.nombre) ? 'text-gray-800' : 'text-gray-400'}`}>
-                            {api.nombre}
-                        </span>
-                    </label>
-                ))}
-            </div>
+            {stats?.apiariosEficiencia?.length > 0 ? (
+                <div className="apiario-check-group animate-fade-in">
+                    <span className="filter-label">Mostrar Apiarios:</span>
+                    {stats.apiariosEficiencia.map((api, i) => (
+                        <label key={api.nombre} className="apiario-check-item">
+                            <input 
+                                type="checkbox" 
+                                className="hidden"
+                                checked={selectedApiarios.includes(api.nombre)}
+                                onChange={() => handleToggle(api.nombre)}
+                            />
+                            <div 
+                                className={`custom-checkbox ${selectedApiarios.includes(api.nombre) ? 'active' : ''}`}
+                                style={{ 
+                                    backgroundColor: selectedApiarios.includes(api.nombre) ? APIARIO_COLORS[i % APIARIO_COLORS.length] : 'transparent',
+                                    borderColor: APIARIO_COLORS[i % APIARIO_COLORS.length] 
+                                }}
+                            >
+                                {selectedApiarios.includes(api.nombre) && (
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 20 20" fill="white">
+                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                    </svg>
+                                )}
+                            </div>
+                            <span className={`text-sm font-medium ${selectedApiarios.includes(api.nombre) ? 'text-gray-800' : 'text-gray-400'}`}>
+                                {api.nombre}
+                            </span>
+                        </label>
+                    ))}
+                </div>
+            ) : (
+                <div className="no-data-msg" style={{textAlign: 'center', padding: '20px', color: 'var(--dark-brown)'}}>
+                    No se encontraron apiarios registrados para este usuario.
+                </div>
+            )}
 
             <div className="eficiencia-chart-card">
                 {mielData && mielData.length > 1 ? (
@@ -223,7 +229,7 @@ const EficienciaApiarios = ({ usr }) => {
                     loader={<div style={{padding: '20px', textAlign: 'center'}}>Generando comparativa...</div>}
                 /> ) : (
                     <div className="no-data-msg" style={{textAlign: 'center', padding: '40px'}}>
-                        Selecciona al menos un apiario para visualizar los datos de eficiencia.
+                        {selectedApiarios.length === 0 ? "Seleccione un apiario" : "No hay datos de eficiencia de miel disponibles."}
                     </div>
                 )}
             </div>
@@ -239,7 +245,7 @@ const EficienciaApiarios = ({ usr }) => {
                     loader={<div style={{padding: '20px', textAlign: 'center'}}>Analizando polen...</div>}
                 /> ) : (
                     <div className="no-data-msg" style={{textAlign: 'center', padding: '40px'}}>
-                        Selecciona apiarios para ver la eficiencia de polen.
+                        {selectedApiarios.length === 0 ? "Seleccione un apiario" : "No hay datos de eficiencia de polen disponibles."}
                     </div>
                 )}
             </div>

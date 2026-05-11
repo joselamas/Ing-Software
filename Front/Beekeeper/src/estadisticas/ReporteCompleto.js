@@ -140,7 +140,9 @@ const ReporteCompleto = ({ usr, onDownloadTriggered, onDownloadComplete }) => {
             
             // Pequeño delay para asegurar que los gráficos se dibujen tras el cambio de estado
             const timer = setTimeout(() => {
-                generarPDF().then(() => {
+                generarPDF()
+                .catch(err => console.error("Fallo en descarga automática:", err))
+                .finally(() => {
                     if (onDownloadComplete) onDownloadComplete();
                 });
             }, 1500); 

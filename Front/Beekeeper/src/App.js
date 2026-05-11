@@ -39,6 +39,9 @@ function App() {
 
     const [selectedColmena, setSelectedColmena] = useState(null);
     const [triggerReportDownload, setTriggerReportDownload] = useState(false);
+    const [isDownloadingReport, setIsDownloadingReport] = useState(false);
+
+    console.log("relacion consumo / produccion", { viewState, usr, selectedApiario, selectedColmena });
 
 
   return (
@@ -47,7 +50,11 @@ function App() {
         setViewState = {setViewState}
         setUsr={setUsr}
         usr = {usr}
-        onDownloadReport={() => setTriggerReportDownload(true)}
+        onDownloadReport={() => {
+            setTriggerReportDownload(true);
+            setIsDownloadingReport(true);
+        }}
+        isDownloadingReport={isDownloadingReport}
       />}
       { viewState === 'Login' &&
         <Login
@@ -207,7 +214,10 @@ function App() {
           <ReporteCompleto 
             usr={usr} 
             onDownloadTriggered={triggerReportDownload} 
-            onDownloadComplete={() => setTriggerReportDownload(false)} 
+            onDownloadComplete={() => {
+                setTriggerReportDownload(false);
+                setIsDownloadingReport(false);
+            }} 
           />
         </div>
       )}

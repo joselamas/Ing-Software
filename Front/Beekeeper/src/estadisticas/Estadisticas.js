@@ -149,8 +149,8 @@ const Estadisticas = ({ usr }) => {
         <div className="gestion-container" ref={reportRef}>
             <header className="perfil-header">
                 <div>
-                    <h1>Análisis de <span>Rendimiento</span></h1>
-                    <p>Monitoreo de productividad, costos y Retorno de Inversión (ROI).</p>
+                    <h1>Relación <span>Consumo / Producción</span></h1>
+                    <p>Monitoreo de productividad, costos .</p>
                 </div>
                 <button 
                     onClick={handleDownloadPDF} 
@@ -165,7 +165,7 @@ const Estadisticas = ({ usr }) => {
 
             <div className="stats-grid-dashboard">
                 <div className="stat-card highlight">
-                    <label style={{fontSize:'2rem'}}>Retorno de Inversión (ROI)</label>
+                    <label style={{fontSize:'2rem'}}>Relación Inversión Alimentación / Producción</label>
                     <h2>{stats.roi.porcentaje}%</h2>
                     <div className="roi-badge">Neto: {formatMoneda(stats.roi.beneficio)}</div>
                     <p style={{fontSize: '1.3rem', marginTop: '10px', color: 'var(--dark-brown)'}}>
@@ -210,9 +210,19 @@ const Estadisticas = ({ usr }) => {
             loader={<div>Cargando Gráfico...</div>} 
             options={{
                 curveType: "function",
-                pointSize: 8,
-                lineWidth: 1,
-                // ... tus otros options
+                pointSize: 6,
+                lineWidth: 3,
+                colors: ["#f59e0b", "#10b981", "#3b82f6", "#ef4444"],
+                chartArea: { width: "85%", height: "70%" },
+                hAxis: {
+                    textStyle: { fontSize: 10 },
+                    gridlines: { color: "transparent" }
+                },
+                vAxis: {
+                    minValue: 0,
+                    gridlines: { color: "#f3f4f6" }
+                },
+                legend: { position: "top", textStyle: { fontSize: 11, fontWeight: "bold" } }
             }}
         />
     ) : (
