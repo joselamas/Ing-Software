@@ -136,3 +136,33 @@ export async function obtenerAlimentacion(acronimo) {
         return { status: -1, mensaje: "Error de conexión con el servidor" };
     }
 }
+
+export async function listarProduccionAnual(acronimo) {
+    try {
+        // Realizamos una única petición ya que este endpoint no está paginado
+        const response = await fetch(`${url}listarProduccionAnual?acronimo=${encodeURIComponent(acronimo)}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        });
+
+        if (!response.ok) {
+            // El backend retorna un texto simple en caso de error 500 o BadRequest
+            const errorMsg = await response.text();
+            return { status: 0, mensaje: errorMsg || "Error al obtener rendimiento anual" };
+        }
+
+        const data = await response.json();
+        
+        // El backend devuelve directamente List<ProduccionAnual>
+        const listaValida = Array.isArray(data) ? data : [];
+
+        return { 
+            status: 1, 
+            data: listaValida 
+        };
+
+    } catch (err) {
+        console.error("Error de conexión:", err.message);
+        return { status: -1, mensaje: "Error de conexión con el servidor" };
+    }
+}

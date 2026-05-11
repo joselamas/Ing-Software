@@ -218,7 +218,36 @@ namespace Beekepeer.Controllers
         }
 
 
+        [HttpGet]
+        [Route("listarProduccionAnual")]
+        public IActionResult getProduccionAnual([FromQuery] string acronimo)
+        {
+            if (string.IsNullOrWhiteSpace(acronimo))
+            {
+                return BadRequest("El acrónimo del usuario es obligatorio para obtener el rendimiento anual.");
+            }
 
+            try
+            {
+                // Llamada a la capa SQL para obtener el histórico de 3 años
+                var resultado = _sql.getProduccionAnual(acronimo);
+
+                if (resultado == null || resultado.Count == 0)
+                {
+                    // Retornamos una lista vacía con status 200 para evitar errores en el Frontend
+                    return Ok(new List<ProduccionAnual>());
+                }
+
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+                // Log del error para depuración en el servidor
+                Console.WriteLine($"Error al obtener producción anual para {acronimo}: {ex.Message}");
+
+                return StatusCode(500, "Ocurrió un error interno al procesar el reporte de rendimiento.");
+            }
+        }
 
     }
 }
