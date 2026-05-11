@@ -77,5 +77,56 @@ namespace Beekepeer.DDBB.querysSQL
                             ORDER BY CT.fecha DESC, CT.colmena_id ASC
                             OFFSET @Offset ROWS
                             FETCH NEXT @Limit ROWS ONLY";
-                            }
+
+        public const string GetProduccionAnual = @"
+                    WITH ProduccionAnualCTE AS (
+                        SELECT 
+                            YEAR(P.fecha) AS Anio,
+                            SUM(CASE WHEN P.tipo_producto = 'Miel' THEN P.cantidad_kg ELSE 0 END) AS MielKg,
+                            SUM(CASE WHEN P.tipo_producto = 'Polen' THEN P.cantidad_kg ELSE 0 END) AS PolenKg,
+                            -- Cálculo de valores (Ajustar multiplicadores según precio de mercado actual)
+                            SUM(CASE WHEN P.tipo_producto = 'Miel' THEN P.cantidad_kg * P.precio_aprox_kg ELSE 0 END) AS MielValor,
+                            SUM(CASE WHEN P.tipo_producto = 'Polen' THEN P.cantidad_kg * P.precio_aprox_kg ELSE 0 END) AS PolenValor
+                        FROM produccion_cosecha AS P
+                        INNER JOIN colmena AS C ON P.colmena_id = C.id
+                        WHERE C.usuario_acronimo = @Acronimo 
+                          AND YEAR(P.fecha) >= YEAR(GETDATE()) - 2
+                        GROUP BY YEAR(P.fecha)
+                    ),
+                    CostosAnualesCTE AS (
+                        SELECT 
+                            YEAR(A.fecha) AS Anio,
+                            -- Cantidades biológicas
+                            SUM(CASE WHEN A.tipo_suministro = 'Jarabe' THEN A.cantidad ELSE 0 END) AS JarabeKg,
+                            SUM(CASE WHEN A.tipo_suministro <> 'Jarabe' THEN A.cantidad ELSE 0 END) AS TortaKg,
+                            -- Valores económicos
+                            SUM(CASE WHEN A.tipo_suministro = 'Jarabe' THEN A.precio_total_insumo ELSE 0 END) AS JarabeValor,
+                            SUM(CASE WHEN A.tipo_suministro <> 'Jarabe' THEN A.precio_total_insumo ELSE 0 END) AS TortaValor
+                        FROM control_alimentacion AS A
+                        INNER JOIN colmena AS C ON A.colmena_id = C.id
+                        WHERE C.usuario_acronimo = @Acronimo 
+                          AND YEAR(A.fecha) >= YEAR(GETDATE()) - 2
+                        GROUP BY YEAR(A.fecha)
+                    )
+                    SELECT 
+                        COALESCE(P.Anio, C.Anio) AS Anio,
+                        ISNULL(P.MielKg, 0) AS MielKg,
+                        ISNULL(C.JarabeKg, 0) AS JarabeKg,
+                        ISNULL(P.MielValor, 0) AS MielValor,
+                        ISNULL(C.JarabeValor, 0) AS JarabeValor,
+                        ISNULL(P.PolenKg, 0) AS PolenKg,
+                        ISNULL(C.TortaKg, 0) AS TortaKg,
+                        ISNULL(P.PolenValor, 0) AS PolenValor,
+                        ISNULL(C.TortaValor, 0) AS TortaValor,
+                        -- Relaciones MIEL
+                        CAST(CASE WHEN ISNULL(C.JarabeKg, 0) = 0 THEN 0 ELSE (ISNULL(P.MielKg, 0) / C.JarabeKg) END AS FLOAT) AS RelacionNetaMiel,
+                        CAST(CASE WHEN ISNULL(C.JarabeValor, 0) = 0 THEN 0 ELSE (ISNULL(P.MielValor, 0) / C.JarabeValor) END AS FLOAT) AS RelacionEconomicaMiel,
+                        -- Relaciones POLEN
+                        CAST(CASE WHEN ISNULL(C.TortaKg, 0) = 0 THEN 0 ELSE (ISNULL(P.PolenKg, 0) / C.TortaKg) END AS FLOAT) AS RelacionNetaPolen,
+                        CAST(CASE WHEN ISNULL(C.TortaValor, 0) = 0 THEN 0 ELSE (ISNULL(P.PolenValor, 0) / C.TortaValor) END AS FLOAT) AS RelacionEconomicaPolen
+                    FROM ProduccionAnualCTE P
+                    FULL OUTER JOIN CostosAnualesCTE C ON P.Anio = C.Anio
+                    ORDER BY Anio DESC";
+    }
+
 }

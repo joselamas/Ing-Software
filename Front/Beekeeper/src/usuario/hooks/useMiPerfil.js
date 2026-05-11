@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import * as WSColmena from '../../webService/WS_colmena';
 import * as WSApiario from '../../webService/WS_apiario';
+import * as WSProduccion from '../../webService/WS_produccion';
 
 /**
  * Hook para gestionar las estadísticas y datos del perfil del usuario.
@@ -11,7 +12,8 @@ export const useMiPerfil = (usr) => {
         activas: 0,
         historicas: 0,
         totalApiarios: 0,
-        kgAnual: [0, 0, 0] // Datos hardcodeados para kgAnual
+        produccionAnual: [],
+        apiarios: []
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -21,17 +23,28 @@ export const useMiPerfil = (usr) => {
             if (!usr?.acronimo) return;
             setLoading(true);
             try {
-                // Ejecutamos ambas consultas en paralelo para mayor eficiencia
-                const [resColmenas, resApiarios] = await Promise.all([
+                // Ejecutamos las tres consultas en paralelo para mayor eficiencia
+                const [resColmenas, resApiarios, resProduccion] = await Promise.all([
                     WSColmena.getListColmenasUsr(usr.acronimo),
-                    WSApiario.ListarApiarios(usr.acronimo)
+                    WSApiario.ObtenerColmenas(usr.acronimo),
+                    WSProduccion.listarProduccionAnual(usr.acronimo)
                 ]);
 
                 let colmenasRaw = [];
                 if (resColmenas.status === 1) colmenasRaw = resColmenas.data || [];
 
                 let apiariosCount = 0;
-                if (resApiarios.status === 1) apiariosCount = resApiarios.apiarios?.length || 0;
+                let apiariosList = [];
+                if (resApiarios.status === 1) {
+                    apiariosList = (resApiarios.apiarios || []).map(item => ({
+                        ...item.apiario,
+                        numColmenas: item.listColmenas?.length || 0
+                    }));
+                    apiariosCount = apiariosList.length;
+                }
+
+                let produccionAnual = [];
+                if (resProduccion.status === 1) produccionAnual = resProduccion.data || [];
 
                 const activas = colmenasRaw.filter(c => c.colmena?.activo).length;
 
@@ -40,7 +53,8 @@ export const useMiPerfil = (usr) => {
                     activas: activas,
                     historicas: colmenasRaw.length - activas,
                     totalApiarios: apiariosCount,
-                    kgAnual: [150, 200, 250] // Valores de ejemplo para 2024, 2025, 2026
+                    produccionAnual: produccionAnual,
+                    apiarios: apiariosList
                 });
             } catch (err) {
                 setError("Error al sincronizar estadísticas del perfil.");

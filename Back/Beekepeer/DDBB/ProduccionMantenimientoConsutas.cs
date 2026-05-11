@@ -149,5 +149,48 @@ namespace Beekepeer.DDBB
             return lista;
         }
 
+
+        public List<ProduccionAnual> getProduccionAnual(string acronimo)
+        {
+            List<ProduccionAnual> lista = new List<ProduccionAnual>();
+
+            using (SqlConnection connection = new SqlConnection(_sqlurl))
+            {
+                SqlCommand cmd = new SqlCommand(queryProduccionMantenimiento.GetProduccionAnual, connection);
+                cmd.Parameters.AddWithValue("@Acronimo", acronimo);
+
+                connection.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var item = new ProduccionAnual
+                        {
+                            Anio = Convert.ToInt32(reader["Anio"]),
+
+                            // --- SECCIÓN MIEL ---
+                            MielKg = (float)Convert.ToDecimal(reader["MielKg"]),
+                            JarabeKg = (float)Convert.ToDecimal(reader["JarabeKg"]),
+                            MielValor = (float)Convert.ToDecimal(reader["MielValor"]),
+                            JarabeValor = (float)Convert.ToDecimal(reader["JarabeValor"]),
+                            RelacionNetaMiel = (float)Convert.ToDecimal(reader["RelacionNetaMiel"]),
+                            RelacionEconomicaMiel = (float)Convert.ToDecimal(reader["RelacionEconomicaMiel"]),
+
+                            // --- SECCIÓN POLEN ---
+                            PolenKg = (float)Convert.ToDecimal(reader["PolenKg"]),
+                            TortaKg = (float)Convert.ToDecimal(reader["TortaKg"]),
+                            PolenValor = (float)Convert.ToDecimal(reader["PolenValor"]),
+                            TortaValor = (float)Convert.ToDecimal(reader["TortaValor"]),
+                            RelacionNetaPolen = (float)Convert.ToDecimal(reader["RelacionNetaPolen"]),
+                            RelacionEconomicaPolen = (float)Convert.ToDecimal(reader["RelacionEconomicaPolen"])
+                        };
+
+                        lista.Add(item);
+                    }
+                }
+            }
+            return lista;
+        }
     }
 }
