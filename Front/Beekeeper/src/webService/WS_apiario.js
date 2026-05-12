@@ -1,6 +1,5 @@
-//const url = 'http://localhost:5000/api/Apiario/'; //LOCAL
-
-const url = 'http://localhost:5283/api/Apiario/'; //WEB
+import CONFIG from './config';
+const url = CONFIG.URL_APIARIO;
 
 
 export async function CrearApiario(_apiario) {

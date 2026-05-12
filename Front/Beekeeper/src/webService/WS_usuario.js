@@ -1,5 +1,6 @@
-//const url = 'http://localhost:5000/api/Usuario/'; // LOCAL
-const url = 'http://localhost:5283/api/Usuario/'; //WEB
+import CONFIG from './config';
+const url = CONFIG.URL_USUARIO;
+
 
 
 export async function CrearUsuario(usr) {
@@ -15,10 +16,7 @@ export async function CrearUsuario(usr) {
             body: _body 
         });
             
-
-        console.log(response)
         if (response.ok) {
-            console.log(response)
             usuario = await response.json();
         } else {
             // Maneja errores 400 (BadRequest) o 500 del servidor
