@@ -1,4 +1,5 @@
-const url = 'http://localhost:5283/api/Usuario/'; 
+import CONFIG from './config';
+const url = CONFIG.URL_USUARIO;
 
 
 

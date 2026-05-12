@@ -1,5 +1,6 @@
+import CONFIG from './config';
 // URL base para el controlador de Estadísticas/Análisis
-const url = "http://localhost:5283/api/Estadisticas/"; 
+const url = CONFIG.URL_ESTADISTICAS;
 
 /**
  * Obtiene el resumen global de estadísticas (ROI, Producción Total, Gastos)

@@ -1,4 +1,5 @@
-const url = 'http://localhost:5283/api/ProduccionMantenimiento/';
+import CONFIG from './config';
+const url = CONFIG.URL_PRODUCCION;
 
 export async function registrarProduccion(datos) {
 

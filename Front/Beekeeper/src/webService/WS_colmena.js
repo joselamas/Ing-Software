@@ -1,5 +1,6 @@
+import CONFIG from './config';
 // La URL base centralizada. Si mañana se sube el backend a un servidor real, solo se cambia aquí.
-const url = 'http://localhost:5283/api/Colmena/';
+const url = CONFIG.URL_COLMENA;
 
 export async function insertarColmena(nuevaColmena, apiarioId) {
     // 1. Construimos la URL con el parámetro de consulta
