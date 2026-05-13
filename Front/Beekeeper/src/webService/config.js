@@ -1,5 +1,5 @@
 const API_BASE_URL = 'http://localhost:5283/api/';
-//const API_BASE_URL = 'http://localhost:5283/api/';
+//const API_BASE_URL = '/api/';
 
 const CONFIG = {
     URL_USUARIO: `${API_BASE_URL}Usuario/`,

@@ -35,3 +35,6 @@ _setup/
 obj/
 Back/Beekepeer/2appsettings.Development.json
 Back/Beekepeer/appsettings.Development.json
+Back/Beekepeer/1appsettings.Development.json
+wwwroot/
+Back/Beekepeer/Beekepeer.csproj.user

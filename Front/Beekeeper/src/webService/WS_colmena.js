@@ -1,5 +1,5 @@
 import CONFIG from './config';
-// La URL base centralizada. Si mañana se sube el backend a un servidor real, solo se cambia aquí.
+
 const url = CONFIG.URL_COLMENA;
 
 export async function insertarColmena(nuevaColmena, apiarioId) {
