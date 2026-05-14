@@ -1,3 +1,4 @@
+using System;
 using System.Data.SqlClient; // Asegúrate de tener este paquete o System.Data.SqlClient
 using System.IO;
 
@@ -7,31 +8,50 @@ namespace Beekepeer.DDBB
     {
         public static void Initialize(string localDbServer)
         {
-            // 1. Nos conectamos a la base de datos 'master' del LocalDB
-            string masterConnection = $"Server={localDbServer};Database=master;Trusted_Connection=True;Encrypt=False;";
             string dbName = "Beekeeper";
+
+            // Definimos y creamos la carpeta "Datos" dentro de la ruta del ejecutable
+            string baseDir = AppContext.BaseDirectory;
+            string dataFolderPath = Path.Combine(baseDir, "Datos");
+
+            if (!Directory.Exists(dataFolderPath))
+            {
+                Directory.CreateDirectory(dataFolderPath);
+            }
+
+            // Rutas completas para los archivos físicos
+            string mdfPath = Path.Combine(dataFolderPath, "Beekeeper.mdf");
+            string ldfPath = Path.Combine(dataFolderPath, "Beekeeper_log.ldf");
+
+            // Nos conectamos a la base de datos 'master' del LocalDB
+            string masterConnection = $"Server={localDbServer};Database=master;Trusted_Connection=True;Encrypt=False;";
+            
 
             using (var connection = new SqlConnection(masterConnection))
             {
                 connection.Open();
 
-                // 2. Revisamos si Beekeeper ya existe
+                // Revisamos si Beekeeper ya existe
                 string checkDbQuery = $"SELECT database_id FROM sys.databases WHERE Name = '{dbName}'";
                 using (var checkCmd = new SqlCommand(checkDbQuery, connection))
                 {
                     var result = checkCmd.ExecuteScalar();
 
-                    // 3. Si result es null, la base de datos NO existe
+                    // Si result es null, la base de datos NO existe
                     if (result == null)
                     {
-                        // Creamos la base de datos física
-                        string createDbQuery = $"CREATE DATABASE {dbName}";
+                        // Creamos la base de datos especificando la ubicación de los archivos
+                        string createDbQuery = $@"
+                            CREATE DATABASE [{dbName}] 
+                            ON PRIMARY (NAME = {dbName}_Data, FILENAME = '{mdfPath}') 
+                            LOG ON (NAME = {dbName}_Log, FILENAME = '{ldfPath}')";
+
                         using (var createCmd = new SqlCommand(createDbQuery, connection))
                         {
                             createCmd.ExecuteNonQuery();
                         }
 
-                        // 4. Ahora ejecutamos el script de las tablas
+                        // Ahora ejecutamos el script de las tablas
                         EjecutarScriptTablas(localDbServer, dbName);
                     }
                 }
