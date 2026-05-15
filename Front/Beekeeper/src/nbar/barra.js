@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import "./barra.css"
 import ModalAbout from '../componentes/ModalAbout.js';
+import ModalLogout from '../componentes/ModalLogout.js';
 
 export default function BarraNavegacion(props){
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -9,9 +10,19 @@ export default function BarraNavegacion(props){
 
     const [isAboutOpen, setIsAboutOpen] = useState(false);
 
+    const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+
     const closeSesion = () =>{
-        props.setUsr(null)
-        props.setViewState("Login")
+
+        if (window.confirm("¿Estás seguro de que deseas cerrar tu sesión en Beekeeper?")) {
+            
+            // 1. Borramos la persistencia inmediatamente
+            localStorage.removeItem('beekeeper_session'); 
+            
+            // 2. Limpiamos el estado global de React
+            props.setUsr(null);
+            props.setViewState("Login");
+        }
     }
 
     const handleNavigation = (view) => {
@@ -37,6 +48,21 @@ export default function BarraNavegacion(props){
         } else {
             setOpenDropdown(menuName); // Si era otro, lo abre
         }
+    }
+
+    // Esta función solo muestra el aviso en pantalla
+    const intentarCerrarSesion = () => {
+        setIsLogoutOpen(true);
+        setIsMenuOpen(false); // Cierra el menú en móviles
+        setOpenDropdown("");  // Cierra los dropdowns
+    }
+
+    // Esta es la función letal que borra todo
+    const ejecutarCierreDefinitivo = () => {
+        localStorage.removeItem('beekeeper_session'); 
+        props.setUsr(null);
+        props.setViewState("Login");
+        setIsLogoutOpen(false); // Cerramos el modal al terminar
     }
 
     const createView = () => {
@@ -141,7 +167,7 @@ export default function BarraNavegacion(props){
                         </li>
                         {/* NUEVO: Botón de Cerrar Sesión (Solo visible en móviles) */}
                         <li className="mobile-only-logout">
-                            <button className="dropbtn btn-logout" onClick={() => closeSesion()}>
+                            <button className="dropbtn btn-logout" onClick={intentarCerrarSesion}>
                                 Cerrar Sesión ➔
                             </button>
                         </li>
@@ -159,7 +185,7 @@ export default function BarraNavegacion(props){
                             <div onClick={() => handleNavigation("MiPerfil")}>Mi Perfil</div>
                             <div onClick={() => handleNavigation("ActualizarDatos")}>Actualizar Perfil</div>
                             <div onClick={() => { setIsAboutOpen(true); setOpenDropdown(""); }}>Acerca del Sistema</div>
-                            <div onClick={() => closeSesion()} className="logout-item">Cerrar Sesión</div>
+                            <div onClick={intentarCerrarSesion} className="logout-item">Cerrar Sesión</div>
                         </div>
                     </div>
                 </div>
@@ -173,6 +199,11 @@ export default function BarraNavegacion(props){
             <ModalAbout 
                 isOpen={isAboutOpen} 
                 onClose={() => setIsAboutOpen(false)} 
+            />
+            <ModalLogout 
+                isOpen={isLogoutOpen} 
+                onClose={() => setIsLogoutOpen(false)} 
+                onConfirm={ejecutarCierreDefinitivo} 
             />
         </section>
     );

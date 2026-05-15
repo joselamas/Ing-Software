@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BarraNavegacion from './nbar/barra.js'
 
 import Login from './usuario/login.js'
@@ -41,6 +41,75 @@ function App() {
     const [selectedColmena, setSelectedColmena] = useState(null);
     const [triggerReportDownload, setTriggerReportDownload] = useState(false);
     const [isDownloadingReport, setIsDownloadingReport] = useState(false);
+
+
+    useEffect(() => {
+        const sessionData = localStorage.getItem('beekeeper_session');
+        
+        if (sessionData) {
+            try {
+                // 1. DECODIFICACIÓN: Pasamos de Base64 -> Texto normal -> Objeto JSON
+                const datosDesofuscados = decodeURIComponent(atob(sessionData));
+                const { user, view, lastActive } = JSON.parse(datosDesofuscados);
+                
+                const now = new Date().getTime();
+                const Minuto = 5 * 60 * 1000;
+
+                if (now - lastActive < Minuto) {
+                    setUsr(user);
+                    setViewState(view || "Home");
+                } else {
+                    localStorage.removeItem('beekeeper_session');
+                    setViewState("Login");
+                }
+            } catch (error) {
+                // MEDIDA DE SEGURIDAD: Si alguien intentó modificar el texto raro a mano 
+                // y rompió el formato, forzamos el cierre de sesión inmediatamente.
+                console.error("Intento de manipulación de sesión detectado.");
+                localStorage.removeItem('beekeeper_session');
+                setViewState("Login");
+            }
+        }
+    }, []);
+
+    // ==========================================
+    // 2. EFECTO DE "LATIDO" (Actualiza la actividad)
+    // ==========================================
+    useEffect(() => {
+        if (usr) {
+            // Empaquetamos la lógica de guardado en una constante
+            const guardarSesion = () => {
+                const session = {
+                    user: usr,
+                    view: viewState,
+                    lastActive: new Date().getTime()
+                };
+
+                // 2. OFUSCACIÓN: Pasamos de Objeto JSON -> Texto seguro -> Base64
+                const stringSession = JSON.stringify(session);
+                const tokenOculto = btoa(encodeURIComponent(stringSession));
+
+                localStorage.setItem('beekeeper_session', tokenOculto);
+            };
+
+            // 1. GUARDADO INMEDIATO: Lo ejecutamos en el mismo instante en que 'usr' tiene datos
+            guardarSesion();
+
+            // 2. EL LATIDO: Iniciamos el ciclo de 10 segundos para mantener la sesión viva
+            const interval = setInterval(guardarSesion, 10000); 
+
+            return () => clearInterval(interval); // Limpieza al desmontar
+        }
+    }, [usr, viewState]);
+
+    // ==========================================
+    // 3. FUNCIÓN DE CIERRE DE SESIÓN MANUAL
+    // ==========================================
+    const finalizarSesionManual = () => {
+        localStorage.removeItem('beekeeper_session'); // Borramos el storage inmediatamente
+        setUsr(null);
+        setViewState("Login");
+    };
 
     console.log("relacion consumo / produccion", { viewState, usr, selectedApiario, selectedColmena });
 
