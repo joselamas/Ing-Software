@@ -29,6 +29,9 @@
     text-align: center;
     width: 100vw;
     overflow-x: hidden; /* Garantiza que nada se salga por los lados */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ocupa al menos el 100% del alto de la pantalla */
 }
 
 

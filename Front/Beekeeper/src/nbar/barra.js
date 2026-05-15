@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import "./barra.css"
+import ModalAbout from '../componentes/ModalAbout.js';
 
 export default function BarraNavegacion(props){
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     // NUEVO: Estado para saber qué submenú exacto está abierto
     const [openDropdown, setOpenDropdown] = useState("");
+
+    const [isAboutOpen, setIsAboutOpen] = useState(false);
 
     const closeSesion = () =>{
         props.setUsr(null)
@@ -134,6 +137,7 @@ export default function BarraNavegacion(props){
                         <li className="mobile-only-profile">
                             <div onClick={() => handleNavigation("MiPerfil")}>Mi Perfil</div>
                             <div onClick={() => handleNavigation("ActualizarDatos")}>Actualizar Perfil</div>
+                            <div onClick={() => { setIsAboutOpen(true); setIsMenuOpen(false); }}>Acerca del Sistema</div>
                         </li>
                         {/* NUEVO: Botón de Cerrar Sesión (Solo visible en móviles) */}
                         <li className="mobile-only-logout">
@@ -154,6 +158,7 @@ export default function BarraNavegacion(props){
                         <div className={`dropdown-content user-dropdown-right ${openDropdown === "userMenu" ? "show" : ""}`}>
                             <div onClick={() => handleNavigation("MiPerfil")}>Mi Perfil</div>
                             <div onClick={() => handleNavigation("ActualizarDatos")}>Actualizar Perfil</div>
+                            <div onClick={() => { setIsAboutOpen(true); setOpenDropdown(""); }}>Acerca del Sistema</div>
                             <div onClick={() => closeSesion()} className="logout-item">Cerrar Sesión</div>
                         </div>
                     </div>
@@ -165,6 +170,10 @@ export default function BarraNavegacion(props){
     return (
         <section>
             {createView()}
+            <ModalAbout 
+                isOpen={isAboutOpen} 
+                onClose={() => setIsAboutOpen(false)} 
+            />
         </section>
     );
 }

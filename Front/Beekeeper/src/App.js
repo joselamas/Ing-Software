@@ -7,6 +7,7 @@ import Home from './componentes/Home.js';
 import CrearUsuario from './usuario/crearUsuario.js'
 import ModificarUsuario from './usuario/modificarUsuario.js'
 import MiPerfil from './usuario/miPerfil.js';
+import Footer from './Footer.js';
 
 import VerColmenas from './colmenas/VerColmenas.js';
 import DetalleColmena from './colmenas/DetalleColmena.js';
@@ -200,6 +201,8 @@ function App() {
 
       {/* Vista normal por si el usuario decide entrar manualmente al reporte */}
       {viewState === 'ReporteCompleto' && <ReporteCompleto usr={usr} />}
+
+      <Footer />
 
       {/* COMPONENTE DE DESCARGA SILENCIOSA (Background) */}
       {/* Se renderiza fuera de la vista del usuario para procesar los datos y el PDF sin navegar */}
