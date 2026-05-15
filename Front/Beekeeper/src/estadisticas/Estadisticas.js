@@ -7,21 +7,31 @@ import './css/estadisticas.css';
 import '../colmenas/css/verColmenas.css'; // Importamos estilos de paginación compartidos
 
 const Estadisticas = ({ usr }) => {
-    const { stats, loading, formatMoneda } = useEstadisticas(usr);
+    const { stats, annualStats, loading, formatMoneda } = useEstadisticas(usr);
     const reportRef = useRef();
 
     // Estados para paginación
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [isExporting, setIsExporting] = useState(false);
+    const [activeTab, setActiveTab] = useState("General");
 
     // Formatear datos para Google Charts
     const chartData = useMemo(() => {
         if (!stats || !stats.comparativaMeses || stats.comparativaMeses.length === 0) {
             return null;
         }
+
+        // Si estamos en un año específico, filtramos los meses de ese año
+        let rawData = stats.comparativaMeses;
+        if (activeTab !== "General") {
+            rawData = rawData.filter(m => String(m.mes).startsWith(activeTab));
+        }
+
+        if (rawData.length === 0) return null;
+
         const header = ["Mes", "Miel", "Polen", "Líquido", "Sólido"];
-        const rows = stats.comparativaMeses.map(m => [
+        const rows = rawData.map(m => [
             String(m.mes),
             Number(m.miel),
             Number(m.polen),
@@ -29,7 +39,35 @@ const Estadisticas = ({ usr }) => {
             Number(m.solido) || 0
         ]);
         return [header, ...rows];
-    }, [stats]);
+    }, [stats, activeTab]);
+
+    // Obtener los datos resumidos según la pestaña activa
+    const displaySummary = useMemo(() => {
+        if (activeTab === "General") {
+            return {
+                roi: stats.roi,
+                produccion: stats.produccionTotal,
+                gastos: stats.gastoTotal
+            };
+        }
+        const yearData = annualStats.find(a => String(a.anio) === activeTab);
+        if (!yearData) return null;
+
+        const ingresos = yearData.mielValor + yearData.polenValor;
+        const egresos = yearData.jarabeValor + yearData.tortaValor;
+        
+        return {
+            roi: {
+                // Calculamos el ROI general para el año específico
+                porcentaje: egresos > 0 ? Number((((ingresos - egresos) / egresos) * 100).toFixed(2)) : 0,
+                beneficio: ingresos - egresos,
+                ingresos,
+                egresos
+            },
+            produccion: { miel: yearData.mielKg, polen: yearData.polenKg },
+            gastos: { liquido: yearData.jarabeKg, solido: yearData.tortaKg }
+        };
+    }, [stats, annualStats, activeTab]);
 
     useEffect(() => {
         setCurrentPage(1);
@@ -163,74 +201,100 @@ const Estadisticas = ({ usr }) => {
                 </button>
             </header>
 
+            {/* SISTEMA DE PESTAÑAS */}
+            <div className="tabs-container" style={{ display: 'flex', gap: '10px', marginBottom: '25px', overflowX: 'hidden', paddingBottom: '10px' }}>
+                <button 
+                    className={`tab-btn ${activeTab === 'General' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('General')}
+                    style={{ padding: '10px 20px', borderRadius: '8px', border: '3px solid var(--dark-brown)', fontWeight: '800', backgroundColor: activeTab === 'General' ? 'var(--primary-yellow)' : 'white', cursor: 'pointer' }}
+                >
+                    GENERAL (HISTÓRICO)
+                </button>
+                {annualStats.map(year => (
+                    <button 
+                        key={year.anio}
+                        className={`tab-btn ${activeTab === String(year.anio) ? 'active' : ''}`}
+                        onClick={() => setActiveTab(String(year.anio))}
+                        style={{ padding: '10px 20px', borderRadius: '8px', border: '3px solid var(--dark-brown)', fontWeight: '800', backgroundColor: activeTab === String(year.anio) ? 'var(--primary-yellow)' : 'white', cursor: 'pointer' }}
+                    >
+                        AÑO {year.anio}
+                    </button>
+                ))}
+            </div>
+
+            {displaySummary && (
             <div className="stats-grid-dashboard">
                 <div className="stat-card highlight">
-                    <label style={{fontSize:'2rem'}}>Relación Inversión Alimentación / Producción</label>
-                    <h2>{stats.roi.porcentaje}%</h2>
-                    <div className="roi-badge">Neto: {formatMoneda(stats.roi.beneficio)}</div>
+                    <label style={{fontSize:'2rem'}}>Relación Inversión Alimentación / Producción {activeTab === 'General' ? '(General)' : `(${activeTab})`}</label>
+                    <h2>{displaySummary.roi.porcentaje}%</h2>
+                    <div className="roi-badge">Neto: {formatMoneda(displaySummary.roi.beneficio)}</div>
                     <p style={{fontSize: '1.3rem', marginTop: '10px', color: 'var(--dark-brown)'}}>
-                        Basado en {formatMoneda(stats.roi.ingresos)} ingresos vs {formatMoneda(stats.roi.egresos)} egresos.
+                        Basado en {formatMoneda(displaySummary.roi.ingresos)} ingresos vs {formatMoneda(displaySummary.roi.egresos)} egresos.
                     </p>
                 </div>
 
                 <div className="stat-card">
-                    <label>Producción vs Alimentación</label>
+                    <label>Producción {activeTab === 'General' ? 'Total' : `del Año ${activeTab}`} vs Alimentación {activeTab === 'General' ? 'Total' : `del Año ${activeTab}`}</label>
                     <div className="production-split-container">
                         <div className="prod-box honey">
-                            <span className="prod-value">{stats.produccionTotal.miel}</span>
+                            <span className="prod-value">{displaySummary.produccion.miel}</span>
                             <span className="prod-label">Kg Miel</span>
                         </div>
                         <div className="prod-box pollen">
-                            <span className="prod-value">{stats.produccionTotal.polen}</span>
+                            <span className="prod-value">{displaySummary.produccion.polen}</span>
                             <span className="prod-label">Kg Polen</span>
                         </div>
                     </div>
                     <div className="production-split-container" style={{ marginTop: '15px' }}>
                         <div className="prod-box liquid">
-                            <span className="prod-value">{stats.gastoTotal.liquido}</span>
+                            <span className="prod-value">{displaySummary.gastos.liquido}</span>
                             <span className="prod-label">Líquido</span>
                         </div>
                         <div className="prod-box solid">
-                            <span className="prod-value">{stats.gastoTotal.solido}</span>
+                            <span className="prod-value">{displaySummary.gastos.solido}</span>
                             <span className="prod-label">Sólido</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="stat-card wide-card">
-                    <label>Tendencia: Producción vs Consumo</label>
-                   <div className="chart-wrapper-google">
-    {chartData && chartData.length > 1 ? (
-        <Chart
-            chartType="LineChart"
-            width="100%"
-            height="350px"
-            data={chartData}
-            // Agrega esto para evitar errores de redimensionamiento
-            loader={<div>Cargando Gráfico...</div>} 
-            options={{
-                curveType: "function",
-                pointSize: 6,
-                lineWidth: 3,
-                colors: ["#f59e0b", "#10b981", "#3b82f6", "#ef4444"],
-                chartArea: { width: "85%", height: "70%" },
-                hAxis: {
-                    textStyle: { fontSize: 10 },
-                    gridlines: { color: "transparent" }
-                },
-                vAxis: {
-                    minValue: 0,
-                    gridlines: { color: "#f3f4f6" }
-                },
-                legend: { position: "top", textStyle: { fontSize: 11, fontWeight: "bold" } }
-            }}
-        />
-    ) : (
-        <div className="no-data-msg">No hay datos históricos para graficar</div>
-        )}
-</div>
-                </div>
+                {/* La gráfica de tendencia solo se muestra en la pestaña "General" */}
+                {activeTab === "General" && (
+                    <div className="stat-card wide-card">
+                        <label>Tendencia Histórica</label>
+                        <div className="chart-wrapper-google">
+                            {chartData && chartData.length > 1 ? (
+                                <Chart
+                                    chartType="LineChart"
+                                    width="100%"
+                                    height="350px"
+                                    data={chartData}
+                                    // Agrega esto para evitar errores de redimensionamiento
+                                    loader={<div>Cargando Gráfico...</div>} 
+                                    options={{
+                                        curveType: "function",
+                                        pointSize: 6,
+                                        lineWidth: 3,
+                                        colors: ["#f59e0b", "#10b981", "#3b82f6", "#ef4444"],
+                                        chartArea: { width: "85%", height: "70%" },
+                                        hAxis: {
+                                            textStyle: { fontSize: 10 },
+                                            gridlines: { color: "transparent" }
+                                        },
+                                        vAxis: {
+                                            minValue: 0,
+                                            gridlines: { color: "#f3f4f6" }
+                                        },
+                                        legend: { position: "top", textStyle: { fontSize: 11, fontWeight: "bold" } }
+                                    }}
+                                />
+                            ) : (
+                                <div className="no-data-msg">No hay datos históricos para graficar</div>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
+            )}
 
             <section className="elite-ranking-container animate-fade-in">
                 <h3>🏆 Ranking de Colmenas Élite</h3>

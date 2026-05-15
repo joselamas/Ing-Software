@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getEstadisticasGlobales } from '../../webService/WS_estadisticas';
+import * as WSProduccion from '../../webService/WS_produccion';
 
 export const useEstadisticas = (usr) => {
     const [loading, setLoading] = useState(true);
@@ -10,11 +11,15 @@ export const useEstadisticas = (usr) => {
         rankingElite: [],
         comparativaMeses: []
     });
+    const [annualStats, setAnnualStats] = useState([]);
 
     useEffect(() => {
         const fetchStats = async () => {
             setLoading(true);
-            const response = await getEstadisticasGlobales(usr);
+            const [response, responseAnnual] = await Promise.all([
+                getEstadisticasGlobales(usr),
+                WSProduccion.listarProduccionAnual(usr.acronimo)
+            ]);
             
             if (response.status === 1) {
                 const data = response.data;
@@ -35,6 +40,9 @@ export const useEstadisticas = (usr) => {
                     }
                 });
             }
+            if (responseAnnual.status === 1) {
+                setAnnualStats(responseAnnual.data || []);
+            }
             setLoading(false);
         };
 
@@ -48,5 +56,5 @@ export const useEstadisticas = (usr) => {
         }).format(val);
     };
 
-    return { stats, loading, formatMoneda };
+    return { stats, annualStats, loading, formatMoneda };
 };

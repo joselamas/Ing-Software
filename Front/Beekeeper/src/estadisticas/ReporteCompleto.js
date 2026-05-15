@@ -21,12 +21,19 @@ const ReporteCompleto = ({ usr, onDownloadTriggered, onDownloadComplete }) => {
     const parte2Ref = useRef();
     const [isGenerating, setIsGenerating] = useState(false);
 
-    const { stats: globalStats, loading: load1, formatMoneda } = useEstadisticas(usr);
+    const { stats: globalStats, annualStats, loading: load1, formatMoneda } = useEstadisticas(usr);
     const { stats: apiarioStats, loading: load2 } = useAnalisisApiarios(usr);
     const { stats: eficienciaStats, loading: load3 } = useEficienciaApiarios(usr);
     const { stats: alturaStats, loading: load4 } = useRendimientoAltura(usr);
 
     const isLoading = load1 || load2 || load3 || load4;
+
+    const renderValor = (valor, decimales = 2) => {
+        if (typeof valor === 'number') {
+            return valor % 1 === 0 ? valor.toLocaleString() : valor.toFixed(decimales);
+        }
+        return valor || '0';
+    };
 
     const formatearEtiquetaX = (valor) => {
         if (!valor) return "";
@@ -52,7 +59,6 @@ const ReporteCompleto = ({ usr, onDownloadTriggered, onDownloadComplete }) => {
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pageHeight = pdf.internal.pageSize.getHeight();
 
-            // Configuración común para asegurar fondo blanco puro y evitar errores de color
             const opcionesCanvas = {
                 scale: 2,
                 useCORS: true,
@@ -70,7 +76,6 @@ const ReporteCompleto = ({ usr, onDownloadTriggered, onDownloadComplete }) => {
                         });
                     });
                     
-                    // Asegurar fondo blanco y márgenes en los bloques clonados para el PDF
                     ['pdf-parte-1', 'pdf-parte-2'].forEach(id => {
                         const bloque = clonedDoc.getElementById(id);
                         if (bloque) {
@@ -79,13 +84,11 @@ const ReporteCompleto = ({ usr, onDownloadTriggered, onDownloadComplete }) => {
                         }
                     });
 
-                    // Ocultar botón
                     const btns = clonedDoc.querySelectorAll('.perfil-btn');
                     btns.forEach(b => b.style.display = 'none');
                 }
             };
 
-            // Función auxiliar para procesar un bloque y manejar su paginación interna si es muy largo
             const agregarBloqueAlPDF = async (element, esPrimerBloque) => {
                 if (!element) {
                     throw new Error("Elemento de reporte no encontrado en el DOM");
@@ -97,7 +100,6 @@ const ReporteCompleto = ({ usr, onDownloadTriggered, onDownloadComplete }) => {
                 let heightLeft = imgHeight;
                 let position = 0;
 
-                // Si no es el primer bloque (es decir, es la parte 2), forzamos una PÁGINA NUEVA
                 if (!esPrimerBloque) {
                     pdf.addPage();
                 }
@@ -105,19 +107,15 @@ const ReporteCompleto = ({ usr, onDownloadTriggered, onDownloadComplete }) => {
                 pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
                 heightLeft -= pageHeight;
 
-                // Si el bloque sigue siendo más grande que una página, genera las extra necesarias
                 while (heightLeft > 0) {
-                    position -= pageHeight; // Sube la imagen una página completa
+                    position -= pageHeight; 
                     pdf.addPage();
                     pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
                     heightLeft -= pageHeight;
                 }
             };
 
-            // 1. Capturamos e imprimimos Secciones 1 y 2
             await agregarBloqueAlPDF(parte1Ref.current, true);
-            
-            // 2. Capturamos e imprimimos Secciones 3 y 4 (Comenzará obligatoriamente en página nueva)
             await agregarBloqueAlPDF(parte2Ref.current, false);
 
             pdf.save(`Reporte_Maestro_Beekeeper_${usr?.acronimo || 'General'}.pdf`);
@@ -130,11 +128,8 @@ const ReporteCompleto = ({ usr, onDownloadTriggered, onDownloadComplete }) => {
         }
     }, [isGenerating, usr, globalStats, apiarioStats, eficienciaStats, alturaStats, formatMoneda]);
 
-    // Effect to trigger PDF generation when onDownloadTriggered is true
     useEffect(() => {
         if (onDownloadTriggered && !isLoading && !isGenerating) {
-            
-            // Pequeño delay para asegurar que los gráficos se dibujen tras el cambio de estado
             const timer = setTimeout(() => {
                 generarPDF()
                 .catch(err => console.error("Fallo en descarga automática:", err))
@@ -147,13 +142,11 @@ const ReporteCompleto = ({ usr, onDownloadTriggered, onDownloadComplete }) => {
         }
     }, [onDownloadTriggered, isLoading, isGenerating, onDownloadComplete, generarPDF]);
 
-    console.log("Renderizando ReporteCompleto con stats:", { globalStats, apiarioStats, eficienciaStats, alturaStats });
     return (
         <div className="gestion-container" ref={reportRef} style={{ padding: '40px', backgroundColor: '#fdfaf5', minWidth: '1100px' }}>
             
             {isLoading && <div className="loading-state">Consolidando Reporte Maestro...</div>}
 
-            {/* BLOQUE 1: Quedará en las primeras páginas */}
             <div id="pdf-parte-1" ref={parte1Ref} style={{ display: isLoading ? 'none' : 'block' }}>
                 <header className="perfil-header" style={{ borderBottom: '4px solid var(--dark-brown)', paddingBottom: '20px', marginBottom: '30px' }}>
                     <div>
@@ -214,6 +207,51 @@ const ReporteCompleto = ({ usr, onDownloadTriggered, onDownloadComplete }) => {
                 </section>
 
                 <section className="report-section" style={{ marginTop: '40px' }}>
+                    <h2 className="filter-label">1.1 Desglose de Rendimiento por Temporada</h2>
+                    <div className="produccion-container">
+                        {annualStats.map((data) => (
+                            <div key={data.anio} className="anio-stats-block" style={{ marginBottom: '30px', padding: '20px', border: '3px solid var(--dark-brown)', borderRadius: '12px', backgroundColor: '#fff' }}>
+                                <h3 className="anio-title" style={{ fontSize: '1.2rem', fontWeight: '900', color: 'var(--dark-brown)', borderBottom: '2px solid var(--primary-yellow)', paddingBottom: '10px', marginBottom: '20px' }}>Resumen Anual {data.anio}</h3>
+                                <div className="stats-grid-small" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                                    <div className="stat-group" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', padding: '15px', backgroundColor: '#fdfaf5', border: '1px solid var(--soft-border)', borderRadius: '14px' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column' }}><span style={{ fontSize: '0.75rem', opacity: 0.8 }}>Miel (Kg)</span><strong>{renderValor(data.mielKg)}</strong></div>
+                                        <div style={{ display: 'flex', flexDirection: 'column' }}><span style={{ fontSize: '0.75rem', opacity: 0.8 }}>Jarabe (Kg)</span><strong>{renderValor(data.jarabeKg)}</strong></div>
+                                        <div style={{ gridColumn: 'span 2', backgroundColor: 'var(--primary-yellow)', padding: '8px', borderRadius: '10px', textAlign: 'center' }}>
+                                            <span style={{ fontSize: '0.75rem', display: 'block' }}>Relación Neta Miel</span>
+                                            <strong>{renderValor(data.relacionNetaMiel)}</strong>
+                                        </div>
+                                        <div style={{ display: 'flex', flexDirection: 'column' }}><span style={{ fontSize: '0.75rem', opacity: 0.8 }}>Miel ($)</span><strong>${renderValor(data.mielValor)}</strong></div>
+                                        <div style={{ display: 'flex', flexDirection: 'column' }}><span style={{ fontSize: '0.75rem', opacity: 0.8 }}>Jarabe ($)</span><strong>${renderValor(data.jarabeValor)}</strong></div>
+                                        <div style={{ gridColumn: 'span 2', backgroundColor: 'var(--primary-yellow)', padding: '8px', borderRadius: '10px', textAlign: 'center' }}>
+                                            <span style={{ fontSize: '0.75rem', display: 'block' }}>Relación Econ. Miel</span>
+                                            <strong>{renderValor(data.relacionEconomicaMiel)}</strong>
+                                        </div>
+                                    </div>
+                                    <div className="stat-group" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', padding: '15px', backgroundColor: '#fdfaf5', border: '1px solid var(--soft-border)', borderRadius: '14px' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column' }}><span style={{ fontSize: '0.75rem', opacity: 0.8 }}>Polen (Kg)</span><strong>{renderValor(data.polenKg)}</strong></div>
+                                        <div style={{ display: 'flex', flexDirection: 'column' }}><span style={{ fontSize: '0.75rem', opacity: 0.8 }}>Torta (Kg)</span><strong>{renderValor(data.tortaKg)}</strong></div>
+                                        <div style={{ gridColumn: 'span 2', backgroundColor: 'var(--primary-yellow)', padding: '8px', borderRadius: '10px', textAlign: 'center' }}>
+                                            <span style={{ fontSize: '0.75rem', display: 'block' }}>Relación Neta Polen</span>
+                                            <strong>{renderValor(data.relacionNetaPolen)}</strong>
+                                        </div>
+                                        <div style={{ display: 'flex', flexDirection: 'column' }}><span style={{ fontSize: '0.75rem', opacity: 0.8 }}>Polen ($)</span><strong>${renderValor(data.polenValor)}</strong></div>
+                                        <div style={{ display: 'flex', flexDirection: 'column' }}><span style={{ fontSize: '0.75rem', opacity: 0.8 }}>Torta ($)</span><strong>${renderValor(data.tortaValor)}</strong></div>
+                                        <div style={{ gridColumn: 'span 2', backgroundColor: 'var(--primary-yellow)', padding: '8px', borderRadius: '10px', textAlign: 'center' }}>
+                                            <span style={{ fontSize: '0.75rem', display: 'block' }}>Relación Econ. Polen</span>
+                                            <strong>{renderValor(data.relacionEconomicaPolen)}</strong>
+                                        </div>
+                                    </div>
+                                    <div style={{ gridColumn: 'span 2', backgroundColor: 'var(--primary-yellow)', padding: '15px', borderRadius: '12px', textAlign: 'center', border: '2px solid var(--dark-brown)', marginTop: '10px' }}>
+                                        <span style={{ fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Resultado Económico Final {data.anio}</span>
+                                        <strong style={{ display: 'block', fontSize: '1.5rem', marginTop: '5px' }}>${renderValor(data.mielValor + data.polenValor - data.jarabeValor - data.tortaValor)}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                <section className="report-section" style={{ marginTop: '40px' }}>
                     <h2 className="filter-label">2. Comportamiento por Apiario</h2>
                     <p style={{ fontSize: '1rem', color: 'var(--dark-brown)', marginBottom: '15px', fontWeight: '700' }}>
                         Balance de producción mensual: <span style={{ color: '#b45309' }}>● Miel (Ámbar)</span> y <span style={{ color: '#065f46' }}>● Polen (Verde)</span>.
@@ -242,53 +280,56 @@ const ReporteCompleto = ({ usr, onDownloadTriggered, onDownloadComplete }) => {
                 </section>
             </div>
 
-            {/* BLOQUE 2: Forzado a una página nueva en el PDF */}
             <div id="pdf-parte-2" ref={parte2Ref} style={{ display: isLoading ? 'none' : 'block' }}>
-         <section className="report-section" style={{ marginTop: '20px' }}>
-    <h2 className="filter-label">3. Eficiencia por Apiario</h2>
-    <div className="stats-grid-dashboard">
-        <div className="stat-card wide-card">
-            <label>Promedio de producción (Kg/Colmena)</label>
-            <Chart
-                chartType="BarChart"
-                width="100%" 
-                height="400px" // Aumentamos un poco el alto para dar aire a la leyenda
-                data={[
-                    ["Apiario", "Producción (Kg/Colmena)"],
-                    ...(eficienciaStats?.apiariosEficiencia.map(a => [
-                        limpiarNombre(a.nombre), 
-                        a.historico[a.historico.length - 1]?.eficiencia || 0
-                    ]) || [])
-                ]}
-                options={{ 
-                    colors: ["#8b5cf6"],
-                    // 1. Forzamos la posición de la leyenda
-                    legend: { 
-                        position: 'bottom', 
-                        alignment: 'center',
-                        textStyle: { fontSize: 12 } 
-                    },
-                    // 2. Reducimos el chartArea para dejar espacio a la leyenda y etiquetas
-                    chartArea: { 
-                        width: '70%',  // Dejamos 30% de espacio para la leyenda/ejes
-                        height: '70%', // Dejamos espacio abajo para la leyenda
-                        left: '25%'    // Espacio para los nombres de los apiarios
-                    },
-                    vAxis: { 
-                        textStyle: { fontSize: 11 },
-                        title: "Apiarios"
-                    },
-                    hAxis: {
-                        title: "Kg por Colmena",
-                        minValue: 0
-                    },
-                    // Esto asegura que la leyenda no se recorte al exportar
-                    forceIFrame: false 
-                }}
-            />
-        </div>
-    </div>
-</section>
+                <section className="report-section" style={{ marginTop: '20px' }}>
+                    <h2 className="filter-label">3. Eficiencia por Apiario</h2>
+                    <div className="stats-grid-dashboard">
+                        <div className="stat-card wide-card">
+                            <label>Promedio de producción (Kg/Colmena)</label>
+                            <Chart
+                                chartType="BarChart"
+                                width="100%" 
+                                height="600px" 
+                                data={[
+                                    ["Apiario", "Producción (Kg/Colm)", { role: "annotation" }],
+                                    ...(eficienciaStats?.apiariosEficiencia.map(a => {
+                                        const nombre = limpiarNombre(a.nombre);
+                                        const valor = a.historico[a.historico.length - 1]?.eficiencia || 0;
+                                        return [nombre, valor, nombre];
+                                    }) || [])
+                                ]}
+                                options={{ 
+                                    colors: ["#8b5cf6"],
+                                    chartArea: { 
+                                        width: '75%', 
+                                        left: '5%', 
+                                        height: '85%',
+                                        top: '5%'
+                                    },
+                                    annotations: {
+                                        alwaysOutside: false,
+                                        textStyle: {
+                                            fontSize: 14,
+                                            bold: true,
+                                            color: '#ffffff',
+                                            auraColor: 'none'
+                                        }
+                                    },
+                                    vAxis: { 
+                                        textPosition: 'none' 
+                                    },
+                                    hAxis: {
+                                        title: "Kg por Colmena",
+                                        minValue: 0,
+                                        gridlines: { color: '#f3f4f6' }
+                                    },
+                                    bar: { groupWidth: "75%" },
+                                    legend: { position: 'none' }
+                                }}
+                            />
+                        </div>
+                    </div>
+                </section>
 
                 <section className="report-section" style={{ marginTop: '40px' }}>
                     <h2 className="filter-label">4. Factores Geográficos (Altitud)</h2>
