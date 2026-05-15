@@ -35,8 +35,37 @@ export const useCrearUsuario = (setViewState) => {
         e.preventDefault();
         setError("");
 
+        // 1. Validar formato de correo electrónico
+        // Exige que haya texto, luego un "@", luego texto, un punto ".", y texto al final.
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.correo)) {
+            setModalInfo({
+                titulo: 'Correo Inválido',
+                mensaje: 'Por favor, ingrese un correo electrónico válido (ejemplo@correo.com).'
+            });
+            setIsModalOpen(true);
+            return;
+        }
+
+        // 2. Validar complejidad de la contraseña
+        // Mínimo 8 caracteres, al menos 1 letra, 1 número y 1 carácter especial
+        const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+        if (!passwordRegex.test(formData.clave)) {
+            setModalInfo({
+                titulo: 'Contraseña Débil',
+                mensaje: 'La contraseña no cumple con los requisitos mínimos de seguridad.'
+            });
+            setIsModalOpen(true);
+            return;
+        }
+
+        // 3. Validar que las contraseñas coincidan
         if (formData.clave !== formData.repetirClave) {
-            setError("Las contraseñas no coinciden");
+            setModalInfo({
+                titulo: 'Error en Contraseñas',
+                mensaje: 'Las contraseñas no coinciden. Por favor, verifíquelas.'
+            });
+            setIsModalOpen(true);
             return;
         }
 

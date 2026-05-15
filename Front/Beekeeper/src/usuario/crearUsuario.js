@@ -14,6 +14,18 @@ export default function CrearUsuario(props) {
         error
     } = useCrearUsuario(props.setViewState);
 
+
+    // ==========================================
+    // EVALUACIÓN REACTIVA DE LA CONTRASEÑA
+    // Se recalcula automáticamente cada vez que el usuario teclea
+    // ==========================================
+    const pwd = formData.clave;
+    const hasLength = pwd.length >= 8;
+    const hasLetter = /[a-zA-Z]/.test(pwd);
+    const hasNumber = /\d/.test(pwd);
+    const hasSpecial = /[\W_]/.test(pwd);
+
+
     const createView = () => {
         return (
             <div className="crearUsuario-container">
@@ -31,8 +43,7 @@ export default function CrearUsuario(props) {
                     <div className="form-container">
                         <h1>Crear Cuenta</h1>
                         <p className="form-desc">Únete para gestionar tus apiarios fácilmente.</p>
-                        {error && <p style={{color: 'red', fontWeight: 'bold'}}>{error}</p>}
-
+                        
                         <form id="auth-form" onSubmit={manejarRegistro} noValidate>
                             <div className="input-group">
                                 <label>Acronimo</label>
@@ -56,14 +67,28 @@ export default function CrearUsuario(props) {
                                 <label>Correo Electrónico</label>
                                 <input type="email" name="correo" value={formData.correo} onChange={handleChange} required />
                             </div>
-                            <div className="input-group">
-                                <label>Localidad</label>
-                                <input type="text" name="localidad_asociada" value={formData.localidad_asociada} onChange={handleChange} required />
-                            </div>
+                            
                             <div className="input-group">
                                 <label>Contraseña</label>
                                 <input type="password" name="clave" value={formData.clave} onChange={handleChange} required minLength="8" maxLength="20" />
+                                
+                                {/* REQUISITOS REACTIVOS */}
+                                <div style={{ fontSize: '0.75rem', marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                    <span style={{ color: hasLength ? '#15803d' : '#6b7280', transition: 'color 0.3s ease' }}>
+                                        {hasLength ? '✅' : '❌'} Mínimo 8 caracteres
+                                    </span>
+                                    <span style={{ color: hasLetter ? '#15803d' : '#6b7280', transition: 'color 0.3s ease' }}>
+                                        {hasLetter ? '✅' : '❌'} Al menos 1 letra
+                                    </span>
+                                    <span style={{ color: hasNumber ? '#15803d' : '#6b7280', transition: 'color 0.3s ease' }}>
+                                        {hasNumber ? '✅' : '❌'} Al menos 1 número
+                                    </span>
+                                    <span style={{ color: hasSpecial ? '#15803d' : '#6b7280', transition: 'color 0.3s ease' }}>
+                                        {hasSpecial ? '✅' : '❌'} Al menos 1 carácter especial
+                                    </span>
+                                </div>
                             </div>
+                            
                             <div className="input-group">
                                 <label>Repetir Contraseña</label>
                                 <input type="password" name="repetirClave" value={formData.repetirClave} onChange={handleChange} required minLength="8" maxLength="20" />
