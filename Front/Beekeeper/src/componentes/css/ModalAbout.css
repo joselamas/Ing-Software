@@ -1,0 +1,132 @@
+/* =========================================
+   ESTILOS PARA EL MODAL "ACERCA DE..."
+   ========================================= */
+
+.about-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999; /* Por encima del navbar */
+}
+
+.about-modal {
+    background-color: var(--bg-cream, #FDFBF7);
+    border: 3px solid var(--dark-brown, #3E2723);
+    border-radius: 8px;
+    width: 90%;
+    max-width: 450px;
+    position: relative;
+    box-shadow: 8px 8px 0px var(--dark-brown, #3E2723);
+    padding: 30px;
+    animation: modalFadeIn 0.3s ease-out forwards;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.about-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--dark-brown, #3E2723);
+    font-weight: bold;
+    transition: transform 0.1s ease;
+}
+
+.about-close-btn:hover {
+    transform: scale(1.2);
+}
+
+.about-content {
+    text-align: center;
+    color: var(--dark-brown, #3E2723);
+}
+
+.about-logo-container {
+    margin-bottom: 10px;
+}
+
+.about-logo-icon {
+    color: var(--primary-yellow, #FFC107);
+    font-size: 4rem;
+    text-shadow: 2px 2px 0 var(--dark-brown, #3E2723), -2px -2px 0 var(--dark-brown, #3E2723);
+}
+
+.about-title {
+    margin: 0;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.about-version {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: bold;
+}
+
+.about-divider {
+    border-top: 2px dashed var(--dark-brown, #3E2723);
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
+    margin: 20px 0;
+}
+
+.about-description {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.about-credits-box {
+    background-color: rgba(255, 193, 7, 0.1);
+    border: 2px solid var(--primary-yellow, #FFC107);
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.about-credits-title {
+    margin: 0 0 5px 0;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #666;
+}
+
+.about-team-name {
+    margin: 0 0 10px 0;
+    font-size: 1.2rem;
+    font-weight: 900;
+}
+
+.about-university {
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.about-license {
+    font-size: 0.85rem;
+    color: var(--rust, #D84315);
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.about-copyright {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #888;
+}

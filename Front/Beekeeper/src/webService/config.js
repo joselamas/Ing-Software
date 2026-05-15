@@ -1,4 +1,5 @@
 const API_BASE_URL = 'http://localhost:5283/api/';
+//const API_BASE_URL = '/api/';
 //const API_BASE_UR2L = 'http://localhost:5283/api/';
 
 const CONFIG = {
