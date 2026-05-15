@@ -32,8 +32,15 @@ import './App.css';
 
 function App() {
 
-    const [viewState, setViewState] = useState("Login");
-    const [usr, setUsr] = useState(null);
+    const [usr, setUsr] = useState(() => {
+        const savedUsr = localStorage.getItem('beekeeper_user');
+        return savedUsr ? JSON.parse(savedUsr) : null;
+    });
+
+    const [viewState, setViewState] = useState(() => {
+        return localStorage.getItem('beekeeper_user') ? "Home" : "Login";
+    });
+
     const [selectedApiario, setSelectedApiario] = useState(null);
     const [selectedApiarioID, setSelectedApiarioID] = useState(null);
 

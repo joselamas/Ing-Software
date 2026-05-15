@@ -29,6 +29,7 @@ export const useLogin = (props) => {
             
             if (respuesta && respuesta.status === 1) {
                 // ÉXITO: Guardamos el usuario y cambiamos la vista
+                localStorage.setItem('beekeeper_user', JSON.stringify(respuesta.usuario));
                 props.setUsr(respuesta.usuario);
                 props.setViewState('Home');
             } else {

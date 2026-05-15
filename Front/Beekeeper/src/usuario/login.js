@@ -19,7 +19,9 @@ export default function Login(props) {
 
         // Si los datos son admin/admin, entro y borralo
         if (formData.identificador === 'admin' && formData.clave === 'admin') {
-            props.setUsr({ nombre: "Administrador", id: 1 }); 
+            const adminUsr = { nombre: "Administrador", id: 1 };
+            localStorage.setItem('beekeeper_user', JSON.stringify(adminUsr));
+            props.setUsr(adminUsr); 
             props.setViewState("VerMisColmenas"); 
         } else {
             // Si no es la llave, ejecutamos la lógica normal del hook

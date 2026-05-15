@@ -7,6 +7,7 @@ export default function BarraNavegacion(props){
     const [openDropdown, setOpenDropdown] = useState("");
 
     const closeSesion = () =>{
+        localStorage.removeItem('beekeeper_user');
         props.setUsr(null)
         props.setViewState("Login")
     }
