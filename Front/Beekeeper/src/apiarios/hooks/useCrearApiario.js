@@ -66,6 +66,15 @@ export const useCrearApiario = (usr, setViewState) => {
             const res = await WSApiario.CrearApiario(payload);
             if (res && res.status === 1) {
                 setModalInfo({ titulo: 'Éxito', mensaje: 'Apiario creado correctamente', tipo: 'success' });
+
+                setFormData({
+                    nombre_referencia: '',
+                    coordenadas: '',
+                    msnm: '',
+                    tipo_flora: '',
+                    capacidad_maxima: '',
+                    descripcion_acceso: ''
+                });
             } else {
                 setModalInfo({ titulo: 'Error', mensaje: res.mensaje || 'Error al guardar', tipo: 'error' });
             }
