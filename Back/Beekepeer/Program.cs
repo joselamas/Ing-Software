@@ -50,6 +50,24 @@ if (app.Environment.IsProduction())
 
     app.UseStaticFiles();  // Para servir los archivos de React
 
+    // ==========================================
+    // 1. EL DESPERTADOR: Arrancar LocalDB antes de conectar
+    // ==========================================
+    try
+    {
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = "cmd.exe",
+            Arguments = "/c sqllocaldb start MSSQLLocalDB",
+            CreateNoWindow = true,
+            UseShellExecute = false
+        })?.WaitForExit();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Aviso al despertar DB: " + ex.Message);
+    }
+
     DbInitializer.Initialize("(localdb)\\MSSQLLocalDB");
 
     // 1. Abrimos el navegador
