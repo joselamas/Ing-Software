@@ -1,0 +1,34 @@
+Términos y Condiciones de Uso - Beekeeper
+Última actualización: Mayo de 2026
+
+Al instalar y utilizar el sistema de gestión apícola "Beekeeper" (en adelante, "el Software"), usted acepta estar sujeto a los siguientes Términos y Condiciones. Si no está de acuerdo con alguno de los puntos descritos a continuación, por favor absténgase de instalar o utilizar este sistema.
+
+1. Naturaleza del Proyecto
+El Software es el resultado de un proyecto académico desarrollado por José Manuel Lamas Tacoronte, Arturo Alejandro Ramirez Osuna, José Sebastian Barrios Gonzales y Victor Alejando Vergara Perez (en adelante, "Equipo 1") , concebido para la cátedra de Ingeniería de Software de la carrera de Ingeniería de Sistemas en la Universidad de Los Andes (ULA). Su propósito es facilitar el registro, control de producción y gestión de activos apícolas.
+
+2. Licencia de Uso (Gratuito y No Comercial)
+Se le otorga una licencia limitada, personal, no exclusiva, intransferible y revocable para descargar, instalar y utilizar el Software.
+
+Uso permitido: Esta licencia es estrictamente para uso personal, educativo o de gestión apícola interna sin fines de lucro o comercialización del software.
+
+Restricciones: Queda terminantemente prohibida la venta, reventa, alquiler, redistribución o modificación del código fuente del Software para beneficio económico.
+
+3. Privacidad y Manejo de Datos Locales
+El Software opera mediante una arquitectura de almacenamiento local (LocalDB).
+
+Toda la información ingresada en el sistema (incluyendo pero no limitándose a: datos de apiarios, inventario de colmenas, controles de alimentación y registros de cosechas) se almacena exclusivamente en el disco duro del equipo donde se instala el Software.
+
+El equipo de desarrollo (Equipo 1) y la Universidad de Los Andes (ULA) no recopilan, no transmiten, ni tienen acceso a sus datos, métricas o información personal. La seguridad y respaldo (backup) de la base de datos es responsabilidad exclusiva del usuario.
+
+4. Propiedad Intelectual
+Todos los derechos de propiedad intelectual, derechos de autor, diseño de interfaz, logotipos y código fuente relacionados con el Software son propiedad del equipo de desarrollo (Equipo 1), conservando el reconocimiento académico correspondiente a la Universidad de Los Andes (ULA).
+
+5. Exención de Garantías y Responsabilidad
+Debido a su naturaleza como proyecto de desarrollo académico, el Software se proporciona "tal cual" (AS IS), sin garantías de ningún tipo, ya sean expresas o implícitas.
+
+El equipo de desarrollo no garantiza que el Software esté libre de errores, interrupciones o fallos técnicos.
+
+En ningún caso los desarrolladores, tutores o la Universidad de Los Andes (ULA) serán responsables por cualquier daño directo, indirecto, incidental o consecuente (incluyendo la pérdida de datos de producción o interrupción del trabajo) que surja del uso o la incapacidad de usar el sistema.
+
+6. Terminación
+Esta licencia es efectiva hasta que sea terminada por usted o por el equipo de desarrollo. Sus derechos bajo esta licencia terminarán automáticamente si incumple cualquiera de los términos aquí establecidos. Tras la terminación, deberá desinstalar el Software y destruir cualquier copia de la base de datos y archivos relacionados.
