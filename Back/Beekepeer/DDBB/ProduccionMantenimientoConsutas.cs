@@ -148,6 +148,40 @@ namespace Beekepeer.DDBB
             }
             return lista;
         }
+        // NUEVO MÉTODO A AGREGAR AL FINAL DE LA CLASE:
+        public List<Alimentacion> ObtenerAlimentacionPorColmena(int idColmena)
+        {
+            List<Alimentacion> lista = new List<Alimentacion>();
+
+            // Usamos tu tabla real: control_alimentacion
+            string query = "SELECT colmena_id, fecha, tipo_suministro, detalle_mezcla, cantidad, precio_total_insumo, observaciones FROM control_alimentacion WHERE colmena_id = @ColmenaId ORDER BY fecha DESC";
+
+            using (SqlConnection connection = new SqlConnection(_sqlurl))
+            {
+                SqlCommand cmd = new SqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@ColmenaId", idColmena);
+
+                connection.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Alimentacion item = new Alimentacion
+                        {
+                            colmena_id = reader["colmena_id"] != DBNull.Value ? Convert.ToInt32(reader["colmena_id"]) : 0,
+                            fecha = reader["fecha"] != DBNull.Value ? Convert.ToDateTime(reader["fecha"]) : DateTime.MinValue,
+                            tipo_suministro = reader["tipo_suministro"] != DBNull.Value ? reader["tipo_suministro"].ToString() ?? "" : "",
+                            detalle_mezcla = reader["detalle_mezcla"] != DBNull.Value ? reader["detalle_mezcla"].ToString() ?? "" : "",
+                            cantidad = reader["cantidad"] != DBNull.Value ? (float)Convert.ToDouble(reader["cantidad"]) : 0f,
+                            precio_total_insumo = reader["precio_total_insumo"] != DBNull.Value ? (float)Convert.ToDouble(reader["precio_total_insumo"]) : 0f,
+                            observaciones = reader["observaciones"] != DBNull.Value ? reader["observaciones"].ToString() ?? "" : ""
+                        };
+                        lista.Add(item);
+                    }
+                }
+            }
+            return lista;
+        }
 
 
         public List<ProduccionAnual> getProduccionAnual(string acronimo)

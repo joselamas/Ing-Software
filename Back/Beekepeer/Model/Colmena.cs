@@ -1,4 +1,5 @@
-﻿using Beekepeer.Model;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Beekepeer.Model
 {
@@ -15,14 +16,12 @@ namespace Beekepeer.Model
         public string id_colmena_usuario { get; set; }
         public DateTime? fecha_inicio_reina { get; set; }
 
+        // LA LISTA QUE ALMACENARÁ EL HISTORIAL
+        public List<Alimentacion> alimentacion { get; set; } = new List<Alimentacion>();
     }
-
-
 
     public class ColmenaRequest : Colmena
     {
-        // Hereda todas las propiedades de Colmena y agregamos la que falta
         public int apiario_id { get; set; }
     }
-
 }
