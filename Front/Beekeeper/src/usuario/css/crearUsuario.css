@@ -16,3 +16,27 @@
 @media (max-width: 900px) {
     .left-panel { display: none; }
 }
+
+.crearUsuario-container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden; /* Evita el scroll en toda la página, se lo daremos solo al panel derecho */
+}
+
+.right-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra horizontalmente */
+    justify-content: flex-start; /* Alinea el contenido desde arriba, NO en el centro */
+    overflow-y: auto; /* Permite hacer scroll hacia abajo si el formulario es muy largo */
+    padding: 40px 20px; /* Da un respiro al título en la parte superior */
+    background-color: var(--bg-cream, #FDFBF7);
+}
+
+.form-container {
+    width: 100%;
+    max-width: 450px; /* Mantiene el formulario con un ancho agradable */
+    margin-top: 20px; /* Separación extra desde el techo */
+}

@@ -15,11 +15,30 @@ export const useModificarUsuario = (usr, setUsr) => {
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData);
 
-        // Validación de coincidencia de contraseñas
-        if (data.password !== data.repeatPassword) {
-            setError("Las contraseñas no coinciden.");
-            setLoading(false);
-            return;
+        if (data.password || data.repeatPassword) {
+            const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+            
+            if (!passwordRegex.test(data.password)) {
+                setModalInfo({
+                    titulo: 'Contraseña Débil',
+                    mensaje: 'La nueva contraseña no cumple con los requisitos mínimos de seguridad.',
+                    tipo: 'error'
+                });
+                setIsModalOpen(true);
+                setLoading(false);
+                return;
+            }
+
+            if (data.password !== data.repeatPassword) {
+                setModalInfo({
+                    titulo: 'Error en Contraseñas',
+                    mensaje: 'Las contraseñas no coinciden.',
+                    tipo: 'error'
+                });
+                setIsModalOpen(true);
+                setLoading(false);
+                return;
+            }
         }
 
         const payload = {
@@ -29,7 +48,7 @@ export const useModificarUsuario = (usr, setUsr) => {
             correo: data.correo || usr.correo,
             telefono: data.telefono || usr.telefono,
             localidad_asociada: data.localidad || usr.localidad_asociada,
-            clave: btoa(data.password)
+            clave: data.password ? btoa(data.password) : usr.clave
         };
 
         try {
@@ -37,6 +56,11 @@ export const useModificarUsuario = (usr, setUsr) => {
             if (res && res.status === 1) {
               payload.clave = '';
               setUsr(payload); // Actualizamos el estado del usuario con los nuevos datos
+         
+              // Limpiamos la clave del payload antes de actualizar el estado global por seguridad
+                const usrActualizado = { ...payload, clave: '' }; 
+                setUsr(usrActualizado);
+              
                 setModalInfo({
                     titulo: 'Actualización Exitosa',
                     mensaje: 'Tu perfil ha sido actualizado correctamente.',

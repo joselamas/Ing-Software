@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useModificarUsuario } from './hooks/useModificarUsuario.js';
 import Modal from '../componentes/modalMSN.js'; 
 import "./css/modificarUsuario.css";
@@ -12,6 +12,17 @@ export default function ModificarUsuario({setUsr , usr, setViewState }) {
         setIsModalOpen, 
         modalInfo 
     } = useModificarUsuario(usr, setUsr);
+
+
+    // Estado local solo para la contraseña visual reactiva
+    const [pwd, setPwd] = useState("");
+    
+    // Evaluaciones Reactivas
+    const hasLength = pwd.length >= 8;
+    const hasLetter = /[a-zA-Z]/.test(pwd);
+    const hasNumber = /\d/.test(pwd);
+    const hasSpecial = /[\W_]/.test(pwd);
+
 
     return (
         <section>
@@ -79,11 +90,28 @@ export default function ModificarUsuario({setUsr , usr, setViewState }) {
                                 <input 
                                     type="password" 
                                     name="password" 
-                                    placeholder="Mínimo 8 caracteres" 
-                                    required 
+                                    value={pwd}
+                                    onChange={(e) => setPwd(e.target.value)}
+                                    placeholder="Dejar en blanco para mantener la actual" 
                                     minLength="8" 
                                     maxLength="20" 
                                 />
+                                {pwd.length > 0 && (
+                                    <div style={{ fontSize: '0.75rem', marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                        <span style={{ color: hasLength ? '#15803d' : '#6b7280', transition: 'color 0.3s ease' }}>
+                                            {hasLength ? '✅' : '❌'} Mínimo 8 caracteres
+                                        </span>
+                                        <span style={{ color: hasLetter ? '#15803d' : '#6b7280', transition: 'color 0.3s ease' }}>
+                                            {hasLetter ? '✅' : '❌'} Al menos 1 letra
+                                        </span>
+                                        <span style={{ color: hasNumber ? '#15803d' : '#6b7280', transition: 'color 0.3s ease' }}>
+                                            {hasNumber ? '✅' : '❌'} Al menos 1 número
+                                        </span>
+                                        <span style={{ color: hasSpecial ? '#15803d' : '#6b7280', transition: 'color 0.3s ease' }}>
+                                            {hasSpecial ? '✅' : '❌'} Al menos 1 carácter especial
+                                        </span>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="input-group">
@@ -91,8 +119,7 @@ export default function ModificarUsuario({setUsr , usr, setViewState }) {
                                 <input 
                                     type="password" 
                                     name="repeatPassword" 
-                                    placeholder="Mínimo 8 caracteres" 
-                                    required 
+                                    placeholder="Confirme su nueva contraseña" 
                                     minLength="8" 
                                     maxLength="20" 
                                 />
@@ -102,7 +129,7 @@ export default function ModificarUsuario({setUsr , usr, setViewState }) {
                                 <button 
                                     type="button" 
                                     className="secondary-btn" 
-                                    onClick={() => setViewState("Dashboard")}
+                                    onClick={() => setViewState("Home")}
                                 >
                                     Cancelar
                                 </button>
@@ -119,7 +146,7 @@ export default function ModificarUsuario({setUsr , usr, setViewState }) {
                 isOpen={isModalOpen} 
                 onClose={() => setIsModalOpen(false)} 
                 goView={setViewState} 
-                view={modalInfo.tipo === 'success' ? "Dashboard" : ""}
+                view={modalInfo.tipo === 'success' ? "Home" : ""}
                 title={modalInfo.titulo}
                 message={modalInfo.mensaje}
                 type={modalInfo.tipo}
