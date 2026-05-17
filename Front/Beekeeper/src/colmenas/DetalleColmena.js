@@ -46,21 +46,30 @@ const DetalleColmena = ({ colmena, setViewState }) => {
                     )}
                 </section>
 
-                {/* Panel de Alimentación - DINÁMICO */}
+                {/* Panel de Alimentación - DINÁMICO REPARADO */}
+                {/* Panel de Alimentación - DINÁMICO REPARADO */}
                 <section className="detalle-card alimentacion">
-                    <h3>Alimentación</h3>
+                    <h3>Alimentación Reciente</h3>
                     {info.alimentacion && info.alimentacion.length > 0 ? (
-                        info.alimentacion.map((al, index) => (
-                            <div key={index} className="info-item">
-                                <span>{al.fecha?.split('T')[0]}:</span> {al.alimento} ({al.cantidad})
-                            </div>
-                        ))
+                        info.alimentacion.map((al, index) => {
+                            // Extraer fecha y variables reales del modelo de C#
+                            const fechaFmt = al.fecha?.split('T')[0] || "Sin fecha";
+                            const alimento = al.tipo_suministro || al.tipoSuministro || "Suministro";
+                            const cant = al.cantidad || 0;
+                            const costo = al.precio_total_insumo !== undefined ? al.precio_total_insumo : al.precioTotalInsumo;
+
+                            return (
+                                <div key={index} className="info-item">
+                                    <span>{fechaFmt}:</span> {alimento} ({cant} unds) {costo ? `- $${costo}` : ''}
+                                </div>
+                            );
+                        })
                     ) : (
                         <div className="placeholder-text">No hay registros de alimentación.</div>
                     )}
                 </section>
 
-                {/* Historial de Revisiones - DINÁMICO */}
+                {/* Historial de Revisiones - En pausa por ahora */}
                 <section className="detalle-card historial full-width">
                     <h3>Historial de Revisiones</h3>
                     <table className="neobrutalist-table mini">
