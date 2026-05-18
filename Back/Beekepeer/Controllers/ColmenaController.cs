@@ -14,14 +14,14 @@ namespace Beekepeer.Controllers
     {
         private readonly ColmenaConsultas _sql;
         private readonly ApiarioColmenaConsultas _sqlApiarioColmena;
-        private readonly ProduccionMantenimientoConsutas _sqlMantenimiento; // AGREGADO
+        private readonly ProduccionMantenimientoConsutas _sqlMantenimiento;
 
         public ColmenaController(IConfiguration configuration)
         {
             string connectionString = configuration.GetConnectionString("DefaultConnection") ?? "";
             _sql = new ColmenaConsultas(connectionString);
             _sqlApiarioColmena = new ApiarioColmenaConsultas(connectionString);
-            _sqlMantenimiento = new ProduccionMantenimientoConsutas(connectionString); // INICIALIZADO
+            _sqlMantenimiento = new ProduccionMantenimientoConsutas(connectionString);
         }
 
         // 1. OBTENER TODAS O POR USUARIO
@@ -43,12 +43,13 @@ namespace Beekepeer.Controllers
                     return Ok(new List<ColmenaWS>());
                 }
 
-                // UNIÓN BACKEND - FRONTEND
+                // Cargamos de forma segura ambas listas usando _sqlMantenimiento
                 foreach (var item in resultado)
                 {
                     if (item.colmena != null)
                     {
                         item.colmena.alimentacion = _sqlMantenimiento.ObtenerAlimentacionPorColmena(item.colmena.id);
+                        item.colmena.produccion = _sqlMantenimiento.ObtenerProduccionPorColmena(item.colmena.id);
                     }
                 }
 
@@ -56,51 +57,15 @@ namespace Beekepeer.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al listar colmenas: {ex.Message}");
+                Console.WriteLine($"Error al obtener las colmenas: {ex.Message}");
                 return StatusCode(500, "Ocurrió un error interno al procesar la solicitud.");
             }
         }
 
-        [HttpGet]
-        [Route("Colmena_Id_IdAsig")]
-        public ActionResult<List<Colmena_Id_IdAsig>> GetLisIdsColmenas([FromQuery] string? usuarioAcronimo)
-        {
-            if (string.IsNullOrWhiteSpace(usuarioAcronimo)) return BadRequest("El acrónimo del usuario es obligatorio para listar las colmenas.");
-            try
-            {
-                var resultado = _sql.GetLisIdsColmenas(usuarioAcronimo);
-                if (resultado == null || resultado.Count == 0) return Ok(new List<Colmena_Id_IdAsig>());
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al listar colmenas: {ex.Message}");
-                return StatusCode(500, "Ocurrió un error interno al procesar la solicitud.");
-            }
-        }
-
-        // 2. INSERTAR NUEVA COLMENA
-        [HttpPost]
-        [Route("insert")]
-        public IActionResult Insertar([FromBody] Colmena nueva, [FromQuery] int apiarioId)
-        {
-            if (nueva == null) return BadRequest("Datos de la colmena no válidos.");
-            if (apiarioId <= 0) return BadRequest("Debe especificar un ID de apiario válido.");
-
-            int idGenerado = _sql.InsertarColmena(nueva.usuario_acronimo, nueva.fecha_inicio, nueva.fecha_inicio_reina, nueva.es_enjambre, nueva.id_colmena_madre, nueva.activo, nueva.tipo_colmena, nueva.estado, nueva.id_colmena_usuario);
-
-            if (idGenerado == 0) return StatusCode(500, "Error al registrar la colmena (posible ID duplicado).");
-
-            int relacionExitosa = _sqlApiarioColmena.InsertarColmenaEnApiario(nueva.usuario_acronimo, idGenerado, apiarioId, nueva.fecha_inicio);
-
-            if (relacionExitosa == 0) return StatusCode(500, "Colmena creada, pero falló la asignación al apiario.");
-
-            return Ok(new { mensaje = "Colmena registrada con éxito", id = idGenerado });
-        }
-
-        [HttpPatch]
-        [Route("actualizar")]
-        public IActionResult ActualizarColmena([FromBody] ColmenaRequest datos)
+        // 3. ACTUALIZAR
+        [HttpPut]
+        [Route("update")]
+        public IActionResult Update([FromBody] ColmenaRequest datos)
         {
             try
             {
@@ -131,8 +96,8 @@ namespace Beekepeer.Controllers
         public IActionResult Delete(int id)
         {
             bool exito = _sql.BorrarColmena(id);
-            if (!exito) return NotFound("No se pudo eliminar la colmena.");
-            return Ok("Registro eliminado permanentemente.");
+            if (!exito) return NotFound("No se encontró la colmena.");
+            return Ok("Colmena eliminada físicamente.");
         }
     }
 }

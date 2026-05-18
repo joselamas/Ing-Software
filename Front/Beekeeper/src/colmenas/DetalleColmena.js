@@ -2,7 +2,6 @@ import React from 'react';
 import './css/DetalleColmena.css';
 
 const DetalleColmena = ({ colmena, setViewState }) => {
-    // Validación de seguridad para evitar errores si no hay datos
     if (!colmena) {
         setViewState("VerMisColmenas");
         return null;
@@ -38,7 +37,7 @@ const DetalleColmena = ({ colmena, setViewState }) => {
                     {info.produccion && info.produccion.length > 0 ? (
                         info.produccion.map((prod, index) => (
                             <div key={index} className="info-item">
-                                <span>{prod.fecha?.split('T')[0]}:</span> {prod.cantidad}kg ({prod.tipo_producto})
+                                <span>{prod.fecha?.split('T')[0]}:</span> {prod.cantidad_kg}kg ({prod.tipo_producto})
                             </div>
                         ))
                     ) : (
@@ -46,17 +45,15 @@ const DetalleColmena = ({ colmena, setViewState }) => {
                     )}
                 </section>
 
-                {/* Panel de Alimentación - DINÁMICO REPARADO */}
-                {/* Panel de Alimentación - DINÁMICO REPARADO */}
+                {/* Panel de Alimentación */}
                 <section className="detalle-card alimentacion">
                     <h3>Alimentación Reciente</h3>
                     {info.alimentacion && info.alimentacion.length > 0 ? (
                         info.alimentacion.map((al, index) => {
-                            // Extraer fecha y variables reales del modelo de C#
                             const fechaFmt = al.fecha?.split('T')[0] || "Sin fecha";
-                            const alimento = al.tipo_suministro || al.tipoSuministro || "Suministro";
+                            const alimento = al.tipo_suministro || "Suministro";
                             const cant = al.cantidad || 0;
-                            const costo = al.precio_total_insumo !== undefined ? al.precio_total_insumo : al.precioTotalInsumo;
+                            const costo = al.precio_total_insumo !== undefined ? al.precio_total_insumo : 0;
 
                             return (
                                 <div key={index} className="info-item">
@@ -67,35 +64,6 @@ const DetalleColmena = ({ colmena, setViewState }) => {
                     ) : (
                         <div className="placeholder-text">No hay registros de alimentación.</div>
                     )}
-                </section>
-
-                {/* Historial de Revisiones - En pausa por ahora */}
-                <section className="detalle-card historial full-width">
-                    <h3>Historial de Revisiones</h3>
-                    <table className="neobrutalist-table mini">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Observación</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {info.revisiones && info.revisiones.length > 0 ? (
-                                info.revisiones.map((rev, index) => (
-                                    <tr key={index}>
-                                        <td>{rev.fecha?.split('T')[0]}</td>
-                                        <td>{rev.detalle || "Sin observaciones"}</td>
-                                        <td>{rev.estado_salud}</td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="3" style={{textAlign: 'center'}}>No hay revisiones registradas.</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
                 </section>
             </div>
         </div>
