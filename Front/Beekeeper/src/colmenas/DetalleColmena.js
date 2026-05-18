@@ -70,118 +70,109 @@ const DetalleColmena = ({ colmena, setViewState }) => {
     const centroMapa = tienePosicionValida ? ubicacion : [8.5891, -71.1450];
 
     return (
-        <div className="gestion-container">
-            <header className="perfil-header">
-                <div>
-                    <h1>Detalles <span>Colmena</span></h1>
-                    <p>ID: <strong>{info.id_colmena_usuario}</strong> | Apiario: {nombre_apiario || "Sin asignar"}</p>
-                </div>
-                <button className="perfil-btn" onClick={() => setViewState("VerMisColmenas")}>
+        <div className="detalle-container">
+            <div className="detalle-header">
+                <button className="back-btn" onClick={() => setViewState("VerMisColmenas")}>
                     ← Volver
                 </button>
-            </header>
+                <h1>Detalle de Colmena: <span>{info.id_colmena_usuario}</span></h1>
+            </div>
 
-            {/* Estructura de Grid de dos mitades */}
-            <div className="detalle-colmena-layout">
+            <div className="detalle-grid">
                 
-                {/* MITAD IZQUIERDA: Información General + Mapa */}
-                <div className="columna-izquierda-packs">
+                {/* PANEL IZQUIERDO: Estética idéntica a DetalleApiario */}
+                <section className="detalle-left-panel">
+                    <div className="overlay-content">
+                        <div className="bee-icon">
+                            <span style={{ fontSize: '3.5rem' }}>🐝</span>
+                        </div>
+                        <h2>Colmena</h2>
+                        <p>Información biológica y ubicación geográfica.</p>
+                    </div>
                     
-                    {/* Caja de Información General */}
-                    <section className="info-general-box">
-                        <div className="box-header-apiario">
-                            <span className="box-icon-bee">🐝</span>
-                            <h2>COLMENA</h2>
-                            <p className="box-subheader">Información general y estado de la colmena.</p>
+                    <div className="detalle-card info-card">
+                        <h2>Información general</h2>
+                        <div className="info-row">
+                            <span>Apiario</span>
+                            <strong>{nombre_apiario || "Sin asignar"}</strong>
                         </div>
-
-                        <div className="info-container-apiario">
-                            <h3 className="info-title-apiario">Información general</h3>
-                            
-                            <div className="info-row-apiario">
-                                <span className="label-apiario">TIPO</span>
-                                <span className="value-apiario">{info.tipo_colmena}</span>
-                            </div>
-                            <div className="info-row-apiario">
-                                <span className="label-apiario">ESTADO</span>
-                                <span className="value-apiario">{info.estado}</span>
-                            </div>
-                            <div className="info-row-apiario">
-                                <span className="label-apiario">ORIGEN</span>
-                                <span className="value-apiario">{info.es_enjambre ? "Enjambre" : "División"}</span>
-                            </div>
-                            <div className="info-row-apiario">
-                                <span className="label-apiario">FECHA DE INSTALACIÓN</span>
-                                <span className="value-apiario">{info.fecha_inicio?.split('T')[0]}</span>
-                            </div>
+                        <div className="info-row">
+                            <span>Tipo</span>
+                            <strong>{info.tipo_colmena}</strong>
                         </div>
-                    </section>
+                        <div className="info-row">
+                            <span>Estado</span>
+                            <strong>{info.estado}</strong>
+                        </div>
+                        <div className="info-row">
+                            <span>Origen</span>
+                            <strong>{info.es_enjambre ? "Enjambre" : "División"}</strong>
+                        </div>
+                        <div className="info-row">
+                            <span>Instalación</span>
+                            <strong>{info.fecha_inicio?.split('T')[0]}</strong>
+                        </div>
+                        
+                        {/* Mapa integrado en el panel izquierdo */}
+                        <div className="map-wrapper-colmena">
+                            <MapContainer center={centroMapa} zoom={15} style={{ height: '100%', width: '100%' }}>
+                                <TileLayer
+                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                    attribution='&copy; OpenStreetMap'
+                                />
+                                {tienePosicionValida && (
+                                    <Marker position={ubicacion} icon={getCheckpointIcon()}>
+                                        <Popup>
+                                            <div style={{ textAlign: 'center', fontWeight: 'bold' }}>
+                                                {info.id_colmena_usuario}<br/>
+                                                Apiario: {nombre_apiario}
+                                            </div>
+                                        </Popup>
+                                    </Marker>
+                                )}
+                            </MapContainer>
+                        </div>
+                    </div>
+                </section>
 
-                    {/* El contenedor del Mapa */}
-                    <div className="map-colmena-panel">
-                        <MapContainer center={centroMapa} zoom={14} style={{ height: '100%', width: '100%' }}>
-                            <TileLayer
-                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                attribution='&copy; OpenStreetMap'
-                            />
-                            {tienePosicionValida && (
-                                <Marker position={ubicacion} icon={getCheckpointIcon()}>
-                                    <Popup>
-                                        <div style={{ textAlign: 'center', fontFamily: 'inherit', fontWeight: 'bold' }}>
-                                            <strong>Ubicación de Colmena</strong><br/>
-                                            {info.id_colmena_usuario}<br/>
-                                            Apiario: {nombre_apiario}
-                                        </div>
-                                    </Popup>
-                                </Marker>
-                            )}
-                        </MapContainer>
+                {/* PANEL DERECHO: Historial de Producción y Alimentación */}
+                <section className="detalle-right-panel">
+                    <div className="detalle-card colmenas-card" style={{ marginBottom: '24px' }}>
+                        <div className="section-title">
+                            <h2>Producción Reciente</h2>
+                        </div>
+                        <div className="historial-items-container">
+                            {cargandoHistorial ? (
+                                <div className="placeholder-text">Cargando producción...</div>
+                            ) : historial.produccion.length > 0 ? (
+                                historial.produccion.map((prod, index) => (
+                                    <div key={index} className="historial-row">
+                                        <span>{prod.fecha?.split('T')[0]}</span>
+                                        <strong>{prod.cantidad_kg}kg ({prod.tipo_producto})</strong>
+                                    </div>
+                                ))
+                            ) : <div className="placeholder-text">Sin registros de producción.</div>}
+                        </div>
                     </div>
 
-                </div>
-
-                {/* MITAD DERECHA: Bloques de producción y alimentación */}
-                <div className="columna-derecha-packs">
-                    
-                    <section className="detalle-card produccion">
-                        <h3>Producción Reciente</h3>
-                        {cargandoHistorial ? (
-                            <div className="placeholder-text">Cargando producción...</div>
-                        ) : historial.produccion.length > 0 ? (
-                            historial.produccion.map((prod, index) => (
-                                <div key={index} className="info-item">
-                                    <span>{prod.fecha?.split('T')[0]}:</span> {prod.cantidad_kg}kg de {prod.tipo_producto} ({prod.tipo_origen})
-                                </div>
-                            ))
-                        ) : (
-                            <div className="placeholder-text">No hay registros de producción recientes.</div>
-                        )}
-                    </section>
-
-                    <section className="detalle-card alimentacion">
-                        <h3>Alimentación Reciente</h3>
-                        {cargandoHistorial ? (
-                            <div className="placeholder-text">Cargando alimentación...</div>
-                        ) : historial.alimentacion.length > 0 ? (
-                            historial.alimentacion.map((al, index) => {
-                                const fechaFmt = al.fecha?.split('T')[0] || "Sin fecha";
-                                const alimento = al.tipo_suministro || "Suministro";
-                                const detalle = al.detalle_mezcla ? ` - ${al.detalle_mezcla}` : '';
-                                const cant = al.cantidad || 0;
-                                const costo = al.precio_total_insumo !== undefined ? al.precio_total_insumo : 0;
-
-                                return (
-                                    <div key={index} className="info-item">
-                                        <span>{fechaFmt}:</span> {alimento}{detalle} ({cant}kg) {costo ? `- $${costo}` : ''}
+                    <div className="detalle-card colmenas-card">
+                        <div className="section-title">
+                            <h2>Alimentación Reciente</h2>
+                        </div>
+                        <div className="historial-items-container">
+                            {cargandoHistorial ? (
+                                <div className="placeholder-text">Cargando alimentación...</div>
+                            ) : historial.alimentacion.length > 0 ? (
+                                historial.alimentacion.map((al, index) => (
+                                    <div key={index} className="historial-row alimentacion-border">
+                                        <span>{al.fecha?.split('T')[0]}</span>
+                                        <strong>{al.tipo_suministro} ({al.cantidad}kg)</strong>
                                     </div>
-                                );
-                            })
-                        ) : (
-                            <div className="placeholder-text">No hay registros de alimentación.</div>
-                        )}
-                    </section>
-
-                </div>
+                                ))
+                            ) : <div className="placeholder-text">Sin registros de alimentación.</div>}
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
     );
