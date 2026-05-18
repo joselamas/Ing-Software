@@ -180,3 +180,38 @@ export async function desactivarColmena(colmenaId) {
         };
     }
 }
+
+/**
+ * Obtiene el detalle de alimentación y producción de una colmena específica.
+ * @param {number} idColmena ID interno de la colmena.
+ */
+export async function getDetalleMantenimiento(idColmena) {
+    const urlConParams = `${url}getDetalleMantenimiento/${idColmena}`;
+    try {
+        const response = await fetch(urlConParams, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            return { 
+                status: 1, 
+                mensaje: "Detalle de mantenimiento obtenido con éxito", 
+                data: data 
+            };
+        } else {
+            return { 
+                status: 0, 
+                mensaje: data.mensaje || data || "Error al obtener el detalle de mantenimiento" 
+            };
+        }
+    } catch (err) {
+        console.error("Error de conexión en getDetalleMantenimiento:", err.message);
+        return { 
+            status: -1, 
+            mensaje: "Error de conexión con el servidor de Beekeeper" 
+        };
+    }
+}

@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
+import * as WSColmena from '../webService/WS_colmena';
 import 'leaflet/dist/leaflet.css';
 import './css/DetalleColmena.css';
 
@@ -25,6 +26,28 @@ const DetalleColmena = ({ colmena, setViewState }) => {
 
     // Destructuramos: info contiene los datos de la colmena, coordenadas está en la raíz del objeto
     const { colmena: info, nombre_apiario, coordenadas: coordsRaw } = colmena;
+
+    const [historial, setHistorial] = useState({ alimentacion: [], produccion: [] });
+    const [cargandoHistorial, setCargandoHistorial] = useState(false);
+
+    // Carga de historial (Alimentación y Producción) desde el WebService
+    useEffect(() => {
+        const cargarHistorial = async () => {
+            if (!info?.id) return;
+            setCargandoHistorial(true);
+            try {
+                const res = await WSColmena.getDetalleMantenimiento(info.id);
+                if (res.status === 1) {
+                    setHistorial({
+                        alimentacion: res.data.alimentacion || [],
+                        produccion: res.data.produccion || []
+                    });
+                }
+            } catch (err) { console.error("Error cargando historial:", err); }
+            finally { setCargandoHistorial(false); }
+        };
+        cargarHistorial();
+    }, [info?.id]);
 
     // 1. PROCESAMIENTO DE UBICACIÓN
     let ubicacion = null;
@@ -96,7 +119,7 @@ const DetalleColmena = ({ colmena, setViewState }) => {
 
                     {/* El contenedor del Mapa */}
                     <div className="map-colmena-panel">
-                        <MapContainer center={centroMapa} zoom={16} style={{ height: '100%', width: '100%' }}>
+                        <MapContainer center={centroMapa} zoom={14} style={{ height: '100%', width: '100%' }}>
                             <TileLayer
                                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                 attribution='&copy; OpenStreetMap'
@@ -122,10 +145,12 @@ const DetalleColmena = ({ colmena, setViewState }) => {
                     
                     <section className="detalle-card produccion">
                         <h3>Producción Reciente</h3>
-                        {info.produccion && info.produccion.length > 0 ? (
-                            info.produccion.map((prod, index) => (
+                        {cargandoHistorial ? (
+                            <div className="placeholder-text">Cargando producción...</div>
+                        ) : historial.produccion.length > 0 ? (
+                            historial.produccion.map((prod, index) => (
                                 <div key={index} className="info-item">
-                                    <span>{prod.fecha?.split('T')[0]}:</span> {prod.cantidad_kg}kg ({prod.tipo_producto})
+                                    <span>{prod.fecha?.split('T')[0]}:</span> {prod.cantidad_kg}kg de {prod.tipo_producto} ({prod.tipo_origen})
                                 </div>
                             ))
                         ) : (
@@ -135,16 +160,19 @@ const DetalleColmena = ({ colmena, setViewState }) => {
 
                     <section className="detalle-card alimentacion">
                         <h3>Alimentación Reciente</h3>
-                        {info.alimentacion && info.alimentacion.length > 0 ? (
-                            info.alimentacion.map((al, index) => {
+                        {cargandoHistorial ? (
+                            <div className="placeholder-text">Cargando alimentación...</div>
+                        ) : historial.alimentacion.length > 0 ? (
+                            historial.alimentacion.map((al, index) => {
                                 const fechaFmt = al.fecha?.split('T')[0] || "Sin fecha";
                                 const alimento = al.tipo_suministro || "Suministro";
+                                const detalle = al.detalle_mezcla ? ` - ${al.detalle_mezcla}` : '';
                                 const cant = al.cantidad || 0;
                                 const costo = al.precio_total_insumo !== undefined ? al.precio_total_insumo : 0;
 
                                 return (
                                     <div key={index} className="info-item">
-                                        <span>{fechaFmt}:</span> {alimento} ({cant} unds) {costo ? `- $${costo}` : ''}
+                                        <span>{fechaFmt}:</span> {alimento}{detalle} ({cant}kg) {costo ? `- $${costo}` : ''}
                                     </div>
                                 );
                             })

@@ -43,16 +43,7 @@ namespace Beekepeer.Controllers
                     return Ok(new List<ColmenaWS>());
                 }
 
-                // Cargamos de forma segura ambas listas usando _sqlMantenimiento
-                foreach (var item in resultado)
-                {
-                    if (item.colmena != null)
-                    {
-                        item.colmena.alimentacion = _sqlMantenimiento.ObtenerAlimentacionPorColmena(item.colmena.id);
-                        item.colmena.produccion = _sqlMantenimiento.ObtenerProduccionPorColmena(item.colmena.id);
-                    }
-                }
-
+                // Ya no cargamos alimentación ni producción aquí para agilizar la respuesta
                 return Ok(resultado);
             }
             catch (Exception ex)
@@ -61,7 +52,35 @@ namespace Beekepeer.Controllers
                 return StatusCode(500, "Ocurrió un error interno al procesar la solicitud.");
             }
         }
+        [HttpGet]
+        [Route("getDetalleMantenimiento/{idColmena:int}")]
+        public ActionResult<HistorialColmenaResponse> GetDetalleMantenimiento(int idColmena)
+        {
+            if (idColmena <= 0)
+            {
+                return BadRequest("El ID de la colmena no es válido.");
+            }
 
+            try
+            {
+                // Consultamos de forma independiente usando tu servicio _sqlMantenimiento
+                var listaAlimentacion = _sqlMantenimiento.ObtenerAlimentacionPorColmena(idColmena) ?? new List<Alimentacion>();
+                var listaProduccion = _sqlMantenimiento.ObtenerProduccionPorColmena(idColmena) ?? new List<Produccion>();
+
+                var respuesta = new HistorialColmenaResponse
+                {
+                    Alimentacion = listaAlimentacion,
+                    Produccion = listaProduccion
+                };
+
+                return Ok(respuesta);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener el detalle de mantenimiento para la colmena {idColmena}: {ex.Message}");
+                return StatusCode(500, "Ocurrió un error interno al procesar la solicitud.");
+            }
+        }
         // 2. INSERTAR NUEVA COLMENA
         [HttpPost]
         [Route("insert")]
