@@ -51,7 +51,9 @@ namespace Beekepeer.DDBB
                             c,
                             reader["nombre_apiario"].ToString() ?? "Sin nombre",
                             reader["fecha_entradaApiario"] != DBNull.Value ? (DateTime)reader["fecha_entradaApiario"] : DateTime.Now,
-                            Convert.ToInt32(reader["apiario_id"])
+                            Convert.ToInt32(reader["apiario_id"]),
+                            reader["coordenada_apiario"].ToString() ?? "Sin cordenada"
+
                         ));
                     }
                 }

@@ -18,29 +18,33 @@ const getCheckpointIcon = () => {
 };
 
 const DetalleColmena = ({ colmena, setViewState }) => {
-    // 1. CONTROL DE CONSOLA: Abre la consola del navegador (F12) para ver si la posición viene dentro del objeto
-    useEffect(() => {
-        console.log("🔍 DATOS RECIBIDOS EN DETALLE COLMENA:", colmena);
-    }, [colmena]);
-
     if (!colmena) {
         setViewState("VerMisColmenas");
         return null;
     }
 
-    const { colmena: info, nombre_apiario } = colmena;
+    // Destructuramos: info contiene los datos de la colmena, coordenadas está en la raíz del objeto
+    const { colmena: info, nombre_apiario, coordenadas: coordsRaw } = colmena;
 
-    // 2. BÚSQUEDA EXHAUSTIVA: Intentamos capturar la posición desde cualquier estructura posible
-    const posicionApiario = colmena.posicion || colmena.apiario?.posicion || info?.posicion;
+    // 1. PROCESAMIENTO DE UBICACIÓN
+    let ubicacion = null;
+    
+    // Prioridad absoluta al campo coordenadas recibido en el JSON (ej: "8.622464, -71.148520")
+    if (coordsRaw && typeof coordsRaw === 'string' && coordsRaw.includes(',')) {
+        ubicacion = coordsRaw.split(',').map(n => parseFloat(n.trim()));
+    } else if (info?.coordenadas && typeof info.coordenadas === 'string' && info.coordenadas.includes(',')) {
+        // Fallback por si acaso vienen dentro de info
+        ubicacion = info.coordenadas.split(',').map(n => parseFloat(n.trim()));
+    }
 
-    // Validamos si es un arreglo válido [lat, lng] idéntico a tu lógica de listarApiarios
-    const tienePosicionValida = Array.isArray(posicionApiario) && 
-                                posicionApiario.length === 2 && 
-                                Number.isFinite(posicionApiario[0]) && 
-                                Number.isFinite(posicionApiario[1]);
+    // Validamos si la ubicación es válida para Leaflet
+    const tienePosicionValida = Array.isArray(ubicacion) && 
+                                ubicacion.length === 2 && 
+                                Number.isFinite(ubicacion[0]) && 
+                                Number.isFinite(ubicacion[1]);
 
-    // Si no hay posición válida, usamos Mérida por defecto para que el mapa no se vaya al océano
-    const centroMapa = tienePosicionValida ? posicionApiario : [8.5891, -71.1450];
+    // 2. CENTRO DEL MAPA: La ubicación de la colmena es el centro
+    const centroMapa = tienePosicionValida ? ubicacion : [8.5891, -71.1450];
 
     return (
         <div className="gestion-container">
@@ -92,16 +96,18 @@ const DetalleColmena = ({ colmena, setViewState }) => {
 
                     {/* El contenedor del Mapa */}
                     <div className="map-colmena-panel">
-                        <MapContainer center={centroMapa} zoom={15} style={{ height: '100%', width: '100%' }}>
+                        <MapContainer center={centroMapa} zoom={16} style={{ height: '100%', width: '100%' }}>
                             <TileLayer
                                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                 attribution='&copy; OpenStreetMap'
                             />
                             {tienePosicionValida && (
-                                <Marker position={posicionApiario} icon={getCheckpointIcon()}>
+                                <Marker position={ubicacion} icon={getCheckpointIcon()}>
                                     <Popup>
                                         <div style={{ textAlign: 'center', fontFamily: 'inherit', fontWeight: 'bold' }}>
-                                            Apiario: {nombre_apiario || "Ubicación del Apiario"}
+                                            <strong>Ubicación de Colmena</strong><br/>
+                                            {info.id_colmena_usuario}<br/>
+                                            Apiario: {nombre_apiario}
                                         </div>
                                     </Popup>
                                 </Marker>

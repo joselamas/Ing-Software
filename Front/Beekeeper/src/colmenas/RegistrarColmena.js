@@ -1,13 +1,116 @@
-import React from 'react';
-import { useRegistrarColmena } from './hooks/useRegistrarColmena';
+import React, { useState, useEffect } from 'react';
+import * as WSColmena from '../webService/WS_colmena';
+import * as WSApiario from '../webService/WS_apiario.js';
 import './css/registrarColmena.css';
 import apitherapy from '../imagenes/apitherapy.png';
 import ModalMSN from '../componentes/modalMSN';
+
 // URL de imagen externa para evitar errores de carga local
 const imagenColmena = apitherapy;
 
 const RegistrarColmena = (props) => {
-    const { colmena, apiarios, colmenasMadreDisponibles, searchTermMadre, manejarCambio, manejarCambioMadre, registrar, cargando, isModalOpen, setIsModalOpen, modalInfo } = useRegistrarColmena(props.usr);
+    const [colmena, setColmena] = useState({
+        usuario_acronimo: props.usr?.acronimo || '',
+        id_colmena_usuario: '',
+        tipo_colmena: '',
+        fecha_inicio: new Date().toISOString().split('T')[0],
+        fecha_inicio_reina: new Date().toISOString().split('T')[0],
+        es_enjambre: true,
+        id_colmena_madre: '',
+        apiario_id: '',
+        estado: ''
+    });
+
+    const [apiarios, setApiarios] = useState([]);
+    const [colmenasMadreDisponibles, setColmenasMadreDisponibles] = useState([]);
+    const [searchTermMadre, setSearchTermMadre] = useState('');
+    const [cargando, setCargando] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalInfo, setModalInfo] = useState({ titulo: '', mensaje: '', tipo: '' });
+
+    // Carga de datos iniciales al abrir el componente
+    useEffect(() => {
+        const cargarDatos = async () => {
+            if (!props.usr) return;
+            try {
+                // Obtenemos apiarios para el combo
+                const resApi = await WSApiario.ListarApiarios(props.usr.acronimo);
+                if (resApi && resApi.status === 1) {
+                    setApiarios(resApi.apiarios || []);
+                }
+
+                // Obtenemos colmenas para la lista de sugerencias de "Colmena Madre"
+                const resCol = await WSColmena.getColmena_Id_IdAsig(props.usr.acronimo);
+                if (Array.isArray(resCol)) {
+                    // Corregido: Actualizamos el estado de la lista, no el objeto colmena del formulario
+                    setColmenasMadreDisponibles(resCol);
+                }
+            } catch (err) {
+                console.error("Error al cargar catálogos iniciales:", err);
+                // Manejo silencioso para evitar el error de conexión apenas se abre la vista
+            }
+        };
+        cargarDatos();
+    }, [props.usr]);
+
+    const manejarCambio = (e) => {
+        const { name, value, type, checked } = e.target;
+        setColmena((prev) => ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value
+        }));
+    };
+
+    const manejarCambioMadre = (e) => {
+        const val = e.target.value;
+        setSearchTermMadre(val);
+        const match = colmenasMadreDisponibles.find(c => c.id_colmena_usuario === val);
+        if (match) {
+            setColmena(prev => ({ ...prev, id_colmena_madre: match.id }));
+        } else {
+            setColmena(prev => ({ ...prev, id_colmena_madre: '' }));
+        }
+    };
+
+    const registrar = async (e) => {
+        e.preventDefault();
+
+        if (!colmena.apiario_id) {
+            setModalInfo({ titulo: 'Validación', mensaje: 'Debes asignar la colmena a un apiario.', tipo: 'error' });
+            setIsModalOpen(true);
+            return;
+        }
+
+        setCargando(true);
+        try {
+            const apiarioId = parseInt(colmena.apiario_id);
+            const payload = {
+                ...colmena,
+                id_colmena_madre: colmena.es_enjambre ? null : (parseInt(colmena.id_colmena_madre) || null),
+                fecha_inicio_reina: colmena.es_enjambre ? null : colmena.fecha_inicio_reina,
+                activo: true
+            };
+            
+            delete payload.apiario_id;
+
+            const res = await WSColmena.insertarColmena(payload, apiarioId);
+            if (res) {
+                setModalInfo({ titulo: 'Éxito', mensaje: 'Colmena registrada con éxito', tipo: 'success' });
+                setIsModalOpen(true);
+                // Limpiar campos específicos después del éxito
+                setColmena(prev => ({ ...prev, id_colmena_usuario: '', tipo_colmena: '', estado: '', id_colmena_madre: '' }));
+                setSearchTermMadre('');
+            } else {
+                setModalInfo({ titulo: 'Error', mensaje: 'Ocurrió un error al registrar la colmena.', tipo: 'error' });
+                setIsModalOpen(true);
+            }
+        } catch (err) {
+            setModalInfo({ titulo: 'Error de Conexión', mensaje: err.message || 'No se pudo conectar con el servidor.', tipo: 'error' });
+            setIsModalOpen(true);
+        } finally {
+            setCargando(false);
+        }
+    };
 
     return (
         <div className="main-container">

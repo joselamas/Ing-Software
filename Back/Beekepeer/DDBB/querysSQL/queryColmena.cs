@@ -16,6 +16,7 @@
                         c.activo,
                         a.msnm,
                         a.id AS apiario_id,
+	                    a.coordenadas as coordenada_apiario,
                         a.nombre_referencia AS nombre_apiario,
                         ra.fecha_entrada as fecha_entradaApiario
                     FROM colmena c

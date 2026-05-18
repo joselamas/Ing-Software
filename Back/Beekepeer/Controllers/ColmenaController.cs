@@ -62,6 +62,27 @@ namespace Beekepeer.Controllers
             }
         }
 
+        // 2. INSERTAR NUEVA COLMENA
+        [HttpPost]
+        [Route("insert")]
+        public IActionResult Insertar([FromBody] Colmena nueva, [FromQuery] int apiarioId)
+        {
+            if (nueva == null) return BadRequest("Datos de la colmena no válidos.");
+            if (apiarioId <= 0) return BadRequest("Debe especificar un ID de apiario válido.");
+
+            int idGenerado = _sql.InsertarColmena(nueva.usuario_acronimo, nueva.fecha_inicio, nueva.fecha_inicio_reina, nueva.es_enjambre, nueva.id_colmena_madre, nueva.activo, nueva.tipo_colmena, nueva.estado, nueva.id_colmena_usuario);
+
+            if (idGenerado == 0) return StatusCode(500, "Error al registrar la colmena (posible ID duplicado).");
+
+            int relacionExitosa = _sqlApiarioColmena.InsertarColmenaEnApiario(nueva.usuario_acronimo, idGenerado, apiarioId, nueva.fecha_inicio);
+
+            if (relacionExitosa == 0) return StatusCode(500, "Colmena creada, pero falló la asignación al apiario.");
+
+            return Ok(new { mensaje = "Colmena registrada con éxito", id = idGenerado });
+        }
+
+
+
         // 3. ACTUALIZAR
         [HttpPut]
         [Route("update")]
