@@ -28,6 +28,12 @@ const ModalAbout = ({ isOpen, onClose }) => {
                     <div className="about-credits-box">
                         <p className="about-credits-title">DESARROLLADO POR:</p>
                         <p className="about-team-name">Equipo 1</p>
+                        <p><strong>Integrantes:</strong> <br />
+                         José Manuel Lamas Tacoronte <br />
+                         Arturo Alejandro Ramirez Osuna <br />
+                         José Sebastian Barrios Gonzales <br />
+                         Victor Alejando Vergara Perez
+                        </p>
                         <p className="about-university">
                             Proyecto académico - Ingeniería de Software<br />
                             Ingeniería de Sistemas<br />
