@@ -1,28 +1,47 @@
-/* Contenedor principal de la vista de detalles */
-.detalle-grid {
+/* Contenedor principal que divide la pantalla en 50% y 50% */
+.detalle-colmena-layout {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: 1fr 1fr; /* Dos columnas exactamente iguales */
     gap: 25px;
     margin-top: 25px;
     padding-bottom: 40px;
+    align-items: start;
 }
 
-/* Estilo base para todas las tarjetas (Cards) */
+/* Columna de la izquierda para apilar información general y el mapa */
+.columna-izquierda-packs {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* Columna de la derecha para apilar producción y alimentación */
+.columna-derecha-packs {
+    display: flex;
+    flex-direction: column;
+    gap: 25px; 
+}
+
+/* Estilo del contenedor del mapa con la estética neobrutalista idéntica a tus apiarios */
+.map-colmena-panel {
+    height: 300px; /* Alto fijo ideal para equilibrar la vista */
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 3px solid var(--primary-yellow, #f1c40f); /* Toma tu variable amarilla o fallback */
+    box-shadow: 8px 8px 0px #2d2424; /* Sombra sólida característica */
+    box-sizing: border-box;
+}
+
+/* Estilo base original para las tarjetas de Producción y Alimentación */
 .detalle-card {
     background: white;
-    border: 3px solid #2d2424; /* Color café oscuro de tu paleta */
+    border: 3px solid #2d2424;
     box-shadow: 8px 8px 0px #2d2424;
     padding: 24px;
     border-radius: 4px;
-    transition: transform 0.2s ease;
 }
 
-.detalle-card:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 10px 10px 0px #2d2424;
-}
-
-/* Títulos de las secciones con indicadores de color */
 .detalle-card h3 {
     margin-top: 0;
     margin-bottom: 20px;
@@ -35,13 +54,9 @@
     padding-bottom: 10px;
 }
 
-/* Colores temáticos por sección (Bordes laterales) */
-.info-general { border-left: 10px solid #f1c40f; } /* Amarillo */
-.produccion { border-left: 10px solid #2ecc71; }   /* Verde */
-.alimentacion { border-left: 10px solid #3498db; } /* Azul */
-.historial { border-left: 10px solid #e67e22; }    /* Naranja */
+.produccion { border-left: 10px solid #2ecc71; }
+.alimentacion { border-left: 10px solid #3498db; }
 
-/* Estilo de los items de información */
 .info-item {
     margin-bottom: 12px;
     font-size: 1rem;
@@ -58,42 +73,6 @@
     font-size: 0.85rem;
 }
 
-/* Tarjeta de historial a ancho completo */
-.full-width {
-    grid-column: 1 / -1;
-}
-
-/* Tabla de historial neobrutalista */
-.neobrutalist-table.mini {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-    border: 2px solid #2d2424;
-}
-
-.neobrutalist-table.mini th {
-    background-color: #f1c40f;
-    color: #2d2424;
-    padding: 12px;
-    text-align: left;
-    border: 2px solid #2d2424;
-    font-weight: 900;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-}
-
-.neobrutalist-table.mini td {
-    padding: 12px;
-    border: 2px solid #2d2424;
-    background: white;
-    font-size: 0.9rem;
-}
-
-.neobrutalist-table.mini tr:nth-child(even) td {
-    background-color: #fffdf2;
-}
-
-/* Texto cuando no hay registros */
 .placeholder-text {
     color: #888;
     font-style: italic;
@@ -102,13 +81,125 @@
     padding: 20px 0;
 }
 
-/* Responsividad para pantallas pequeñas */
-@media (max-width: 768px) {
-    .detalle-grid {
-        grid-template-columns: 1fr;
+/* ==========================================================================
+   DISEÑO DEL CAPTURE PARA LA MITAD DE INFORMACIÓN GENERAL
+   ========================================================================== */
+
+.info-general-box {
+    background-color: #4a3b32; /* Fondo marrón oscuro */
+    border: 1px solid #3d3029;
+    border-radius: 20px;
+    padding: 35px 25px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.box-header-apiario {
+    margin-bottom: 25px;
+}
+
+.box-icon-bee {
+    font-size: 3.5rem;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.box-header-apiario h2 {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+.box-subheader {
+    color: #cbc2ba;
+    font-size: 0.85rem;
+    margin: 6px 0 0 0;
+}
+
+.info-container-apiario {
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 24px 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.info-title-apiario {
+    color: white;
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-transform: none;
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+}
+
+.info-row-apiario {
+    background-color: #614e43; /* Cajas internas marrón claro */
+    border-radius: 10px;
+    padding: 12px 15px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.info-row-apiario:last-child {
+    margin-bottom: 0;
+}
+
+.label-apiario {
+    color: #cbc2ba;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.value-apiario {
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+}
+/* ==========================================================================
+   ESTILO DEL CHECKPOINT PERSONALIZADO PARA EL MAPA
+   ========================================================================== */
+.custom-leaflet-checkpoint {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+}
+
+.checkpoint-pin {
+    width: 16px;
+    height: 16px;
+    background-color: #e74c3c; /* Color rojo indicador */
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px #e74c3c44, 0 4px 10px rgba(0,0,0,0.3);
+    animation: checkpoint-pulse 1.8s infinite ease-in-out;
+}
+
+@keyframes checkpoint-pulse {
+    0% {
+        box-shadow: 0 0 0 0px rgba(231, 76, 60, 0.7), 0 4px 10px rgba(0,0,0,0.3);
     }
-    
-    .full-width {
-        grid-column: auto;
+    100% {
+        box-shadow: 0 0 0 12px rgba(231, 76, 60, 0), 0 4px 10px rgba(0,0,0,0.3);
+    }
+}
+
+/* Responsividad para pantallas móviles */
+@media (max-width: 900px) {
+    .detalle-colmena-layout {
+        grid-template-columns: 1fr; /* Se vuelven una sola columna en pantallas chicas */
     }
 }
