@@ -16,8 +16,9 @@ namespace Beekepeer.Model
         public string id_colmena_usuario { get; set; }
         public DateTime? fecha_inicio_reina { get; set; }
 
-        // LA LISTA QUE ALMACENARÁ EL HISTORIAL
+        // Aquí se guardarán las dos listas en el objeto de forma limpia
         public List<Alimentacion> alimentacion { get; set; } = new List<Alimentacion>();
+        public List<Produccion> produccion { get; set; } = new List<Produccion>();
     }
 
     public class ColmenaRequest : Colmena

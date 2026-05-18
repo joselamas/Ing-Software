@@ -183,6 +183,39 @@ namespace Beekepeer.DDBB
             return lista;
         }
 
+        // NUEVO MÉTODO A AGREGAR AL FINAL:
+        public List<Produccion> ObtenerProduccionPorColmena(int idColmena)
+        {
+            List<Produccion> lista = new List<Produccion>();
+
+            string query = "SELECT colmena_id, fecha, tipo_producto, tipo_origen, descripcion_flora, cantidad_kg, precio_aprox_kg FROM produccion_cosecha WHERE colmena_id = @ColmenaId ORDER BY fecha DESC";
+
+            using (SqlConnection connection = new SqlConnection(_sqlurl))
+            {
+                SqlCommand cmd = new SqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@ColmenaId", idColmena);
+
+                connection.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Produccion item = new Produccion
+                        {
+                            colmena_id = reader["colmena_id"] != DBNull.Value ? Convert.ToInt32(reader["colmena_id"]) : 0,
+                            fecha = reader["fecha"] != DBNull.Value ? Convert.ToDateTime(reader["fecha"]) : DateTime.MinValue,
+                            tipo_producto = reader["tipo_producto"] != DBNull.Value ? reader["tipo_producto"].ToString() ?? "" : "",
+                            tipo_origen = reader["tipo_origen"] != DBNull.Value ? reader["tipo_origen"].ToString() ?? "" : "",
+                            descripcion_flora = reader["descripcion_flora"] != DBNull.Value ? reader["descripcion_flora"].ToString() ?? "" : "",
+                            cantidad_kg = reader["cantidad_kg"] != DBNull.Value ? (float)Convert.ToDouble(reader["cantidad_kg"]) : 0f,
+                            precio_aprox_kg = reader["precio_aprox_kg"] != DBNull.Value ? (float)Convert.ToDouble(reader["precio_aprox_kg"]) : 0f
+                        };
+                        lista.Add(item);
+                    }
+                }
+            }
+            return lista;
+        }
 
         public List<ProduccionAnual> getProduccionAnual(string acronimo)
         {
