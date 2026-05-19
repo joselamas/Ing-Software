@@ -5,7 +5,7 @@ import * as WSColmena from '../webService/WS_colmena';
 import 'leaflet/dist/leaflet.css';
 import './css/DetalleColmena.css';
 
-// Replicamos exactamente tu método de listarApiarios.js usando L.divIcon para evitar imágenes rotas
+// Replicamos exactamente el método de listarApiarios.js usando L.divIcon para evitar imágenes rotas
 const getCheckpointIcon = () => {
     return L.divIcon({
         html: `<div class="custom-apiary-marker" style="background-color: #e74c3c; width: 32px; height: 32px; border-radius: 50%; border: 3px solid #2d2424; box-shadow: 4px 4px 0px #2d2424; display: flex; align-items: center; justify-content: center;">
