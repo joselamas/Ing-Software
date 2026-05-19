@@ -5,7 +5,41 @@ using System.Threading;     // Para crear el hilo paralelo
 using System.Drawing;       // Para cargar tu logo.ico
 
 
+// 1. (MUTEX)
+// Evita que el servidor arranque dos veces en la misma computadora
+
+bool esNuevaInstancia;
+using Mutex mutex = new Mutex(true, "Beekeeper_Server", out esNuevaInstancia);
+
+if (!esNuevaInstancia)
+{
+    // Ya hay un servidor ejecutándose en segundo plano.
+    // Solo le abrimos la ventana del navegador al usuario y cerramos este intento extra.
+    string url = "http://localhost:5000";
+    try
+    {
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = "msedge",
+            Arguments = $"--app={url}",
+            UseShellExecute = true
+        });
+    }
+    catch
+    {
+        Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
+    }
+
+    // DETENEMOS LA EJECUCIÓN AQUÍ MISMO. No arranca un segundo servidor.
+    return;
+}
+
+
 var builder = WebApplication.CreateBuilder(args);
+
+
+// Permitir conexiones desde la red local
+builder.WebHost.UseUrls("http://0.0.0.0:5000");
 
 // Add services to the container.
 
