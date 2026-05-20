@@ -123,13 +123,16 @@ namespace Beekepeer.Controllers
 
                 // Llamamos a tu lógica de SQL. 
                 // Nota: Pasamos 'datos.acronimo' como identificador y los campos que vienen del form.
+
+                string? claveAActualizar = string.IsNullOrWhiteSpace(datos.clave) ? null : datos.clave;
+
                 bool exito = _sql.ActualizarUsuario(
                     datos.acronimo,
                     null, // permiso (no se modifica en el perfil de usuario)
                     null, // nombre (viniendo del front está disabled)
                     null, // apellido (viniendo del front está disabled)
                     null, // correo (viniendo del front está disabled)
-                    datos.clave, // La nueva contraseña
+                    claveAActualizar, // Filtro de contraseña
                     datos.telefono,
                     datos.localidad_asociada,
                     null  // activo (no se modifica desde aquí)
@@ -137,6 +140,7 @@ namespace Beekepeer.Controllers
 
                 if (exito)
                 {
+                    datos.clave = "";
                     // Retornamos el formato que el Hook espera para mostrar el éxito
                     return Ok(new { status = 1, mensaje = "¡Perfil actualizado con éxito!", data = datos });
                 }

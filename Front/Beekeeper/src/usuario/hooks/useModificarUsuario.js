@@ -48,18 +48,14 @@ export const useModificarUsuario = (usr, setUsr) => {
             correo: data.correo || usr.correo,
             telefono: data.telefono || usr.telefono,
             localidad_asociada: data.localidad || usr.localidad_asociada,
-            clave: data.password ? btoa(data.password) : usr.clave
+            clave: data.password ? btoa(data.password) : ""
         };
 
         try {
             const res = await WSUsuario.ModificarUsuario(payload);
             if (res && res.status === 1) {
-              payload.clave = '';
-              setUsr(payload); // Actualizamos el estado del usuario con los nuevos datos
-         
-              // Limpiamos la clave del payload antes de actualizar el estado global por seguridad
-                const usrActualizado = { ...payload, clave: '' }; 
-                setUsr(usrActualizado);
+             
+                setUsr(payload); // Actualizamos el estado del usuario con los nuevos dato
               
                 setModalInfo({
                     titulo: 'Actualización Exitosa',

@@ -14,6 +14,7 @@ export default function BarraNavegacion(props){
 
     const closeSesion = () =>{
         localStorage.removeItem('beekeeper_user');
+       // localStorage.clear(); // Limpia todo el localStorage para asegurarnos de eliminar cualquier dato persistente
         props.setUsr(null)
         props.setViewState("Login")
     }
@@ -52,7 +53,8 @@ export default function BarraNavegacion(props){
 
     // Esta es la función letal que borra todo
     const ejecutarCierreDefinitivo = () => {
-        localStorage.removeItem('beekeeper_session'); 
+      //  localStorage.clear(); // Limpia todo el localStorage para asegurarnos de eliminar cualquier dato persistente
+        localStorage.removeItem('beekeeper_user');
         props.setUsr(null);
         props.setViewState("Login");
         setIsLogoutOpen(false); // Cerramos el modal al terminar
