@@ -1,42 +1,36 @@
 using Beekepeer.DDBB;
+using Beekepeer;
 using System.Diagnostics;
 using System.Windows.Forms; // Para el System Tray
 using System.Threading;     // Para crear el hilo paralelo
 using System.Drawing;       // Para cargar tu logo.ico
 
-
-// 1. (MUTEX)
-// Evita que el servidor arranque dos veces en la misma computadora
-
-bool esNuevaInstancia;
-using Mutex mutex = new Mutex(true, "Beekeeper_Server", out esNuevaInstancia);
-
-if (!esNuevaInstancia)
-{
-    // Ya hay un servidor ejecutándose en segundo plano.
-    // Solo le abrimos la ventana del navegador al usuario y cerramos este intento extra.
-    string url = "http://localhost:5000";
-    try
-    {
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = "msedge",
-            Arguments = $"--app={url}",
-            UseShellExecute = true
-        });
-    }
-    catch
-    {
-        Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
-    }
-
-    // DETENEMOS LA EJECUCIÓN AQUÍ MISMO. No arranca un segundo servidor.
-    return;
-}
-
-
 var builder = WebApplication.CreateBuilder(args);
 
+Mutex? keepAliveMutex = null;
+
+if (builder.Environment.IsProduction())
+{
+    keepAliveMutex = new Mutex(true, "Beekeeper_Server", out bool esNuevaInstancia);
+
+    if (!esNuevaInstancia)
+    {
+        string url = "http://localhost:5000";
+        try { 
+            Process.Start(new ProcessStartInfo { 
+                FileName = "msedge", 
+                Arguments = $"--app={url}", 
+                UseShellExecute = true 
+            }); 
+        }
+        catch { 
+            Process.Start(new ProcessStartInfo { 
+                FileName = url, UseShellExecute = true 
+            }); 
+        }
+        return; // Detiene la ejecución ANTES de construir el servidor
+    }
+}
 
 // Permitir conexiones desde la red local
 builder.WebHost.UseUrls("http://0.0.0.0:5000");
@@ -84,100 +78,16 @@ if (app.Environment.IsProduction())
 
     app.UseStaticFiles();  // Para servir los archivos de React
 
-    // ==========================================
-    // 1. EL DESPERTADOR: Arrancar LocalDB antes de conectar
-    // ==========================================
-    try
-    {
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = "cmd.exe",
-            Arguments = "/c sqllocaldb start MSSQLLocalDB",
-            CreateNoWindow = true,
-            UseShellExecute = false
-        })?.WaitForExit();
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine("Aviso al despertar DB: " + ex.Message);
-    }
+    ConfiguracionRemota.GenerarScriptBat();
 
-    DbInitializer.Initialize("(localdb)\\MSSQLLocalDB");
+    GestorLocalDB.DespertarEInicializar();
 
-    // 1. Abrimos el navegador
-    string url = "http://localhost:5000";
+    ControladorNavegador.AbrirInterfazLocal();
 
-    try
-    {
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = "msedge", // Llamamos a Microsoft Edge
-            Arguments = $"--app={url}", // Este es el comando mágico que oculta el navegador
-            UseShellExecute = true
-        });
-    }
-    catch
-    {
-        // Plan B: Si por algún milagro no tiene Edge, lo abre en su navegador por defecto normal
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = url,
-            UseShellExecute = true
-        });
-    }
-
-    // 2. Creamos un hilo separado para el icono de la barra de tareas
-    Thread trayThread = new Thread(() =>
-    {
-        Application.EnableVisualStyles();
-        Application.SetCompatibleTextRenderingDefault(false);
-
-        // Creamos el icono
-        NotifyIcon trayIcon = new NotifyIcon();
-        trayIcon.Text = "Beekeeper - Activo";
-
-        // Carga tu mismo logo. Asegúrate de que 'logo.ico' se copie al directorio de salida
-        trayIcon.Icon = new Icon(Path.Combine(AppContext.BaseDirectory, "logo.ico"));
-        trayIcon.Visible = true;
-
-        // Creamos el menú de clic derecho
-        ContextMenuStrip menu = new ContextMenuStrip();
-        ToolStripMenuItem closeItem = new ToolStripMenuItem("Finalizar Beekeeper");
-
-        // Lógica al hacer clic en "Finalizar Beekeeper"
-        closeItem.Click += (sender, e) =>
-        {
-            // Muestra el mensaje de confirmación
-            DialogResult dialogResult = MessageBox.Show(
-                "¿Realmente desea finalizar Beekeeper y apagar el servidor?",
-                "Confirmar cierre",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
-
-            // Si el usuario presiona "Sí"
-            if (dialogResult == DialogResult.Yes)
-            {
-                trayIcon.Visible = false; // Esconde el icono limpiamente
-                Environment.Exit(0);      // Apaga TODO el programa y el servidor
-            }
-            // Si presiona "No", el if se ignora y el programa sigue corriendo normal
-        };
-
-        menu.Items.Add(closeItem);
-        trayIcon.ContextMenuStrip = menu;
-
-        // Mantiene el hilo visual vivo esperando clics
-        Application.Run();
-    });
-
-    // Configuramos el hilo para que sea compatible con ventanas y lo iniciamos
-    trayThread.SetApartmentState(ApartmentState.STA);
-
-    // Le decimos que es secundario para que finalice si el servidor finaliza
-    trayThread.IsBackground = true;
-
-    // Iniciamos el hilo
-    trayThread.Start();
+    ControladorBandeja.IniciarIcono();
 }
 
 app.Run();
+
+// Liberamos la memoria del Mutex al apagar el servidor
+keepAliveMutex?.Dispose();
