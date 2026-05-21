@@ -45,11 +45,17 @@ export default function CrearUsuario(props) {
                         <p className="form-desc">Únete para gestionar tus apiarios fácilmente.</p>
                         
                         <form id="auth-form" onSubmit={manejarRegistro} noValidate>
-                            <div className="input-group">
-                                <label>Acronimo</label>
-                                <input type="text" name="acronimo" value={formData.acronimo} onChange={handleChange} placeholder="JMLT" required minLength="4" maxLength="10" />
+                            <div className="input-row">
+                                <div className="input-group">
+                                    <label>Acrónimo</label>
+                                    <input type="text" name="acronimo" value={formData.acronimo} onChange={handleChange} placeholder="Ej: JMLT" required minLength="4" maxLength="10" />
+                                </div>
+                                <div className="input-group">
+                                    <label>Localidad</label>
+                                    <input type="text" name="localidad_asociada" value={formData.localidad_asociada} onChange={handleChange} placeholder="Ej: Mérida" required />
+                                </div>
                             </div>
-                            <div style={{display: "flex", gap: "10px"}}>
+                            <div className="input-row">
                                 <div className="input-group">
                                     <label>Nombres</label>
                                     <input type="text" name="nombre" value={formData.nombre} onChange={handleChange} required />
@@ -59,13 +65,15 @@ export default function CrearUsuario(props) {
                                     <input type="text" name="apellido" value={formData.apellido} onChange={handleChange} required />
                                 </div>
                             </div>
-                            <div className="input-group">
-                                <label>Teléfono</label>
-                                <input type="tel" name="telefono" value={formData.telefono} onChange={handleChange} required />
-                            </div>
-                            <div className="input-group">
-                                <label>Correo Electrónico</label>
-                                <input type="email" name="correo" value={formData.correo} onChange={handleChange} required />
+                            <div className="input-row">
+                                <div className="input-group">
+                                    <label>Teléfono</label>
+                                    <input type="tel" name="telefono" value={formData.telefono} onChange={handleChange} required />
+                                </div>
+                                <div className="input-group">
+                                    <label>Correo Electrónico</label>
+                                    <input type="email" name="correo" value={formData.correo} onChange={handleChange} required />
+                                </div>
                             </div>
                             
                             <div className="input-group">
@@ -73,18 +81,18 @@ export default function CrearUsuario(props) {
                                 <input type="password" name="clave" value={formData.clave} onChange={handleChange} required minLength="8" maxLength="20" />
                                 
                                 {/* REQUISITOS REACTIVOS */}
-                                <div style={{ fontSize: '0.75rem', marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                    <span style={{ color: hasLength ? '#15803d' : '#6b7280', transition: 'color 0.3s ease' }}>
-                                        {hasLength ? '✅' : '❌'} Mínimo 8 caracteres
+                                <div className="password-rules">
+                                    <span style={{ color: hasLength ? '#15803d' : '#6b7280' }}>
+                                        {hasLength ? '✅' : '❌'} Mínimo 8
                                     </span>
-                                    <span style={{ color: hasLetter ? '#15803d' : '#6b7280', transition: 'color 0.3s ease' }}>
-                                        {hasLetter ? '✅' : '❌'} Al menos 1 letra
+                                    <span style={{ color: hasLetter ? '#15803d' : '#6b7280' }}>
+                                        {hasLetter ? '✅' : '❌'} 1 Letra
                                     </span>
-                                    <span style={{ color: hasNumber ? '#15803d' : '#6b7280', transition: 'color 0.3s ease' }}>
-                                        {hasNumber ? '✅' : '❌'} Al menos 1 número
+                                    <span style={{ color: hasNumber ? '#15803d' : '#6b7280' }}>
+                                        {hasNumber ? '✅' : '❌'} 1 Número
                                     </span>
-                                    <span style={{ color: hasSpecial ? '#15803d' : '#6b7280', transition: 'color 0.3s ease' }}>
-                                        {hasSpecial ? '✅' : '❌'} Al menos 1 carácter especial
+                                    <span style={{ color: hasSpecial ? '#15803d' : '#6b7280' }}>
+                                        {hasSpecial ? '✅' : '❌'} 1 Especial
                                     </span>
                                 </div>
                             </div>

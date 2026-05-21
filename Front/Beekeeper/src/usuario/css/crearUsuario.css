@@ -1,4 +1,7 @@
 
+/* =========================================
+   PANEL IZQUIERDO Y GENERALES
+   ========================================= */
 .overlay-content {
     position: relative;
     z-index: 2;
@@ -7,11 +10,9 @@
 
 .bee-icon img {
     width: 80px;
-    filter: invert(1) sepia(1) saturate(5) hue-rotate(0deg); /* Hace el icono dorado/blanco */
+    filter: invert(1) sepia(1) saturate(5) hue-rotate(0deg); 
     margin-bottom: 20px;
 }
-
-/* PANEL DERECHO: FORMULARIO */
 
 @media (max-width: 900px) {
     .left-panel { display: none; }
@@ -19,24 +20,128 @@
 
 .crearUsuario-container {
     display: flex;
-    width: 100vw;
+    width: 100%;
     height: 100vh;
-    overflow: hidden; /* Evita el scroll en toda la página, se lo daremos solo al panel derecho */
+    box-sizing: border-box;
+    overflow: hidden; /* Fija la pantalla como app de escritorio */
 }
 
+/* =========================================
+   PANEL DERECHO (FORMULARIO CENTRADO)
+   ========================================= */
 .right-panel {
     flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centra horizontalmente */
-    justify-content: flex-start; /* Alinea el contenido desde arriba, NO en el centro */
-    overflow-y: auto; /* Permite hacer scroll hacia abajo si el formulario es muy largo */
-    padding: 40px 20px; /* Da un respiro al título en la parte superior */
+    align-items: center; 
+    justify-content: center; /* ¡CLAVE! Centra verticalmente el contenido */
+    overflow-y: auto; /* Solo aparecerá si la pantalla es extremadamente diminuta */
+    padding: 20px; 
     background-color: var(--bg-cream, #FDFBF7);
+    box-sizing: border-box;
 }
 
 .form-container {
     width: 100%;
-    max-width: 450px; /* Mantiene el formulario con un ancho agradable */
-    margin-top: 20px; /* Separación extra desde el techo */
+    max-width: 450px; 
+    margin: auto;
+}
+
+.form-container h1 {
+    margin-bottom: 5px;
+    color: var(--dark-brown, #3E2723);
+}
+
+.form-desc {
+    margin-bottom: 20px;
+    color: #666;
+}
+
+/* =========================================
+   COMPACTACIÓN DE INPUTS PARA 1366x768
+   ========================================= */
+.input-row {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+}
+
+.input-row .input-group {
+    flex: 1;
+}
+
+.input-group {
+    margin-bottom: 12px; 
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+    font-weight: bold;
+    color: var(--dark-brown, #3E2723);
+}
+
+.input-group input {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Grid mágico para los requisitos de contraseña (2x2) */
+.password-rules {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    font-size: 0.75rem;
+    margin-top: 6px;
+}
+
+.password-rules span {
+    transition: color 0.3s ease;
+}
+
+/* =========================================
+   BOTONES Y FOOTER
+   ========================================= */
+.primary-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: 10px;
+    cursor: pointer;
+    background-color: var(--primary-yellow, #FFC107);
+    border: 2px solid var(--dark-brown, #3E2723);
+    border-radius: 4px;
+    transition: 0.2s;
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 2px 2px 0px var(--dark-brown, #3E2723);
+}
+
+.form-footer {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+/* =========================================
+   AJUSTES FINOS PARA LAPTOPS Y MÓVILES
+   ========================================= */
+@media (max-width: 1366px), (max-height: 768px) {
+    .form-container h1 { font-size: 1.6rem; }
+    .form-desc { margin-bottom: 15px; font-size: 0.85rem; }
+    .input-group { margin-bottom: 10px; }
+    .input-group input { padding: 7px 10px; }
+    .bee-icon img { width: 60px; margin-bottom: 10px; }
+}
+
+@media (max-width: 480px) {
+    .input-row { flex-direction: column; gap: 0; }
+    .password-rules { grid-template-columns: 1fr; /* Vuelve a 1 columna en celular */ }
 }

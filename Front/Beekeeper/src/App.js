@@ -33,14 +33,9 @@ import './App.css';
 
 function App() {
 
-    const [usr, setUsr] = useState(() => {
-        const savedUsr = localStorage.getItem('beekeeper_user');
-        return savedUsr ? JSON.parse(savedUsr) : null;
-    });
+    const [usr, setUsr] = useState(null);
 
-    const [viewState, setViewState] = useState(() => {
-        return localStorage.getItem('beekeeper_user') ? "Home" : "Login";
-    });
+    const [viewState, setViewState] = useState("Login");
 
     const [selectedApiario, setSelectedApiario] = useState(null);
     const [selectedApiarioID, setSelectedApiarioID] = useState(null);
@@ -51,7 +46,7 @@ function App() {
 
 
     useEffect(() => {
-        const sessionData = localStorage.getItem('beekeeper_session');
+        const sessionData = sessionStorage.getItem('beekeeper_session');
         
         if (sessionData) {
             try {
@@ -66,14 +61,14 @@ function App() {
                     setUsr(user);
                     setViewState(view || "Home");
                 } else {
-                    localStorage.removeItem('beekeeper_session');
+                    sessionStorage.removeItem('beekeeper_session');
                     setViewState("Login");
                 }
             } catch (error) {
                 // MEDIDA DE SEGURIDAD: Si alguien intentó modificar el texto raro a mano 
                 // y rompió el formato, forzamos el cierre de sesión inmediatamente.
                 console.error("Intento de manipulación de sesión detectado.");
-                localStorage.removeItem('beekeeper_session');
+                sessionStorage.removeItem('beekeeper_session');
                 setViewState("Login");
             }
         }
@@ -96,7 +91,7 @@ function App() {
                 const stringSession = JSON.stringify(session);
                 const tokenOculto = btoa(encodeURIComponent(stringSession));
 
-                localStorage.setItem('beekeeper_session', tokenOculto);
+                sessionStorage.setItem('beekeeper_session', tokenOculto);
             };
 
             // 1. GUARDADO INMEDIATO: Lo ejecutamos en el mismo instante en que 'usr' tiene datos
@@ -113,7 +108,7 @@ function App() {
     // 3. FUNCIÓN DE CIERRE DE SESIÓN MANUAL
     // ==========================================
     const finalizarSesionManual = () => {
-        localStorage.removeItem('beekeeper_session'); // Borramos el storage inmediatamente
+        sessionStorage.removeItem('beekeeper_session'); // Borramos el storage inmediatamente
         setUsr(null);
         setViewState("Login");
     };
@@ -278,7 +273,7 @@ function App() {
       {/* Vista normal por si el usuario decide entrar manualmente al reporte */}
       {viewState === 'ReporteCompleto' && <ReporteCompleto usr={usr} />}
 
-      <Footer />
+      {/* <Footer /> */}
 
       {/* COMPONENTE DE DESCARGA SILENCIOSA (Background) */}
       {/* Se renderiza fuera de la vista del usuario para procesar los datos y el PDF sin navegar */}

@@ -130,3 +130,54 @@
     font-size: 0.75rem;
     color: #888;
 }
+
+@media (max-width: 1366px), (max-height: 768px) {
+    .about-modal {
+        padding: 20px;
+        max-width: 400px;
+    }
+    
+    .about-logo-icon {
+        font-size: 2.5rem; /* Logo más pequeño */
+    }
+    
+    .about-title {
+        font-size: 1.2rem;
+    }
+    
+    .about-divider {
+        margin: 12px 0;
+    }
+    
+    .about-description {
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+    }
+    
+    .about-credits-box {
+        padding: 10px;
+        margin-bottom: 12px;
+    }
+    
+    .about-credits-title {
+        font-size: 0.7rem;
+    }
+    
+    .about-team-name {
+        font-size: 1.05rem;
+        margin-bottom: 5px;
+    }
+    
+    .about-university {
+        font-size: 0.75rem;
+    }
+    
+    .about-license {
+        font-size: 0.75rem;
+        margin-bottom: 10px;
+    }
+    
+    .about-copyright {
+        font-size: 0.7rem;
+    }
+}
