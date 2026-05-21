@@ -46,16 +46,19 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
-        builder => builder.AllowAnyOrigin()
+        policy => policy.AllowAnyOrigin()
                           .AllowAnyMethod()
                           .AllowAnyHeader());
 });
 var app = builder.Build();
-app.UseCors(options => {
+/*app.UseCors(options => {
     options.AllowAnyOrigin(); // O http://localhost:3000
     options.AllowAnyMethod();
     options.AllowAnyHeader();
-});
+});*/
+
+app.UseCors("AllowReactApp");
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
